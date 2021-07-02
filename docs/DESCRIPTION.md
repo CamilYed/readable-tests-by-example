@@ -18,5 +18,5 @@ to takie zamówienie ma darmową dostawę.
 W przypadku klientów VIP przy każdym ich zamówieniu, na ich skrzynkę pocztową wysyłany jest darmowy utwór muzyczny w postaci
 pliku mp3.
 
-Po opłacie zamówienie nie można dokonywać żadnych modyfikacji.
+Po opłacie zamówienia nie można dokonywać żadnych modyfikacji.
 

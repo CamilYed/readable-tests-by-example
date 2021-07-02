@@ -1,4 +1,4 @@
-package tech.allegro.blog.order
+package tech.allegro.blog.vinyl.shop.order
 
 import spock.lang.Specification
 

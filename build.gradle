@@ -20,6 +20,8 @@ repositories {
 }
 
 project.ext.versions = [
+    lombok             : '1.18.20',
+    vavr               : '1.0.0-alpha-3',
 		spock              : '2.0-groovy-3.0'
 ]
 
@@ -32,9 +34,16 @@ configurations {
 
 
 dependencies {
+  compileOnly "org.projectlombok:lombok:${versions.lombok}"
+  annotationProcessor "org.projectlombok:lombok:${versions.lombok}"
+
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+  implementation "io.vavr:vavr:${versions.vavr}"
+
+  testCompileOnly "org.projectlombok:lombok:${versions.lombok}"
+  testAnnotationProcessor "org.projectlombok:lombok:${versions.lombok}"
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation group: 'org.spockframework', name: 'spock-core', version: versions.spock
+	testImplementation "org.spockframework:spock-core:${versions.spock}"
 
 }
 

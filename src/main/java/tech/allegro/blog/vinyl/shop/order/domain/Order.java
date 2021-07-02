@@ -4,20 +4,27 @@ import io.vavr.collection.List;
 import lombok.AllArgsConstructor;
 import tech.allegro.blog.vinyl.shop.catalogue.VinylId;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
+import tech.allegro.blog.vinyl.shop.delivery.Delivery;
 
 @AllArgsConstructor
 public class Order {
   private final OrderId orderId;
   private final OrderLines orderLines = OrderLines.empty();
+  private Delivery delivery;
   private boolean unpaid;
 
-  void pay(Money amount) {
+  public void pay(Money amount, Delivery delivery) {
     if (unpaid) {
-      final var orderValue = orderLines.total();
-      if (orderValue.notEqualTo(amount)) {
+      final var toPay = orderLines.total().add(delivery.cost());
+      if (toPay.notEqualTo(amount)) {
         unpaid = true;
       }
+      this.delivery = delivery;
     }
+  }
+
+  public Money orderValue() {
+    return orderLines.total();
   }
 }
 

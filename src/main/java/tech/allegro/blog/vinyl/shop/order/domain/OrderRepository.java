@@ -1,9 +1,11 @@
 package tech.allegro.blog.vinyl.shop.order.domain;
 
 
-import io.vavr.control.Option;
+import java.util.Optional;
 
 public interface OrderRepository {
 
-  Option<Order> findBy(OrderId orderId);
+  Optional<Order> findBy(OrderId orderId);
+
+  void save(Order order);
 }

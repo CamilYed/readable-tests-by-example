@@ -1,2 +1,5 @@
-# readable-tests-by-example
-How to improve your tests readability by few simple tips
+# Getting Started
+
+### Example project for Allegro Tech Blog
+
+

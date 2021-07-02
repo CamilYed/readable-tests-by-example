@@ -1,0 +1,67 @@
+plugins {
+	id 'org.springframework.boot' version '2.5.2'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+  id 'groovy'
+  id 'application'
+}
+
+group = 'tech.allegro.blog'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+targetCompatibility = '11'
+
+repositories {
+	mavenCentral()
+}
+
+project.ext.versions = [
+		spock              : '2.0-groovy-3.0'
+]
+
+configurations {
+  integrationTestImplementation.extendsFrom compileOnly
+  integrationTestImplementation.extendsFrom implementation
+  integrationTestImplementation.extendsFrom annotationProcessor
+  integrationTestImplementation.extendsFrom testImplementation
+}
+
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation group: 'org.spockframework', name: 'spock-core', version: versions.spock
+
+}
+
+sourceSets {
+  integrationTest {
+    groovy {
+      compileClasspath += main.output + test.output
+      runtimeClasspath += main.output + test.output
+      srcDir {
+        file('src/integrationTest/groovy')
+      }
+    }
+    resources.srcDir file('src/integrationTest/resources')
+  }
+}
+
+test {
+  testLogging {
+    exceptionFormat = 'full'
+    events = ["STARTED", "PASSED", "SKIPPED", "FAILED"]
+
+  }
+}
+
+task integrationTest(type: Test) {
+  testClassesDirs = sourceSets.integrationTest.output.classesDirs
+  classpath = sourceSets.integrationTest.runtimeClasspath
+  include '**/*Spec.*'
+  include '**/*Test.*'
+
+  systemProperty 'spring.profiles.active', 'integration'
+  outputs.upToDateWhen { false }
+}
+

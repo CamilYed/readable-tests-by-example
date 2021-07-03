@@ -22,17 +22,17 @@ public class OrderPaymentHandler implements CommandHandler<OrderPaymentHandler.P
   @Override
   public Either<Failure, Void> handle(PayOrderCommand command) {
     Try.run(() -> {
-        final var orderIfPresent = orderRepository.findBy(command.orderId);
-        orderIfPresent.ifPresent(order -> {
+        final var clientOrder = orderRepository.findBy(command.orderId);
+        clientOrder.ifPresent(order -> {
           var orderValue = order.orderValue();
           var clientReputation = clientReputationProvider.getFor(command.clientId);
           var delivery = deliveryCostPolicy.calculate(orderValue, clientReputation);
-          order.pay(command.amount, delivery);
+          var paymentResult = order.pay(command.amount, delivery);
           orderRepository.save(order);
         });
       }
     ).onFailure(throwable -> {
-      log.error("There was an error trying to pay for order (1)", command.orderId);
+      log.error("There was an error trying to pay for order {}", command.orderId);
     });
 
     return null;

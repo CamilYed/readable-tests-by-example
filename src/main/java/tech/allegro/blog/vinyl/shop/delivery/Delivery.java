@@ -7,6 +7,10 @@ public record Delivery(
   Money cost
 ) {
 
+  public static Delivery of(Money cost) {
+    return new Delivery(DeliveryId.random(), cost);
+  }
+
   public static Delivery defaultPrice() {
     return new Delivery(DeliveryId.random(), new Money(20.00));
   }

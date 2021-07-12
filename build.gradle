@@ -11,7 +11,7 @@ version = '0.0.1-SNAPSHOT'
 
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(16)
+    languageVersion = JavaLanguageVersion.of(17)
   }
 }
 
@@ -38,7 +38,6 @@ dependencies {
   annotationProcessor "org.projectlombok:lombok:${versions.lombok}"
 
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-  implementation "io.vavr:vavr:${versions.vavr}"
 
   testCompileOnly "org.projectlombok:lombok:${versions.lombok}"
   testAnnotationProcessor "org.projectlombok:lombok:${versions.lombok}"
@@ -78,3 +77,6 @@ task integrationTest(type: Test) {
   outputs.upToDateWhen { false }
 }
 
+wrapper {
+  gradleVersion = '7.1.1'
+}

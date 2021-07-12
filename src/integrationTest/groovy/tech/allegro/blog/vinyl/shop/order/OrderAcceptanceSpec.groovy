@@ -7,7 +7,6 @@ class OrderAcceptanceSpec extends Specification {
 
 
   def "shouldn't charge for delivery for VIP customers"() {
-
   }
 
   def "shouldn't charge for delivery for order value above fixed amount based on promotion price list"() {

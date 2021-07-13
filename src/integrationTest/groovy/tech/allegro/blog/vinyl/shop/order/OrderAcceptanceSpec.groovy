@@ -6,7 +6,7 @@ import spock.lang.Specification
 class OrderAcceptanceSpec extends Specification {
 
 
-  def "shouldn't charge for delivery for VIP customers"() {
+  def "shouldn't charge for delivery when the client has a VIP status"() {
     given: "There is a client order with amount 40 euro"
 
     and: "The client has a VIP reputation"

@@ -7,11 +7,11 @@ class OrderAcceptanceSpec extends Specification {
 
 
   def "shouldn't charge for delivery for VIP customers"() {
-    given: "There is a client order"
+    given: "There is a client order with amount 40 euro"
 
     and: "The client has a VIP reputation"
 
-    when: "When the client pays the order with the correct amount"
+    when: "When the client pays the order with the 40 euro"
 
     then: "The order has been paid correctly"
 

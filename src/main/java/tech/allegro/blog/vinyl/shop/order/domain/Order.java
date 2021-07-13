@@ -41,7 +41,8 @@ public class Order {
   }
 
   private Optional<OrderPaidEvent> orderPaidSuccessfully() {
-    return Optional.of(new OrderPaidEvent(orderId, Instant.now()));
+    final var totalCost = this.orderValue().add(delivery.cost());
+    return Optional.of(new OrderPaidEvent(orderId, Instant.now(), totalCost));
   }
 
   private Optional<OrderPaidEvent> nothing() {

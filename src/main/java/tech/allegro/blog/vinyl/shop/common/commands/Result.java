@@ -24,10 +24,18 @@ public class Result<SUCCESS> {
     return success != null;
   }
 
-  public void throwErrorIfOccurred() {
+  public SUCCESS getSuccessOrThrowError() {
     if (!isSuccess())
       throw new Failure(error);
+    return success;
   }
+
+  public SUCCESS getSuccessOrDefault(SUCCESS defaultV) {
+    if (!isSuccess())
+      return defaultV;
+    return success;
+  }
+
 
   public static class Failure extends RuntimeException {
 

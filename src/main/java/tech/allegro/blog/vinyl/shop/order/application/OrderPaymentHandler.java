@@ -6,6 +6,7 @@ import tech.allegro.blog.vinyl.shop.client.ClientId;
 import tech.allegro.blog.vinyl.shop.client.ClientReputationProvider;
 import tech.allegro.blog.vinyl.shop.common.commands.CommandHandler;
 import tech.allegro.blog.vinyl.shop.common.commands.Result;
+import tech.allegro.blog.vinyl.shop.common.events.DomainEventPublisher;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
 import tech.allegro.blog.vinyl.shop.delivery.DeliveryCostPolicy;
 import tech.allegro.blog.vinyl.shop.order.domain.OrderId;
@@ -17,19 +18,22 @@ public class OrderPaymentHandler implements CommandHandler<OrderPaymentHandler.P
   private final OrderRepository orderRepository;
   private final ClientReputationProvider clientReputationProvider;
   private final DeliveryCostPolicy deliveryCostPolicy;
+  private final DomainEventPublisher domainEventPublisher;
 
   @Override
+  // Transactional
   public void handle(PayOrderCommand command) {
     final var result = Result.run(() -> {
       final var clientOrder = orderRepository.findBy(command.orderId);
-      return clientOrder.map(order -> {
+      return clientOrder.flatMap(order -> {
         var orderValue = order.orderValue();
         var clientReputation = clientReputationProvider.getFor(command.clientId);
         var delivery = deliveryCostPolicy.calculate(orderValue, clientReputation);
         return order.pay(command.amount, delivery);
       });
     });
-    result.throwErrorIfOccurred();
+    final var success = result.getSuccessOrThrowError();
+    success.ifPresent(domainEventPublisher::saveAndPublish);
   }
 
   public record PayOrderCommand(

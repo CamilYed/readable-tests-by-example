@@ -7,6 +7,15 @@ class OrderAcceptanceSpec extends Specification {
 
 
   def "shouldn't charge for delivery for VIP customers"() {
+    given: "There is a client order"
+
+    and: "The client has a VIP reputation"
+
+    when: "When the client pays the order with the correct amount"
+
+    then: "The order has been paid correctly"
+
+    and: "The payment system has been notified"
   }
 
   def "shouldn't charge for delivery for order value above fixed amount based on promotion price list"() {

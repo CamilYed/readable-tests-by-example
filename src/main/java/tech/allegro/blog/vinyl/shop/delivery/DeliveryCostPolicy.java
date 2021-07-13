@@ -19,10 +19,10 @@ class DefaultDeliveryCostPolicy implements DeliveryCostPolicy {
   @Override
   public Delivery calculate(Money orderValue, ClientReputation clientReputation) {
     if (clientReputation == ClientReputation.VIP)
-      return Delivery.freeDelivery();
+      return Delivery.freeDeliveryDueToClientReputation();
     if (orderValue.greaterThan(FREE_DELIVERY_AMOUNT_THRESHOLD))
-      return Delivery.freeDelivery();
-    final var resultOfGettingCurrentDeliveryCost = Result.run(() -> Delivery.of(deliveryCostProvider.currentCost()));
-    return resultOfGettingCurrentDeliveryCost.getSuccessOrDefault(Delivery.defaultPrice());
+      return Delivery.freeDeliveryDueToOrderCost();
+    final var resultOfGettingCurrentDeliveryCost = Result.run(() -> Delivery.standardDelivery(deliveryCostProvider.currentCost()));
+    return resultOfGettingCurrentDeliveryCost.getSuccessOrDefault(Delivery.standardDeliveryWithDefaultPrice());
   }
 }

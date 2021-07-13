@@ -8,6 +8,7 @@ import tech.allegro.blog.vinyl.shop.common.commands.CommandHandler;
 import tech.allegro.blog.vinyl.shop.common.commands.Result;
 import tech.allegro.blog.vinyl.shop.common.events.DomainEventPublisher;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
+import tech.allegro.blog.vinyl.shop.delivery.Delivery;
 import tech.allegro.blog.vinyl.shop.delivery.DeliveryCostPolicy;
 import tech.allegro.blog.vinyl.shop.order.domain.OrderId;
 import tech.allegro.blog.vinyl.shop.order.domain.OrderRepository;
@@ -23,17 +24,15 @@ public class OrderPaymentHandler implements CommandHandler<OrderPaymentHandler.P
   @Override
   // Transactional
   public void handle(PayOrderCommand command) {
-    final var result = Result.run(() -> {
-      final var clientOrder = orderRepository.findBy(command.orderId);
-      return clientOrder.flatMap(order -> {
-        var orderValue = order.orderValue();
-        var clientReputation = clientReputationProvider.getFor(command.clientId);
-        var delivery = deliveryCostPolicy.calculate(orderValue, clientReputation);
-        return order.pay(command.amount, delivery);
-      });
+    final var clientOrder = orderRepository.findBy(command.orderId);
+    final var paymentResult = clientOrder.flatMap(order -> {
+      var orderValue = order.orderValue();
+      var clientReputation = clientReputationProvider.getFor(command.clientId);
+      var delivery = deliveryCostPolicy.calculate(orderValue, clientReputation);
+      return order.pay(command.amount, delivery);
     });
-    final var success = result.getSuccessOrThrowError();
-    success.ifPresent(domainEventPublisher::saveAndPublish);
+
+    paymentResult.ifPresent(domainEventPublisher::saveAndPublish);
   }
 
   public record PayOrderCommand(

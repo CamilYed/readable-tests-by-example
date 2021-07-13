@@ -20,7 +20,7 @@ public class Order {
 
   public Optional<OrderPaidEvent> pay(Money amount, Delivery delivery) {
     if (unpaid) {
-      final var toPay = orderLines.total().add(delivery.cost());
+      final var toPay = orderLines.total().add(delivery.getCost());
       if (amount.notEqualTo(toPay)) {
         unpaid = true;
         throw amountToBePaidIsDifferent();
@@ -41,8 +41,8 @@ public class Order {
   }
 
   private Optional<OrderPaidEvent> orderPaidSuccessfully() {
-    final var totalCost = this.orderValue().add(delivery.cost());
-    return Optional.of(new OrderPaidEvent(orderId, Instant.now(), totalCost));
+    final var totalCost = this.orderValue().add(delivery.getCost());
+    return Optional.of(new OrderPaidEvent(orderId, Instant.now(), totalCost, delivery));
   }
 
   private Optional<OrderPaidEvent> nothing() {

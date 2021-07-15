@@ -5,11 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import tech.allegro.blog.vinyl.shop.client.ClientId;
 import tech.allegro.blog.vinyl.shop.client.ClientReputationProvider;
 import tech.allegro.blog.vinyl.shop.common.commands.CommandHandler;
-import tech.allegro.blog.vinyl.shop.common.commands.Result;
 import tech.allegro.blog.vinyl.shop.common.events.DomainEventPublisher;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
 import tech.allegro.blog.vinyl.shop.delivery.Delivery;
 import tech.allegro.blog.vinyl.shop.delivery.DeliveryCostPolicy;
+import tech.allegro.blog.vinyl.shop.order.adapters.MailBoxSystemBox;
+import tech.allegro.blog.vinyl.shop.order.domain.DomainEvent;
 import tech.allegro.blog.vinyl.shop.order.domain.OrderId;
 import tech.allegro.blog.vinyl.shop.order.domain.OrderRepository;
 
@@ -20,6 +21,7 @@ public class OrderPaymentHandler implements CommandHandler<OrderPaymentHandler.P
   private final ClientReputationProvider clientReputationProvider;
   private final DeliveryCostPolicy deliveryCostPolicy;
   private final DomainEventPublisher domainEventPublisher;
+  private final MailBoxSystemBox mailBoxSystemBox;
 
   @Override
   // Transactional
@@ -33,6 +35,16 @@ public class OrderPaymentHandler implements CommandHandler<OrderPaymentHandler.P
     });
 
     paymentResult.ifPresent(domainEventPublisher::saveAndPublish);
+    paymentResult.ifPresent(it -> {
+      domainEventPublisher.saveAndPublish(it);
+      if (shouldSendAlsoFreeTrackMusic(it)) {
+        mailBoxSystemBox.sendFreeMusicTrackForClient(command.clientId);
+      }
+    });
+  }
+
+  private boolean shouldSendAlsoFreeTrackMusic(DomainEvent.OrderPaidEvent it) {
+    return it.delivery() instanceof Delivery.FreeDeliveryDueToClientReputation;
   }
 
   public record PayOrderCommand(

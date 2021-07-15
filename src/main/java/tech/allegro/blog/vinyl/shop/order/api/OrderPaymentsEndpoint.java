@@ -1,11 +1,9 @@
 package tech.allegro.blog.vinyl.shop.order.api;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import tech.allegro.blog.vinyl.shop.client.ClientId;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
 import tech.allegro.blog.vinyl.shop.order.application.OrderPaymentHandler;
@@ -36,5 +34,16 @@ class OrderPaymentsEndpoint {
         new Money(Double.parseDouble(amount))
       );
     }
+  }
+
+  @ControllerAdvice
+  private static class ExceptionHandlingAdvice {
+    @ExceptionHandler(Throwable.class)
+    ResponseEntity<ErrorMessage> handleUnexpetedError(Throwable e) {
+      ErrorMessage errorMessage = new ErrorMessage(e.getMessage());
+      return new ResponseEntity<>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    record ErrorMessage(String message) { }
   }
 }

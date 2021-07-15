@@ -4,5 +4,7 @@ import tech.allegro.blog.vinyl.shop.common.money.Money;
 
 interface CurrentDeliveryCostProvider {
 
-  Money currentCost();
+  default Money currentCost() {
+    return new Money(22.00);
+  }
 }

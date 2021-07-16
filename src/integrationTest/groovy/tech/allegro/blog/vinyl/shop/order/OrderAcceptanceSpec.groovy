@@ -74,8 +74,8 @@ class OrderAcceptanceSpec extends Specification {
   def "shouldn't modify paid order"() {
     given: "There is a paid client order"
 
-    when: "When the client pays the order"
+    when: "When the client want to add ite to order"
 
-    then: "The payment system was not notified"
+    then: "The payment should reject modification"
   }
 }

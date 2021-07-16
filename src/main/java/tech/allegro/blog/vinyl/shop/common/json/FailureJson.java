@@ -1,8 +1,8 @@
 package tech.allegro.blog.vinyl.shop.common.json;
 
-public record FailureJson(Integer code, String message, String details) {
+public record FailureJson(String message, String details) {
 
-  public FailureJson(Integer code, String message) {
-    this(code, message, "");
+  public FailureJson(String message) {
+    this(message, "");
   }
 }

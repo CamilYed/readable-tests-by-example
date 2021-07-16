@@ -9,7 +9,6 @@ import tech.allegro.blog.vinyl.shop.order.domain.DomainEvent.OrderPaidEvent;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @AllArgsConstructor
 public class Order {
@@ -18,44 +17,62 @@ public class Order {
   private Delivery delivery;
   private boolean unpaid;
 
-  public Optional<OrderPaidEvent> pay(Money amount, Delivery delivery) {
+  public OrderPaidEvent pay(Money amount, Delivery delivery) {
     if (unpaid) {
       final var toPay = orderLines.total().add(delivery.getCost());
-      if (amount.notEqualTo(toPay)) {
+      if (amount.equalTo(toPay)) {
+        this.delivery = delivery;
+        unpaid = true;
+        return orderPaidSuccessfully();
+      } else {
         unpaid = true;
         throw amountToBePaidIsDifferent();
-      } else {
-        this.delivery = delivery;
-        return orderPaidSuccessfully();
       }
     }
-    return nothing();
+    throw orderAlreadyPaid();
+  }
+
+  public void addItem(VinylId productId, Money price) {
+    if (unpaid) {
+      orderLines.add(productId, price);
+    } else throw new CanNotModifyPaidOrder();
   }
 
   public Money orderValue() {
     return orderLines.total();
   }
 
+  private OrderPaidEvent orderPaidSuccessfully() {
+    final var totalCost = this.orderValue().add(delivery.getCost());
+    return new OrderPaidEvent(orderId, Instant.now(), totalCost, delivery);
+  }
+
+
   private AmountToPayIsDifferent amountToBePaidIsDifferent() {
     return new AmountToPayIsDifferent();
   }
 
-  private Optional<OrderPaidEvent> orderPaidSuccessfully() {
-    final var totalCost = this.orderValue().add(delivery.getCost());
-    return Optional.of(new OrderPaidEvent(orderId, Instant.now(), totalCost, delivery));
-  }
-
-  private Optional<OrderPaidEvent> nothing() {
-    return Optional.empty();
-  }
-
   public static final class AmountToPayIsDifferent extends RuntimeException {
+  }
+
+  private OrderAlreadyPaid orderAlreadyPaid() {
+    return new OrderAlreadyPaid();
+  }
+
+  public static final class OrderAlreadyPaid extends RuntimeException {
+  }
+
+  public static final class CanNotModifyPaidOrder extends RuntimeException {
   }
 }
 
 record OrderLines(
   List<OrderLine> lines
 ) {
+
+  void add(VinylId productId, Money price) {
+    lines.add(OrderLine.create(productId, price));
+  }
 
   private OrderLines() {
     this(Collections.emptyList());
@@ -74,4 +91,7 @@ record OrderLines(
 }
 
 record OrderLine(VinylId productId, Money price) {
+  static OrderLine create(VinylId productId, Money price) {
+    return new OrderLine(productId, price);
+  }
 }

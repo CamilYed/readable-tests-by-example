@@ -19,7 +19,11 @@ public record Money(BigDecimal value, Currency currency) {
   }
 
   public boolean notEqualTo(Money money) {
-    return this.value.compareTo(money.value) != 0;
+    return !equalTo(money);
+  }
+
+  public boolean equalTo(Money money) {
+    return this.value.compareTo(money.value) == 0;
   }
 
   public boolean greaterThan(Money money) {

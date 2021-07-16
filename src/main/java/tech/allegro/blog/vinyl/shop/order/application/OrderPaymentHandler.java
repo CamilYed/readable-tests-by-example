@@ -11,6 +11,7 @@ import tech.allegro.blog.vinyl.shop.delivery.Delivery;
 import tech.allegro.blog.vinyl.shop.delivery.DeliveryCostPolicy;
 import tech.allegro.blog.vinyl.shop.order.adapters.MailBoxSystemBox;
 import tech.allegro.blog.vinyl.shop.order.domain.DomainEvent;
+import tech.allegro.blog.vinyl.shop.order.domain.Order;
 import tech.allegro.blog.vinyl.shop.order.domain.OrderId;
 import tech.allegro.blog.vinyl.shop.order.domain.OrderRepository;
 
@@ -24,14 +25,13 @@ public class OrderPaymentHandler implements CommandHandler<OrderPaymentHandler.P
   private final MailBoxSystemBox mailBoxSystemBox;
 
   @Override
-  // Transactional
   public void handle(PayOrderCommand command) {
     final var clientOrder = orderRepository.findBy(command.orderId);
-    final var paymentResult = clientOrder.flatMap(order -> {
+    final var paymentResult = clientOrder.map(order -> {
       var orderValue = order.orderValue();
       var clientReputation = clientReputationProvider.getFor(command.clientId);
       var delivery = deliveryCostPolicy.calculate(orderValue, clientReputation);
-      return order.pay(command.amount, delivery);
+      return tryPayOrderWithDelivery(command.amount, order, delivery);
     });
 
     paymentResult.ifPresent(domainEventPublisher::saveAndPublish);
@@ -41,6 +41,16 @@ public class OrderPaymentHandler implements CommandHandler<OrderPaymentHandler.P
         mailBoxSystemBox.sendFreeMusicTrackForClient(command.clientId);
       }
     });
+  }
+
+  private DomainEvent.OrderPaidEvent tryPayOrderWithDelivery(Money amount, Order order, Delivery delivery) {
+    try {
+      return order.pay(amount, delivery);
+    } catch (Order.AmountToPayIsDifferent | Order.OrderAlreadyPaid e) {
+        log.error("Can not pay order", e);
+        // TODO map to another exc.
+        throw e;
+    }
   }
 
   private boolean shouldSendAlsoFreeTrackMusic(DomainEvent.OrderPaidEvent it) {

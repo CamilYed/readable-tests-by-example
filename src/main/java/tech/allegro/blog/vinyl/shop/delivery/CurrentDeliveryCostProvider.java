@@ -2,9 +2,9 @@ package tech.allegro.blog.vinyl.shop.delivery;
 
 import tech.allegro.blog.vinyl.shop.common.money.Money;
 
-interface CurrentDeliveryCostProvider {
+public interface CurrentDeliveryCostProvider {
 
   default Money currentCost() {
-    return Money.of(22.00);
+    return Money.of("22.00");
   }
 }

@@ -19,7 +19,7 @@ class OrderAcceptanceSpec extends Specification {
     and: "The free track music was sent to the client's mailbox"
   }
 
-  def "shouldn't charge for delivery for order value above fixed amount based on promotion price list"() {
+  def "shouldn't charge for delivery for order value above or fixed amount based on promotion price list"() {
     given: "There is a client order with amount 40 EUR"
 
     and: "The client is not a VIP"

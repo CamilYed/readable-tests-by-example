@@ -13,8 +13,8 @@ public class Money {
   public static final Currency EURO = Currency.getInstance("EUR");
   public static final Money ZERO = new Money(BigDecimal.valueOf(0));
 
-  public static Money of(Double value) {
-    return Money.of(BigDecimal.valueOf(value));
+  public static Money of(String value) {
+    return Money.of(new BigDecimal(value));
   }
 
   public Money add(Money money) {
@@ -31,5 +31,9 @@ public class Money {
 
   public boolean greaterThan(Money money) {
     return this.value.compareTo(money.value) > 0;
+  }
+
+  public boolean greaterOrEqualTo(Money money) {
+    return this.value.compareTo(money.value) >= 0;
   }
 }

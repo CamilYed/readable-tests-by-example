@@ -4,12 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Value;
 import tech.allegro.blog.vinyl.shop.catalogue.VinylId;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
+import tech.allegro.blog.vinyl.shop.common.time.ClockProvider;
 import tech.allegro.blog.vinyl.shop.delivery.Delivery;
 import tech.allegro.blog.vinyl.shop.order.domain.DomainEvent.OrderPaidEvent;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @AllArgsConstructor
@@ -45,8 +45,7 @@ public class Order {
   }
 
   private OrderPaidEvent orderPaidSuccessfully() {
-    final var totalCost = this.orderValue().add(delivery.getCost());
-    return OrderPaidEvent.of(orderId, Instant.now(), totalCost, delivery);
+    return OrderPaidEvent.of(orderId, ClockProvider.systemClock().instant(), orderValue(), delivery);
   }
 
 

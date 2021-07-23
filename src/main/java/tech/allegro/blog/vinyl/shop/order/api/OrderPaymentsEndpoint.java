@@ -34,7 +34,7 @@ class OrderPaymentsEndpoint {
       return PayOrderCommand.of(
         ClientId.of(clientId),
         OrderId.of(orderId),
-        Money.of(Double.parseDouble(amount))
+        Money.of(amount)
       );
     }
   }

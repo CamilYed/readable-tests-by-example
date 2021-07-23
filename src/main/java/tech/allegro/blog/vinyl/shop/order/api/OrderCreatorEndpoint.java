@@ -35,7 +35,7 @@ class OrderCreatorEndpoint {
 
     AddItemsToOrderCommand toCommand(String orderId) {
       final var itemsToAdd = items.stream()
-        .map(it -> Item.of(VinylId.of(it.productId), Money.of(Double.parseDouble(it.price))))
+        .map(it -> Item.of(VinylId.of(it.productId), Money.of(it.price)))
         .collect(Collectors.toList());
       return AddItemsToOrderCommand.of(OrderId.of(orderId), itemsToAdd);
     }

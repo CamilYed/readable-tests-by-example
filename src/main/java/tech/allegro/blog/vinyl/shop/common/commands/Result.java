@@ -16,18 +16,12 @@ public class Result<SUCCESS> {
     try {
       return new Result<>(block.get(), null);
     } catch (Throwable t) {
-      return new Result<SUCCESS>(block.get(), new Failure(t));
+      return new Result<>(null, new Failure(t));
     }
   }
 
   public boolean isSuccess() {
     return success != null;
-  }
-
-  public SUCCESS getSuccessOrThrowError() {
-    if (!isSuccess())
-      throw new Failure(error);
-    return success;
   }
 
   public SUCCESS getSuccessOrDefault(SUCCESS defaultV) {

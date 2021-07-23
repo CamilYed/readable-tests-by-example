@@ -2,15 +2,15 @@ package tech.allegro.blog.vinyl.shop.order.application
 
 import spock.lang.Specification
 import spock.lang.Subject
-import tech.allegro.blog.vinyl.shop.catalogue.VinylId
-import tech.allegro.blog.vinyl.shop.client.ClientId
-import tech.allegro.blog.vinyl.shop.client.ClientReputation
-import tech.allegro.blog.vinyl.shop.client.ClientReputationProvider
+import tech.allegro.blog.vinyl.shop.catalogue.domain.VinylId
+import tech.allegro.blog.vinyl.shop.client.domain.ClientId
+import tech.allegro.blog.vinyl.shop.client.domain.ClientReputation
+import tech.allegro.blog.vinyl.shop.client.domain.ClientReputationProvider
 import tech.allegro.blog.vinyl.shop.common.events.DomainEventPublisher
 import tech.allegro.blog.vinyl.shop.common.money.Money
 import tech.allegro.blog.vinyl.shop.common.time.ClockProvider
-import tech.allegro.blog.vinyl.shop.delivery.CurrentDeliveryCostProvider
-import tech.allegro.blog.vinyl.shop.delivery.DeliveryCostPolicy
+import tech.allegro.blog.vinyl.shop.delivery.domain.CurrentDeliveryCostProvider
+import tech.allegro.blog.vinyl.shop.delivery.domain.DeliveryCostPolicy
 import tech.allegro.blog.vinyl.shop.order.adapters.MailBoxSystemBox
 import tech.allegro.blog.vinyl.shop.order.domain.Order
 import tech.allegro.blog.vinyl.shop.order.domain.OrderId
@@ -22,7 +22,7 @@ import java.time.Instant
 import java.time.ZoneId
 
 import static tech.allegro.blog.vinyl.shop.order.domain.DomainEvent.OrderPaidEvent
-import static tech.allegro.blog.vinyl.shop.delivery.DeliveryCostPolicy.DefaultDeliveryCostPolicy
+import static tech.allegro.blog.vinyl.shop.delivery.domain.DeliveryCostPolicy.DefaultDeliveryCostPolicy
 import static tech.allegro.blog.vinyl.shop.order.application.OrderPaymentHandler.PayOrderCommand
 
 class OrderPaymentNotRefactoredSpec extends Specification {
@@ -50,8 +50,8 @@ class OrderPaymentNotRefactoredSpec extends Specification {
   static final OrderId ORDER_ID = OrderId.of("1")
   static final Order ORDER_40_EUR = sampleOrder(Money.of(40.00))
   static final ClientId CLIENT_ID = ClientId.of("1")
-  static final ClientReputation VIP = ClientReputation.VIP
-  static final ClientReputation NOT_VIP = ClientReputation.STANDARD
+  static final ClientReputation VIP = ClientReputation.vip(CLIENT_ID)
+  static final ClientReputation NOT_VIP = ClientReputation.notVip(CLIENT_ID)
   static final PayOrderCommand PAY_FOR_ORDER_40_EUR = PayOrderCommand.of(CLIENT_ID, ORDER_ID, _40_EUR)
   static final PayOrderCommand PAY_FOR_ORDER_40_EUR_PLUS_20_EUR_DELIVERY = PayOrderCommand.of(CLIENT_ID, ORDER_ID, _40_EUR.add(_20_EUR))
   static final PayOrderCommand PAY_FOR_ORDER_40_EUR_PLUS_25_EUR_DELIVERY = PayOrderCommand.of(CLIENT_ID, ORDER_ID, _40_EUR.add(_25_EUR))

@@ -3,7 +3,7 @@ package tech.allegro.blog.vinyl.shop.order.application;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
-import tech.allegro.blog.vinyl.shop.catalogue.VinylId;
+import tech.allegro.blog.vinyl.shop.catalogue.domain.VinylId;
 import tech.allegro.blog.vinyl.shop.common.commands.CommandHandler;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
 import tech.allegro.blog.vinyl.shop.order.domain.Order;

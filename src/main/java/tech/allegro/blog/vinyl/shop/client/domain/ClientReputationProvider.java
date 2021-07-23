@@ -1,4 +1,4 @@
-package tech.allegro.blog.vinyl.shop.client;
+package tech.allegro.blog.vinyl.shop.client.domain;
 
 public interface ClientReputationProvider {
 

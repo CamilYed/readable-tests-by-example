@@ -2,7 +2,7 @@ package tech.allegro.blog.vinyl.shop.order.domain;
 
 import lombok.Value;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
-import tech.allegro.blog.vinyl.shop.delivery.Delivery;
+import tech.allegro.blog.vinyl.shop.delivery.domain.Delivery;
 
 import java.time.Instant;
 

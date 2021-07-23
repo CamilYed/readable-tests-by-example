@@ -78,7 +78,12 @@ class PaymentProcessNotRefactoredSpec extends Specification {
         noExceptionThrown()
 
     then:
-        1 * domainEventPublisher.saveAndPublish(_)
+        1 * domainEventPublisher.saveAndPublish({ OrderPaidEvent event ->
+          assert event.orderId == ORDER_ID
+          assert event.amount == _40_EUR
+          assert event.delivery.cost == Money.ZERO
+          assert event.when == CURRENT_DATE
+        })
 
     and:
         1 * mailBoxSystemBox.sendFreeMusicTrackForClient(CLIENT_ID)
@@ -101,7 +106,12 @@ class PaymentProcessNotRefactoredSpec extends Specification {
         noExceptionThrown()
 
     then:
-        1 * domainEventPublisher.saveAndPublish(_)
+        1 * domainEventPublisher.saveAndPublish({ OrderPaidEvent event ->
+          assert event.orderId == ORDER_ID
+          assert event.amount == _40_EUR
+          assert event.delivery.cost == Money.ZERO
+          assert event.when == CURRENT_DATE
+        })
 
     and:
         0 * mailBoxSystemBox.sendFreeMusicTrackForClient(CLIENT_ID)

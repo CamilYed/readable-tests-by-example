@@ -7,6 +7,7 @@ import tech.allegro.blog.vinyl.shop.catalogue.VinylId;
 import tech.allegro.blog.vinyl.shop.common.commands.CommandHandler;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
 import tech.allegro.blog.vinyl.shop.order.domain.Order;
+import tech.allegro.blog.vinyl.shop.order.domain.Order.CanNotModifyPaidOrder;
 import tech.allegro.blog.vinyl.shop.order.domain.OrderId;
 import tech.allegro.blog.vinyl.shop.order.domain.OrderRepository;
 
@@ -30,7 +31,7 @@ public class OrderModificationHandler implements CommandHandler<OrderModificatio
   private void tryAddItemToOrder(Order order, Item item) {
     try {
       order.addItem(item.productId, item.price);
-    } catch (Order.CanNotModifyPaidOrder e) {
+    } catch (CanNotModifyPaidOrder e) {
       log.error("Can not modify paid order", e);
       throw e;
     }

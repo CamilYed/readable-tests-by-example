@@ -25,7 +25,7 @@ import static tech.allegro.blog.vinyl.shop.order.domain.DomainEvent.OrderPaidEve
 import static tech.allegro.blog.vinyl.shop.delivery.DeliveryCostPolicy.DefaultDeliveryCostPolicy
 import static tech.allegro.blog.vinyl.shop.order.application.OrderPaymentHandler.PayOrderCommand
 
-class PaymentProcessNotRefactoredSpec extends Specification {
+class OrderPaymentNotRefactoredSpec extends Specification {
 
   OrderRepository orderRepository = Stub()
   ClientReputationProvider clientReputationProvider = Stub()

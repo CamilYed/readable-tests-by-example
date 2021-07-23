@@ -2,7 +2,7 @@ package tech.allegro.blog.vinyl.shop.order.application
 
 import spock.lang.Specification
 
-class PaymentProcessSpec extends Specification {
+class OrderPaymentSpec extends Specification {
 
 
   def "b"() {

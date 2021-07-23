@@ -1,12 +1,14 @@
 package tech.allegro.blog.vinyl.shop.order.domain;
 
 import lombok.AllArgsConstructor;
+import lombok.Value;
 import tech.allegro.blog.vinyl.shop.catalogue.VinylId;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
 import tech.allegro.blog.vinyl.shop.delivery.Delivery;
 import tech.allegro.blog.vinyl.shop.order.domain.DomainEvent.OrderPaidEvent;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -44,7 +46,7 @@ public class Order {
 
   private OrderPaidEvent orderPaidSuccessfully() {
     final var totalCost = this.orderValue().add(delivery.getCost());
-    return new OrderPaidEvent(orderId, Instant.now(), totalCost, delivery);
+    return OrderPaidEvent.of(orderId, Instant.now(), totalCost, delivery);
   }
 
 
@@ -64,33 +66,33 @@ public class Order {
 
   public static final class CanNotModifyPaidOrder extends RuntimeException {
   }
-}
 
-record OrderLines(
-  List<OrderLine> lines
-) {
+  @Value
+  static class OrderLines {
+    List<OrderLine> lines;
 
-  void add(VinylId productId, Money price) {
-    lines.add(OrderLine.create(productId, price));
-  }
+    void add (VinylId productId, Money price){
+      lines.add(OrderLine.create(productId, price));
+    }
 
-  private OrderLines() {
-    this(Collections.emptyList());
-  }
+    static OrderLines empty () {
+      return new OrderLines(new ArrayList<>());
+    }
 
-  static OrderLines empty() {
-    return new OrderLines();
-  }
-
-  Money total() {
-    return lines
-      .stream()
-      .map(OrderLine::price)
-      .reduce(Money.ZERO, Money::add);
+    Money total () {
+      return lines
+        .stream()
+        .map(OrderLine::getPrice)
+        .reduce(Money.ZERO, Money::add);
+    }
   }
 }
 
-record OrderLine(VinylId productId, Money price) {
+@Value(staticConstructor = "of")
+class OrderLine {
+  VinylId productId;
+  Money price;
+
   static OrderLine create(VinylId productId, Money price) {
     return new OrderLine(productId, price);
   }

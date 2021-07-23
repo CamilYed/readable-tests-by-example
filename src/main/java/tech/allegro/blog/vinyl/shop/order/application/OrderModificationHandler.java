@@ -1,6 +1,7 @@
 package tech.allegro.blog.vinyl.shop.order.application;
 
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import tech.allegro.blog.vinyl.shop.catalogue.VinylId;
 import tech.allegro.blog.vinyl.shop.common.commands.CommandHandler;
@@ -13,7 +14,7 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-public class OrderCreatorHandler implements CommandHandler<OrderCreatorHandler.AddItemsToOrderCommand> {
+public class OrderModificationHandler implements CommandHandler<OrderModificationHandler.AddItemsToOrderCommand> {
   private final OrderRepository orderRepository;
 
   @Override
@@ -35,9 +36,15 @@ public class OrderCreatorHandler implements CommandHandler<OrderCreatorHandler.A
     }
   }
 
-  public record AddItemsToOrderCommand(OrderId orderId, List<Item> items) {
+  @Value(staticConstructor = "of")
+  static public class AddItemsToOrderCommand {
+    OrderId orderId;
+    List<Item> items;
   }
 
-  public record Item(VinylId productId, Money price) {
+  @Value(staticConstructor = "of")
+  static public class Item {
+    VinylId productId;
+    Money price;
   }
 }

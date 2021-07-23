@@ -1,8 +1,8 @@
 package tech.allegro.blog.vinyl.shop.common.json;
 
-public record FailureJson(String message, String details) {
+import lombok.Data;
 
-  public FailureJson(String message) {
-    this(message, "");
-  }
+@Data
+public class FailureJson {
+  private final String message;
 }

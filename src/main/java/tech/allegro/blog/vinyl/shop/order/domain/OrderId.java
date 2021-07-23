@@ -1,4 +1,8 @@
 package tech.allegro.blog.vinyl.shop.order.domain;
 
-public record OrderId(String value) {
+import lombok.Value;
+
+@Value(staticConstructor = "of")
+public class OrderId {
+  String value;
 }

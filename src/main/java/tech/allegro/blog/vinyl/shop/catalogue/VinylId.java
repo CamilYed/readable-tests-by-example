@@ -1,4 +1,8 @@
 package tech.allegro.blog.vinyl.shop.catalogue;
 
-public record VinylId(String value) {
+import lombok.Value;
+
+@Value(staticConstructor = "of")
+public class VinylId {
+  String value;
 }

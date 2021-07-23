@@ -1,21 +1,24 @@
 package tech.allegro.blog.vinyl.shop.common.money;
 
+import lombok.Value;
+
 import java.math.BigDecimal;
 import java.util.Currency;
 
-public record Money(BigDecimal value, Currency currency) {
+@Value(staticConstructor = "of")
+public class Money {
+  BigDecimal value;
+  Currency currency = EURO;
 
+  public static final Currency EURO = Currency.getInstance("EUR");
   public static final Money ZERO = new Money(BigDecimal.valueOf(0));
 
-  public Money(Double value) {
-    this(BigDecimal.valueOf(value), Currency.getInstance("EUR"));
-  }
-  public Money(BigDecimal value) {
-    this(value, Currency.getInstance("EUR"));
+  public static Money of(Double value) {
+    return Money.of(BigDecimal.valueOf(value));
   }
 
   public Money add(Money money) {
-    return new Money(this.value.add(money.value));
+    return Money.of(this.value.add(money.value));
   }
 
   public boolean notEqualTo(Money money) {

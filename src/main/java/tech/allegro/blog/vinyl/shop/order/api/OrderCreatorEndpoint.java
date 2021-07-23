@@ -1,5 +1,6 @@
 package tech.allegro.blog.vinyl.shop.order.api;
 
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,9 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import tech.allegro.blog.vinyl.shop.catalogue.VinylId;
 import tech.allegro.blog.vinyl.shop.common.json.FailureJson;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
-import tech.allegro.blog.vinyl.shop.order.application.OrderCreatorHandler;
-import tech.allegro.blog.vinyl.shop.order.application.OrderCreatorHandler.AddItemsToOrderCommand;
-import tech.allegro.blog.vinyl.shop.order.application.OrderCreatorHandler.Item;
+import tech.allegro.blog.vinyl.shop.order.application.OrderModificationHandler;
+import tech.allegro.blog.vinyl.shop.order.application.OrderModificationHandler.AddItemsToOrderCommand;
+import tech.allegro.blog.vinyl.shop.order.application.OrderModificationHandler.Item;
 import tech.allegro.blog.vinyl.shop.order.domain.OrderId;
 
 import java.util.List;
@@ -19,28 +20,31 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 class OrderCreatorEndpoint {
 
-  private final OrderCreatorHandler orderCreatorHandler;
+  private final OrderModificationHandler orderCreatorHandler;
 
-  @PostMapping("/orders/items")
+  @PutMapping("/orders/{orderId}/items")
   ResponseEntity<Void> items(@PathVariable String orderId, @RequestBody ModificationJson items) {
     orderCreatorHandler.handle(items.toCommand(orderId));
     return ResponseEntity.accepted().body(null);
 
   }
 
-  record ModificationJson(
-    List<ItemJson> items
-  ) {
+  @Data
+  static class ModificationJson {
+    private final  List<ItemJson> items;
 
     AddItemsToOrderCommand toCommand(String orderId) {
       final var itemsToAdd = items.stream()
-        .map(it -> new Item(new VinylId(it.productId), new Money(Double.parseDouble(it.price))))
+        .map(it -> Item.of(VinylId.of(it.productId), Money.of(Double.parseDouble(it.price))))
         .collect(Collectors.toList());
-      return new AddItemsToOrderCommand(new OrderId(orderId), itemsToAdd);
+      return AddItemsToOrderCommand.of(OrderId.of(orderId), itemsToAdd);
     }
   }
 
-  record ItemJson(String productId, String price) {
+  @Data
+  static class ItemJson {
+    private final String productId;
+    private final String price;
   }
 
   @ControllerAdvice

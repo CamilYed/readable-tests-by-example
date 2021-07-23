@@ -11,7 +11,7 @@ version = '0.0.1-SNAPSHOT'
 
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(17)
+    languageVersion = JavaLanguageVersion.of(11)
   }
 }
 
@@ -26,9 +26,6 @@ project.ext.versions = [
 ]
 
 configurations {
-  unitTestNotRefactored {
-    extendsFrom testCompileClasspath
-  }
   integrationTest {
     extendsFrom testRuntimeClasspath
   }
@@ -45,16 +42,7 @@ dependencies {
 }
 
 sourceSets {
-  unitTestNotRefactored {
-    groovy {
-      compileClasspath += main.output + project.configurations.testCompileClasspath + project.configurations.unitTestNotRefactored
-      runtimeClasspath += output + compileClasspath
-      srcDir {
-        file('src/unitTestNotRefactored/groovy')
-      }
-    }
-    resources.srcDir file('src/unitTestNotRefactored/resources')
-  }
+
   integrationTest {
     groovy {
       compileClasspath += main.output + test.output + project.configurations.testRuntimeClasspath + project.configurations.integrationTest
@@ -74,41 +62,25 @@ test {
   testLogging {
     exceptionFormat = 'full'
     events = ["STARTED", "PASSED", "SKIPPED", "FAILED"]
-
   }
-}
-
-task unitTestNotRefactored(type: Test) {
-  useJUnitPlatform()
-  testLogging {
-    exceptionFormat = 'full'
-    events = ["STARTED", "PASSED", "SKIPPED", "FAILED"]
-  }
-  testClassesDirs = sourceSets.unitTestNotRefactored.output.classesDirs
-  classpath = sourceSets.unitTestNotRefactored.runtimeClasspath
-  include '**/*Spec.*'
-  include '**/*Test.*'
 }
 
 task integrationTest(type: Test) {
   useJUnitPlatform()
+  include '**/*Spec.*'
+  include '**/*Test.*'
+  testClassesDirs = sourceSets.integrationTest.output.classesDirs
+  classpath = sourceSets.integrationTest.runtimeClasspath
+  systemProperty 'spring.profiles.active', 'integration'
+  outputs.upToDateWhen { false }
   testLogging {
     exceptionFormat = 'full'
     events = ["STARTED", "PASSED", "SKIPPED", "FAILED"]
   }
-  testClassesDirs = sourceSets.integrationTest.output.classesDirs
-  classpath = sourceSets.integrationTest.runtimeClasspath
-  include '**/*Spec.*'
-  include '**/*Test.*'
-  systemProperty 'spring.profiles.active', 'integration'
-  outputs.upToDateWhen { false }
 }
-
-test.dependsOn unitTestNotRefactored, integrationTest
 
 compileJava {
   options.encoding = 'UTF-8'
-  options.compilerArgs +=[ "-parameters", "--enable-preview"]
 }
 
 wrapper {

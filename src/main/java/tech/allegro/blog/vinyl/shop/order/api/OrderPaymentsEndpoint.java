@@ -1,5 +1,6 @@
 package tech.allegro.blog.vinyl.shop.order.api;
 
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,15 +25,16 @@ class OrderPaymentsEndpoint {
     return ResponseEntity.accepted().body(null);
   }
 
-  record PaymentJson(
-    String clientId,
-    String amount
-  ) {
+  @Data
+  static class PaymentJson {
+    private final String clientId;
+    private final String amount;
+
     PayOrderCommand toCommand(String orderId) {
-      return new PayOrderCommand(
-        new ClientId(clientId),
-        new OrderId(orderId),
-        new Money(Double.parseDouble(amount))
+      return PayOrderCommand.of(
+        ClientId.of(clientId),
+        OrderId.of(orderId),
+        Money.of(Double.parseDouble(amount))
       );
     }
   }

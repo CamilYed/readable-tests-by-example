@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
 
 @RequiredArgsConstructor
-public sealed class Delivery {
+public abstract class Delivery {
   private final DeliveryId id;
   @Getter private final Money cost;
 
@@ -22,7 +22,7 @@ public sealed class Delivery {
   }
 
   public static StandardDelivery standardDeliveryWithDefaultPrice() {
-    return new StandardDelivery(DeliveryId.random(), new Money(20.00));
+    return new StandardDelivery(DeliveryId.random(), Money.of(20.00));
   }
 
   public static final class FreeDeliveryDueToOrderCost extends Delivery {

@@ -42,7 +42,7 @@ class OrderPaymentsEndpoint {
   @ControllerAdvice
   private static class ExceptionHandlingAdvice {
     @ExceptionHandler(Throwable.class)
-    ResponseEntity<FailureJson> handleUnexpetedError(Throwable e) {
+    ResponseEntity<FailureJson> handleUnexpectedError(Throwable e) {
       FailureJson errorMessage = new FailureJson(e.getMessage());
       return new ResponseEntity<>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
     }

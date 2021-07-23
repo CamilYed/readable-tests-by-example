@@ -22,7 +22,7 @@ public interface DeliveryCostPolicy {
     public Delivery calculate(Money orderValue, ClientReputation clientReputation) {
       if (clientReputation == ClientReputation.VIP)
         return Delivery.freeDeliveryDueToClientReputation();
-      var MOV = promotionPriceCatalogue.freeDeliveryPromotionOrderMinimumValue();
+      var MOV = promotionPriceCatalogue.getMininumOrderValueForFreeDelivery();
       if (orderValue.greaterOrEqualTo(MOV))
         return Delivery.freeDeliveryDueToOrderCost();
       final var resultOfGettingCurrentDeliveryCost = Result.run(() -> Delivery.standardDelivery(deliveryCostProvider.currentCost()));

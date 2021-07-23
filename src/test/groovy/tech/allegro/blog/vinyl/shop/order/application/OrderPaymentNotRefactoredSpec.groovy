@@ -93,7 +93,7 @@ class OrderPaymentNotRefactoredSpec extends Specification {
         clientReputationProvider.getFor(CLIENT_ID) >> NOT_VIP
 
     and:
-        promotionPriceCatalogue.freeDeliveryPromotionOrderMinimumValue() >> _40_EUR
+        promotionPriceCatalogue.getMininumOrderValueForFreeDelivery() >> _40_EUR
 
     when:
         paymentHandler.handle(PAY_FOR_ORDER_40_EUR)
@@ -121,7 +121,7 @@ class OrderPaymentNotRefactoredSpec extends Specification {
         clientReputationProvider.getFor(CLIENT_ID) >> NOT_VIP
 
     and:
-        promotionPriceCatalogue.freeDeliveryPromotionOrderMinimumValue() >> _50_EUR
+        promotionPriceCatalogue.getMininumOrderValueForFreeDelivery() >> _50_EUR
 
     and:
         currentDeliveryCostProvider.currentCost() >> _25_EUR
@@ -152,7 +152,7 @@ class OrderPaymentNotRefactoredSpec extends Specification {
         clientReputationProvider.getFor(CLIENT_ID) >> NOT_VIP
 
     and:
-        promotionPriceCatalogue.freeDeliveryPromotionOrderMinimumValue() >> _50_EUR
+        promotionPriceCatalogue.getMininumOrderValueForFreeDelivery() >> _50_EUR
 
     and:
         currentDeliveryCostProvider.currentCost() >> { throw new RuntimeException() }

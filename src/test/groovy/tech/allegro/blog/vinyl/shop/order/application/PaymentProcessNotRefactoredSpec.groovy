@@ -10,7 +10,6 @@ import tech.allegro.blog.vinyl.shop.common.events.DomainEventPublisher
 import tech.allegro.blog.vinyl.shop.common.money.Money
 import tech.allegro.blog.vinyl.shop.common.time.ClockProvider
 import tech.allegro.blog.vinyl.shop.delivery.CurrentDeliveryCostProvider
-import tech.allegro.blog.vinyl.shop.delivery.Delivery
 import tech.allegro.blog.vinyl.shop.delivery.DeliveryCostPolicy
 import tech.allegro.blog.vinyl.shop.order.adapters.MailBoxSystemBox
 import tech.allegro.blog.vinyl.shop.order.domain.Order
@@ -67,9 +66,6 @@ class PaymentProcessNotRefactoredSpec extends Specification {
 
     and:
         clientReputationProvider.getFor(CLIENT_ID) >> VIP
-
-    and:
-        deliveryCostPolicy.calculate(_40_EUR, VIP) >> Delivery.freeDeliveryDueToClientReputation()
 
     when:
         paymentHandler.handle(PAY_FOR_ORDER_40_EUR)

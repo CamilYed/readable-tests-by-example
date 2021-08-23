@@ -1,6 +1,7 @@
 package tech.allegro.blog.vinyl.shop.order.domain;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.Value;
 import tech.allegro.blog.vinyl.shop.catalogue.domain.VinylId;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @AllArgsConstructor
 public class Order {
+  @Getter
   private final OrderId orderId;
   private final OrderLines orderLines = OrderLines.empty();
   private Delivery delivery;

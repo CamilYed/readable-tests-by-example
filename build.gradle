@@ -21,8 +21,9 @@ repositories {
 
 project.ext.versions = [
     lombok             : '1.18.20',
-    vavr               : '1.0.0-alpha-3',
-		spock              : '2.0-groovy-3.0'
+    feign              : '3.0.3',
+		spock              : '2.0-groovy-3.0',
+    wiremock           : '2.27.2'
 ]
 
 configurations {
@@ -35,14 +36,15 @@ dependencies {
   compileOnly "org.projectlombok:lombok:${versions.lombok}"
   annotationProcessor "org.projectlombok:lombok:${versions.lombok}"
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+  implementation "org.springframework.cloud:spring-cloud-starter-openfeign:${versions.feign}"
   testCompileOnly "org.projectlombok:lombok:${versions.lombok}"
   testAnnotationProcessor "org.projectlombok:lombok:${versions.lombok}"
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation "org.spockframework:spock-core:${versions.spock}"
+  integrationTest "com.github.tomakehurst:wiremock-jre8-standalone:${versions.wiremock}"
 }
 
 sourceSets {
-
   integrationTest {
     groovy {
       compileClasspath += main.output + test.output + project.configurations.testRuntimeClasspath + project.configurations.integrationTest

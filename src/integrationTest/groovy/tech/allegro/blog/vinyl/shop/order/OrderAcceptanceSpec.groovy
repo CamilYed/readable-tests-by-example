@@ -5,6 +5,10 @@ import spock.lang.Specification
 
 class OrderAcceptanceSpec extends Specification {
 
+  // builder client
+  // wiremock stub - trait
+  // trait
+
   def "shouldn't charge for delivery when the client has a VIP status"() {
     given: "There is a client order with amount 40 EUR"
 

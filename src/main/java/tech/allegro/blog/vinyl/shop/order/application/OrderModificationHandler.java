@@ -16,15 +16,16 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class OrderModificationHandler implements CommandHandler<OrderModificationHandler.AddItemsToOrderCommand> {
+
   private final OrderRepository orderRepository;
 
   @Override
   public void handle(AddItemsToOrderCommand command) {
     final var clientOrder = orderRepository.findBy(command.orderId);
-    clientOrder.ifPresent(order -> command.items
-      .forEach(item -> {
-        tryAddItemToOrder(order, item);
-      })
+    clientOrder.ifPresent(order -> {
+        command.items.forEach(item -> tryAddItemToOrder(order, item));
+        orderRepository.save(order);
+      }
     );
   }
 

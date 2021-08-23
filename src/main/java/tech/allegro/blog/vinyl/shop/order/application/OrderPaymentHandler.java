@@ -11,7 +11,7 @@ import tech.allegro.blog.vinyl.shop.common.events.DomainEventPublisher;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
 import tech.allegro.blog.vinyl.shop.delivery.domain.Delivery;
 import tech.allegro.blog.vinyl.shop.delivery.domain.DeliveryCostPolicy;
-import tech.allegro.blog.vinyl.shop.order.adapters.MailBoxSystemBox;
+import tech.allegro.blog.vinyl.shop.order.domain.FreeMusicTrackSender;
 import tech.allegro.blog.vinyl.shop.order.domain.OrderId;
 import tech.allegro.blog.vinyl.shop.order.domain.OrderRepository;
 
@@ -22,17 +22,17 @@ public class OrderPaymentHandler implements CommandHandler<OrderPaymentHandler.P
   private final ClientReputationProvider clientReputationProvider;
   private final DeliveryCostPolicy deliveryCostPolicy;
   private final DomainEventPublisher domainEventPublisher;
-  private final MailBoxSystemBox mailBoxSystemBox;
+  private final FreeMusicTrackSender mailBoxSystemBox;
 
   @Override
   public void handle(PayOrderCommand command) {
     final var clientOrder = orderRepository.findBy(command.orderId);
     clientOrder.ifPresent(order -> {
       final var orderValue = order.orderValue();
-      final var clientReputation = clientReputationProvider.getFor(command.getClientId());
+      final var clientReputation = clientReputationProvider.get(command.getClientId());
       Delivery delivery = calculateDeliveryCost(orderValue, clientReputation);
       final var event = order.pay(command.amount, delivery);
-      domainEventPublisher.saveAndPublish(event);
+      domainEventPublisher.publish(event);
       sendFreeTrackMusicForVipClient(clientReputation);
     });
   }
@@ -43,7 +43,7 @@ public class OrderPaymentHandler implements CommandHandler<OrderPaymentHandler.P
 
   private void sendFreeTrackMusicForVipClient(ClientReputation clientReputation) {
     if (clientReputation.isVip()) {
-      mailBoxSystemBox.sendFreeMusicTrackForClient(clientReputation.getClientId());
+      mailBoxSystemBox.send(clientReputation.getClientId());
     }
   }
 

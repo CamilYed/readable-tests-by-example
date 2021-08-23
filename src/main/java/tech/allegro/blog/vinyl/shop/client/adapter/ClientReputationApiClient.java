@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient(
   value = "client-reputation-service",
-  url = "client-reputation-service.url"
+  url = "${client-reputation-service.url}"
 )
 interface ClientReputationApiClient {
 

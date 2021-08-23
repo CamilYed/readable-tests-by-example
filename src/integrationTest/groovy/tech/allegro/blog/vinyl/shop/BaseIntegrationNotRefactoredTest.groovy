@@ -14,6 +14,7 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.ResponseEntity
+import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import spock.lang.Specification
@@ -21,9 +22,10 @@ import spock.lang.Specification
 import static org.springframework.http.HttpHeaders.ACCEPT
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE
 
-@SpringBootTest(classes = [AppRunner, WireMockInitializer],
+@SpringBootTest(classes = [AppRunner],
   properties = "application.environment=integration",
   webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ContextConfiguration(initializers = [WireMockInitializer])
 abstract class BaseIntegrationNotRefactoredTest extends Specification {
 
   @Autowired
@@ -63,7 +65,7 @@ abstract class BaseIntegrationNotRefactoredTest extends Specification {
   private static class WireMockInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
     @Override
     void initialize(ConfigurableApplicationContext configurableApplicationContext) {
-      WireMockServer wireMockServer = new WireMockServer(9090)
+      WireMockServer wireMockServer = new WireMockServer(WIRE_MOCK_PORT)
       wireMockServer.start()
       configurableApplicationContext.getBeanFactory().registerSingleton("wireMockServer", wireMockServer)
 

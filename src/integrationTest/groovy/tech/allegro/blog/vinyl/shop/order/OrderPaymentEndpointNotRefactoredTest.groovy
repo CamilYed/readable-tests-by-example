@@ -1,5 +1,6 @@
 package tech.allegro.blog.vinyl.shop.order
 
+import com.github.tomakehurst.wiremock.WireMockServer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
@@ -20,6 +21,9 @@ class OrderPaymentEndpointNotRefactoredTest extends BaseIntegrationNotRefactored
 
   @Autowired
   private OrderRepository orderRepository
+
+  @Autowired
+  WireMockServer wireMockServer
 
   static final ClientId CLIENT_ID_1 = ClientId.of("CLIENT_ID_1")
   static final OrderId ORDER_ID_1 = OrderId.of("1")
@@ -46,13 +50,8 @@ class OrderPaymentEndpointNotRefactoredTest extends BaseIntegrationNotRefactored
 //    and: "The free track music was sent to the client's mailbox"
   }
 
-  def "aa" () {
-    expect:
-         1==1
-  }
-
-  private static void stubGetClientReputationAsVip(ClientId clientId) {
-    stubFor(get("/reputation/${clientId.value}")
+  private void stubGetClientReputationAsVip(ClientId clientId) {
+    wireMockServer.stubFor(get("/reputation/${clientId.value}")
       .willReturn(aResponse()
         .withBody("""{
                             "reputation": "VIP",

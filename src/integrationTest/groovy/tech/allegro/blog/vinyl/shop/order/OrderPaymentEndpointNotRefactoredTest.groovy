@@ -18,7 +18,6 @@ import tech.allegro.blog.vinyl.shop.order.domain.OrderRepository
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo
 import static com.github.tomakehurst.wiremock.client.WireMock.get
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor
 
 class OrderPaymentEndpointNotRefactoredTest extends BaseIntegrationNotRefactoredTest {
 

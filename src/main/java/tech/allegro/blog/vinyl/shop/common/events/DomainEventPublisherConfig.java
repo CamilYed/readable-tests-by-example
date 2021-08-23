@@ -11,11 +11,11 @@ class DomainEventPublisherConfig {
 
   @Bean
   DomainEventPublisher domainEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
-    return new InMemorySpringDomainEventPublisher(applicationEventPublisher);
+    return new SpringDomainEventPublisher(applicationEventPublisher);
   }
 
   @RequiredArgsConstructor
-  static class InMemorySpringDomainEventPublisher implements DomainEventPublisher {
+  static class SpringDomainEventPublisher implements DomainEventPublisher {
     private final ApplicationEventPublisher applicationEventPublisher;
 
     @Override

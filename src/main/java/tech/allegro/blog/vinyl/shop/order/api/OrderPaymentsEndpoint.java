@@ -2,6 +2,7 @@ package tech.allegro.blog.vinyl.shop.order.api;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,9 +15,9 @@ import tech.allegro.blog.vinyl.shop.order.application.OrderPaymentHandler.PayOrd
 import tech.allegro.blog.vinyl.shop.order.domain.OrderId;
 
 @RestController
+@Slf4j
 @RequiredArgsConstructor
 class OrderPaymentsEndpoint {
-
   private final OrderPaymentHandler paymentHandler;
 
   @PostMapping(value = "/payments/orders/{orderId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -40,12 +41,10 @@ class OrderPaymentsEndpoint {
     }
   }
 
-  @ControllerAdvice
-  private static class ExceptionHandlingAdvice {
-    @ExceptionHandler(Throwable.class)
-    ResponseEntity<FailureJson> handleUnexpectedError(Throwable e) {
-      FailureJson errorMessage = new FailureJson(e.getMessage());
-      return new ResponseEntity<>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+  @ExceptionHandler(Throwable.class)
+  ResponseEntity<FailureJson> handleUnexpectedError(Throwable e) {
+    log.error("An unexpected error occurred during payment", e);
+    FailureJson errorMessage = new FailureJson(e.getMessage());
+    return new ResponseEntity<>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }

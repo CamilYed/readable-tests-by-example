@@ -14,3 +14,8 @@ ij_formatter_tags_enabled = false
 ij_smart_tabs = false
 ij_visual_guides = none
 ij_wrap_on_typing = false
+
+[*.groovy]
+ij_groovy_label_indent_size = 4
+ij_groovy_names_count_to_use_import_on_demand = 999
+ij_groovy_class_count_to_use_import_on_demand = 999

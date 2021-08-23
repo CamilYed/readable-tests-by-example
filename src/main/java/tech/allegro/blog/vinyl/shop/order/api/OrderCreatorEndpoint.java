@@ -3,6 +3,7 @@ package tech.allegro.blog.vinyl.shop.order.api;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tech.allegro.blog.vinyl.shop.catalogue.domain.VinylId;
@@ -22,15 +23,14 @@ class OrderCreatorEndpoint {
 
   private final OrderModificationHandler orderCreatorHandler;
 
-  @PutMapping("/orders/{orderId}/items")
-  ResponseEntity<Void> items(@PathVariable String orderId, @RequestBody ModificationJson items) {
+  @PutMapping(value = "/orders/{orderId}/items", produces = MediaType.APPLICATION_JSON_VALUE)
+  ResponseEntity<Void> items(@PathVariable String orderId, @RequestBody OrderItemsJson items) {
     orderCreatorHandler.handle(items.toCommand(orderId));
-    return ResponseEntity.accepted().body(null);
-
+    return ResponseEntity.accepted().build();
   }
 
   @Data
-  static class ModificationJson {
+  static class OrderItemsJson {
     private final  List<ItemJson> items;
 
     AddItemsToOrderCommand toCommand(String orderId) {

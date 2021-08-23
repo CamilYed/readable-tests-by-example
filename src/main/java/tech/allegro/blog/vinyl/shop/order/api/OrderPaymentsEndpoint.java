@@ -3,6 +3,7 @@ package tech.allegro.blog.vinyl.shop.order.api;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tech.allegro.blog.vinyl.shop.client.domain.ClientId;
@@ -18,11 +19,11 @@ class OrderPaymentsEndpoint {
 
   private final OrderPaymentHandler paymentHandler;
 
-  @PostMapping("/orders/{orderId}/payments")
+  @PostMapping(value = "/payments/orders/{orderId}", produces = MediaType.APPLICATION_JSON_VALUE)
   ResponseEntity<Void> payments(@PathVariable String orderId, @RequestBody PaymentJson paymentJson) {
     final var command = paymentJson.toCommand(orderId);
     paymentHandler.handle(command);
-    return ResponseEntity.accepted().body(null);
+    return ResponseEntity.accepted().build();
   }
 
   @Data

@@ -1,7 +1,7 @@
 plugins {
-	id "org.springframework.boot" version "2.5.2"
-	id "io.spring.dependency-management" version "1.0.11.RELEASE"
-	id "java"
+  id "org.springframework.boot" version "2.5.2"
+  id "io.spring.dependency-management" version "1.0.11.RELEASE"
+  id "java"
   id "groovy"
   id "application"
 }
@@ -16,14 +16,14 @@ java {
 }
 
 repositories {
-	mavenCentral()
+  mavenCentral()
 }
 
 project.ext.versions = [
-    lombok             : '1.18.20',
-    feign              : '3.0.3',
-		spock              : '2.0-groovy-3.0',
-    wiremock           : '2.27.2'
+  lombok  : '1.18.20',
+  feign   : '3.0.3',
+  spock   : '2.0-groovy-3.0',
+  wiremock: '2.27.2'
 ]
 
 configurations {
@@ -33,15 +33,18 @@ configurations {
 }
 
 dependencies {
-  compileOnly "org.projectlombok:lombok:${versions.lombok}"
-  annotationProcessor "org.projectlombok:lombok:${versions.lombok}"
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-  implementation "org.springframework.cloud:spring-cloud-starter-openfeign:${versions.feign}"
-  testCompileOnly "org.projectlombok:lombok:${versions.lombok}"
-  testAnnotationProcessor "org.projectlombok:lombok:${versions.lombok}"
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation "org.spockframework:spock-core:${versions.spock}"
-  integrationTest "com.github.tomakehurst:wiremock-jre8-standalone:${versions.wiremock}"
+  compileOnly group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: versions.feign
+
+  testCompileOnly group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  testImplementation group: 'org.spockframework', name: 'spock-core', version: versions.spock
+
+  integrationTest group: 'org.spockframework', name: 'spock-spring', version: versions.spock
+  integrationTest group: 'org.springframework.boot', name: 'spring-boot-starter-test'
+  integrationTest group: 'com.github.tomakehurst', name: 'wiremock-jre8-standalone', version: versions.wiremock
 }
 
 sourceSets {

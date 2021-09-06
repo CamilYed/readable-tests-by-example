@@ -11,6 +11,7 @@ import tech.allegro.blog.vinyl.shop.common.money.Money
 import tech.allegro.blog.vinyl.shop.common.time.ClockProvider
 import tech.allegro.blog.vinyl.shop.delivery.domain.CurrentDeliveryCostProvider
 import tech.allegro.blog.vinyl.shop.delivery.domain.DeliveryCostPolicy
+import tech.allegro.blog.vinyl.shop.order.domain.DomainEvent
 import tech.allegro.blog.vinyl.shop.order.domain.FreeMusicTrackSender
 import tech.allegro.blog.vinyl.shop.order.domain.Order
 import tech.allegro.blog.vinyl.shop.order.domain.OrderId
@@ -21,9 +22,11 @@ import java.time.Clock
 import java.time.Instant
 import java.time.ZoneId
 
-import static tech.allegro.blog.vinyl.shop.order.domain.DomainEvent.OrderPaidEvent
+import static tech.allegro.blog.vinyl.shop.order.domain.DomainEvent.OrderPaid
 import static tech.allegro.blog.vinyl.shop.delivery.domain.DeliveryCostPolicy.DefaultDeliveryCostPolicy
 import static tech.allegro.blog.vinyl.shop.order.application.OrderPaymentHandler.PayOrderCommand
+import static tech.allegro.blog.vinyl.shop.order.domain.DomainEvent.OrderPayFailed.Reason.ALREADY_PAID
+import static tech.allegro.blog.vinyl.shop.order.domain.DomainEvent.OrderPayFailed.Reason.AMOUNT_IS_DIFFERENT
 
 class OrderPaymentNotRefactoredSpec extends Specification {
 
@@ -40,29 +43,30 @@ class OrderPaymentNotRefactoredSpec extends Specification {
     orderRepository, clientReputationProvider, deliveryCostPolicy, domainEventPublisher, mailBoxSystemBox
   )
 
-  static final Instant CURRENT_DATE = Instant.parse("2021-11-05T00:00:00.00Z")
-  static final Clock TEST_CLOCK = Clock.fixed(CURRENT_DATE, ZoneId.systemDefault())
-  static final Money _20_EUR = Money.of(20.00)
-  static final Money _25_EUR = Money.of(25.00)
-  static final Money _40_EUR = Money.of(40.00)
-  static final Money _50_EUR = Money.of(50.00)
-  static final VinylId PRODUCT_ID = VinylId.of("1")
-  static final OrderId ORDER_ID = OrderId.of("1")
-  static final Order ORDER_40_EUR = sampleOrder(_40_EUR)
-  static final ClientId CLIENT_ID = ClientId.of("1")
-  static final ClientReputation VIP = ClientReputation.vip(CLIENT_ID)
-  static final ClientReputation NOT_VIP = ClientReputation.notVip(CLIENT_ID)
-  static final PayOrderCommand PAY_FOR_ORDER_40_EUR = PayOrderCommand.of(CLIENT_ID, ORDER_ID, _40_EUR)
-  static final PayOrderCommand PAY_FOR_ORDER_40_EUR_PLUS_20_EUR_DELIVERY = PayOrderCommand.of(CLIENT_ID, ORDER_ID, _40_EUR.add(_20_EUR))
-  static final PayOrderCommand PAY_FOR_ORDER_40_EUR_PLUS_25_EUR_DELIVERY = PayOrderCommand.of(CLIENT_ID, ORDER_ID, _40_EUR.add(_25_EUR))
+  final Instant CURRENT_DATE = Instant.parse("2021-11-05T00:00:00.00Z")
+  final Clock TEST_CLOCK = Clock.fixed(CURRENT_DATE, ZoneId.systemDefault())
+  final Money _20_EUR = Money.of(20.00)
+  final Money _25_EUR = Money.of(25.00)
+  final Money _40_EUR = Money.of(40.00)
+  final Money _50_EUR = Money.of(50.00)
+  final VinylId PRODUCT_ID = VinylId.of("1")
+  final OrderId ORDER_ID = OrderId.of("1")
+  final Order UNPAID_ORDER_40_EUR = sampleOrder(_40_EUR, true)
+  final Order PAID_ORDER = sampleOrder(_40_EUR, false)
+  final ClientId CLIENT_ID = ClientId.of("1")
+  final ClientReputation VIP = ClientReputation.vip(CLIENT_ID)
+  final ClientReputation NOT_VIP = ClientReputation.notVip(CLIENT_ID)
+  final PayOrderCommand PAY_FOR_ORDER_40_EUR = PayOrderCommand.of(CLIENT_ID, ORDER_ID, _40_EUR)
+  final PayOrderCommand PAY_FOR_ORDER_40_EUR_PLUS_20_EUR_DELIVERY = PayOrderCommand.of(CLIENT_ID, ORDER_ID, _40_EUR.add(_20_EUR))
+  final PayOrderCommand PAY_FOR_ORDER_40_EUR_PLUS_25_EUR_DELIVERY = PayOrderCommand.of(CLIENT_ID, ORDER_ID, _40_EUR.add(_25_EUR))
 
-  def setupSpec() {
+  def setup() {
     ClockProvider.setSystemClock(TEST_CLOCK)
   }
 
   def "shouldn't charge for delivery when the client has a VIP status"() {
     given:
-        orderRepository.findBy(ORDER_ID) >> Optional.of(ORDER_40_EUR)
+        orderRepository.findBy(ORDER_ID) >> Optional.of(UNPAID_ORDER_40_EUR)
 
     and:
         clientReputationProvider.get(CLIENT_ID) >> VIP
@@ -74,7 +78,7 @@ class OrderPaymentNotRefactoredSpec extends Specification {
         noExceptionThrown()
 
     then:
-        1 * domainEventPublisher.publish({ OrderPaidEvent event ->
+        1 * domainEventPublisher.publish({ OrderPaid event ->
           assert event.orderId == ORDER_ID
           assert event.amount == _40_EUR
           assert event.delivery.cost == Money.ZERO
@@ -87,7 +91,7 @@ class OrderPaymentNotRefactoredSpec extends Specification {
 
   def "shouldn't charge for delivery for order value above amount based on promotion price list"() {
     given:
-        orderRepository.findBy(ORDER_ID) >> Optional.of(ORDER_40_EUR)
+        orderRepository.findBy(ORDER_ID) >> Optional.of(UNPAID_ORDER_40_EUR)
 
     and:
         clientReputationProvider.get(CLIENT_ID) >> NOT_VIP
@@ -99,10 +103,7 @@ class OrderPaymentNotRefactoredSpec extends Specification {
         paymentHandler.handle(PAY_FOR_ORDER_40_EUR)
 
     then:
-        noExceptionThrown()
-
-    then:
-        1 * domainEventPublisher.publish({ OrderPaidEvent event ->
+        1 * domainEventPublisher.publish({ OrderPaid event ->
           assert event.orderId == ORDER_ID
           assert event.amount == _40_EUR
           assert event.delivery.cost == Money.ZERO
@@ -115,7 +116,7 @@ class OrderPaymentNotRefactoredSpec extends Specification {
 
   def "should charge for delivery based on price provided by courier system"() {
     given:
-        orderRepository.findBy(ORDER_ID) >> Optional.of(ORDER_40_EUR)
+        orderRepository.findBy(ORDER_ID) >> Optional.of(UNPAID_ORDER_40_EUR)
 
     and:
         clientReputationProvider.get(CLIENT_ID) >> NOT_VIP
@@ -130,10 +131,7 @@ class OrderPaymentNotRefactoredSpec extends Specification {
         paymentHandler.handle(PAY_FOR_ORDER_40_EUR_PLUS_25_EUR_DELIVERY)
 
     then:
-        noExceptionThrown()
-
-    and:
-        1 * domainEventPublisher.publish({ OrderPaidEvent event ->
+        1 * domainEventPublisher.publish({ OrderPaid event ->
           assert event.orderId == ORDER_ID
           assert event.amount == _40_EUR
           assert event.delivery.cost == _25_EUR
@@ -146,7 +144,7 @@ class OrderPaymentNotRefactoredSpec extends Specification {
 
   def "should charge always 20 euro for delivery when the courier system is unavailable"() {
     given:
-        orderRepository.findBy(ORDER_ID) >> Optional.of(ORDER_40_EUR)
+        orderRepository.findBy(ORDER_ID) >> Optional.of(UNPAID_ORDER_40_EUR)
 
     and:
         clientReputationProvider.get(CLIENT_ID) >> NOT_VIP
@@ -161,10 +159,7 @@ class OrderPaymentNotRefactoredSpec extends Specification {
         paymentHandler.handle(PAY_FOR_ORDER_40_EUR_PLUS_20_EUR_DELIVERY)
 
     then:
-        noExceptionThrown()
-
-    and:
-        1 * domainEventPublisher.publish({ OrderPaidEvent event ->
+        1 * domainEventPublisher.publish({ OrderPaid event ->
           assert event.orderId == ORDER_ID
           assert event.amount == _40_EUR
           assert event.delivery.cost == _20_EUR
@@ -175,9 +170,58 @@ class OrderPaymentNotRefactoredSpec extends Specification {
         0 * mailBoxSystemBox.send(CLIENT_ID)
   }
 
-  private static Order sampleOrder(Money price) {
-    def order = new Order(ORDER_ID, null, true)
-    order.addItem(PRODUCT_ID, price)
+  def "should not accept payment if the amounts differ"() {
+    given:
+        orderRepository.findBy(ORDER_ID) >> Optional.of(UNPAID_ORDER_40_EUR)
+
+    and:
+        clientReputationProvider.get(CLIENT_ID) >> NOT_VIP
+
+    and:
+        specialPriceProvider.getMinimumOrderValueForFreeDelivery() >> _40_EUR
+
+    when:
+        paymentHandler.handle(PayOrderCommand.of(CLIENT_ID, ORDER_ID, _50_EUR))
+
+    then:
+        1 * domainEventPublisher.publish({ DomainEvent.OrderPayFailed event ->
+          assert event.orderId == ORDER_ID
+          assert event.when == CURRENT_DATE
+          assert event.reason == AMOUNT_IS_DIFFERENT
+        })
+
+    and:
+        0 * mailBoxSystemBox.send(CLIENT_ID)
+  }
+
+  def "should not charge for a previously paid order"() {
+    given:
+        orderRepository.findBy(ORDER_ID) >> Optional.of(PAID_ORDER)
+
+    and:
+        clientReputationProvider.get(CLIENT_ID) >> NOT_VIP
+
+    and:
+        specialPriceProvider.getMinimumOrderValueForFreeDelivery() >> _40_EUR
+
+    when:
+        paymentHandler.handle(PAY_FOR_ORDER_40_EUR)
+
+    then:
+        1 * domainEventPublisher.publish({ DomainEvent.OrderPayFailed event ->
+          assert event.orderId == ORDER_ID
+          assert event.when == CURRENT_DATE
+          assert event.reason == ALREADY_PAID
+        })
+
+    and:
+        0 * mailBoxSystemBox.send(CLIENT_ID)
+  }
+
+  private Order sampleOrder(Money price, Boolean unpaid = true) {
+    def order = new Order(ORDER_ID, null, unpaid)
+    if (unpaid)
+      order.addItem(PRODUCT_ID, price)
     return order
   }
 }

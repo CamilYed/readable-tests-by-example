@@ -22,15 +22,14 @@ public class OrderPaymentHandler implements CommandHandler<OrderPaymentHandler.P
   private final ClientReputationProvider clientReputationProvider;
   private final DeliveryCostPolicy deliveryCostPolicy;
   private final DomainEventPublisher domainEventPublisher;
-  private final FreeMusicTrackSender mailBoxSystemBox;
+  private final FreeMusicTrackSender freeMusicTrackSender;
 
   @Override
   public void handle(PayOrderCommand command) {
     final var clientOrder = orderRepository.findBy(command.orderId);
     clientOrder.ifPresent(order -> {
-      final var orderValue = order.orderValue();
       final var clientReputation = clientReputationProvider.get(command.getClientId());
-      Delivery delivery = calculateDeliveryCost(orderValue, clientReputation);
+      final var delivery = calculateDeliveryCost(order.orderValue(), clientReputation);
       final var event = order.pay(command.amount, delivery);
       domainEventPublisher.publish(event);
       sendFreeTrackMusicForVipClient(clientReputation);
@@ -43,7 +42,7 @@ public class OrderPaymentHandler implements CommandHandler<OrderPaymentHandler.P
 
   private void sendFreeTrackMusicForVipClient(ClientReputation clientReputation) {
     if (clientReputation.isVip()) {
-      mailBoxSystemBox.send(clientReputation.getClientId());
+      freeMusicTrackSender.send(clientReputation.getClientId());
     }
   }
 

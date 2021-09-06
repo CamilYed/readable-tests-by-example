@@ -7,7 +7,8 @@ import tech.allegro.blog.vinyl.shop.catalogue.domain.VinylId;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
 import tech.allegro.blog.vinyl.shop.common.time.ClockProvider;
 import tech.allegro.blog.vinyl.shop.delivery.domain.Delivery;
-import tech.allegro.blog.vinyl.shop.order.domain.DomainEvent.OrderPaidEvent;
+import tech.allegro.blog.vinyl.shop.order.domain.DomainEvent.OrderPaid;
+import tech.allegro.blog.vinyl.shop.order.domain.DomainEvent.OrderPayFailed;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,19 +21,17 @@ public class Order {
   private Delivery delivery;
   private boolean unpaid;
 
-  public OrderPaidEvent pay(Money amount, Delivery delivery) {
+  public DomainEvent pay(Money amount, Delivery delivery) {
     if (unpaid) {
       final var toPay = orderLines.total().add(delivery.getCost());
       if (amount.equalTo(toPay)) {
         this.delivery = delivery;
-        unpaid = true;
+        unpaid = false;
         return orderPaidSuccessfully();
       } else {
-        unpaid = true;
-        throw amountToBePaidIsDifferent();
+        return amountToBePaidIsDifferent();
       }
-    }
-    throw orderAlreadyPaid();
+    } else return orderAlreadyPaid();
   }
 
   public void addItem(VinylId productId, Money price) {
@@ -45,23 +44,16 @@ public class Order {
     return orderLines.total();
   }
 
-  private OrderPaidEvent orderPaidSuccessfully() {
-    return OrderPaidEvent.of(orderId, ClockProvider.systemClock().instant(), orderValue(), delivery);
+  private OrderPaid orderPaidSuccessfully() {
+    return OrderPaid.of(orderId, ClockProvider.systemClock().instant(), orderValue(), delivery);
   }
 
-
-  private AmountToPayIsDifferent amountToBePaidIsDifferent() {
-    return new AmountToPayIsDifferent();
+  private OrderPayFailed amountToBePaidIsDifferent() {
+    return OrderPayFailed.of(orderId, ClockProvider.systemClock().instant(), OrderPayFailed.Reason.AMOUNT_IS_DIFFERENT);
   }
 
-  public static final class AmountToPayIsDifferent extends RuntimeException {
-  }
-
-  private OrderAlreadyPaid orderAlreadyPaid() {
-    return new OrderAlreadyPaid();
-  }
-
-  public static final class OrderAlreadyPaid extends RuntimeException {
+  private OrderPayFailed orderAlreadyPaid() {
+    return OrderPayFailed.of(orderId, ClockProvider.systemClock().instant(), OrderPayFailed.Reason.ALREADY_PAID);
   }
 
   public static final class CanNotModifyPaidOrder extends RuntimeException {
@@ -71,15 +63,15 @@ public class Order {
   static class OrderLines {
     List<OrderLine> lines;
 
-    void add (VinylId productId, Money price){
-      lines.add(OrderLine.create(productId, price));
-    }
-
-    static OrderLines empty () {
+    static OrderLines empty() {
       return new OrderLines(new ArrayList<>());
     }
 
-    Money total () {
+    void add(VinylId productId, Money price) {
+      lines.add(OrderLine.create(productId, price));
+    }
+
+    Money total() {
       return lines
         .stream()
         .map(OrderLine::getPrice)

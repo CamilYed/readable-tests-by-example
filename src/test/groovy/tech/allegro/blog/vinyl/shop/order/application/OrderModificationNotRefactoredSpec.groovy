@@ -8,6 +8,8 @@ import tech.allegro.blog.vinyl.shop.common.money.Money
 import tech.allegro.blog.vinyl.shop.order.domain.Order
 import tech.allegro.blog.vinyl.shop.order.domain.OrderId
 import tech.allegro.blog.vinyl.shop.order.domain.OrderRepository
+import tech.allegro.blog.vinyl.shop.order.domain.SampleOrder
+
 import static tech.allegro.blog.vinyl.shop.order.application.OrderModificationHandler.AddItemsToOrderCommand
 import static tech.allegro.blog.vinyl.shop.order.domain.Order.CanNotModifyPaidOrder
 
@@ -20,8 +22,10 @@ class OrderModificationNotRefactoredSpec extends Specification {
 
   static final ClientId CLIENT_ID = ClientId.of("1")
   static final OrderId ORDER_ID = OrderId.of("1")
-  static final Order PAID_ORDER = new Order(ORDER_ID, CLIENT_ID, null, null, false)
-  static final List<OrderModificationHandler.Item> ITEMS = [OrderModificationHandler.Item.of(VinylId.of("2"), Money.of(23.00))]
+  final Money _40_EUR = Money.of("40.00","EUR")
+  final VinylId PRODUCT_ID = VinylId.of("1")
+  final Order PAID_ORDER = SampleOrder.build(CLIENT_ID, ORDER_ID, _40_EUR, PRODUCT_ID, false)
+  static final List<OrderModificationHandler.Item> ITEMS = [OrderModificationHandler.Item.of(VinylId.of("2"), Money.of("23.00", "EUR"))]
 
   def "shouldn't modify paid order"() {
     given:

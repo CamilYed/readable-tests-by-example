@@ -7,15 +7,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import tech.allegro.blog.vinyl.shop.catalogue.domain.VinylId;
 import tech.allegro.blog.vinyl.shop.client.domain.ClientId;
 import tech.allegro.blog.vinyl.shop.common.json.FailureJson;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
+import tech.allegro.blog.vinyl.shop.common.money.MoneyJson;
 import tech.allegro.blog.vinyl.shop.order.application.OrderCreatorHandler;
+import tech.allegro.blog.vinyl.shop.order.application.OrderCreatorHandler.CreateOrderWithIdAndItemsCommand;
 import tech.allegro.blog.vinyl.shop.order.application.OrderCreatorHandler.CreateOrderWithItemsCommand;
 import tech.allegro.blog.vinyl.shop.order.application.OrderCreatorHandler.Item;
 import tech.allegro.blog.vinyl.shop.order.domain.OrderId;
@@ -30,9 +29,16 @@ class OrderCreatorEndpoint {
   private final OrderCreatorHandler orderCreatorHandler;
 
   @PostMapping(value = "/orders", produces = MediaType.APPLICATION_JSON_VALUE)
-  ResponseEntity<OrderCreatedJson> create(@RequestBody OrderItemsJson items) {
+  ResponseEntity<OrderCreatedJson> create(@RequestBody CreateOrderWithItemsJson items) {
     final var orderId = orderCreatorHandler.handle(items.toCommand());
     return buildResponse(orderId);
+  }
+
+  @PutMapping(value = "/orders/{orderId}", produces = MediaType.APPLICATION_JSON_VALUE)
+  ResponseEntity<OrderCreatedJson> upsert(@PathVariable("orderId") String orderId,
+                                          @RequestBody CreateOrderWithIdAndItemsJson items) {
+    orderCreatorHandler.handle(items.toCommand());
+    return buildResponse(OrderId.of(orderId));
   }
 
   private ResponseEntity<OrderCreatedJson> buildResponse(OrderId orderId) {
@@ -40,22 +46,36 @@ class OrderCreatorEndpoint {
   }
 
   @Data
-  static class OrderItemsJson {
-    private String clientId;
-    private List<ItemJson> items;
+  static class CreateOrderWithItemsJson {
+    String clientId;
+    List<ItemJson> items;
 
     CreateOrderWithItemsCommand toCommand() {
       final var itemsToAdd = items.stream()
-        .map(it -> Item.of(VinylId.of(it.productId), Money.of(it.price)))
+        .map(it -> Item.of(VinylId.of(it.productId), Money.of(it.cost.getAmount(), it.cost.getCurrency())))
         .collect(Collectors.toList());
       return CreateOrderWithItemsCommand.of(ClientId.of(clientId), itemsToAdd);
     }
   }
 
   @Data
+  static class CreateOrderWithIdAndItemsJson {
+    String orderId;
+    String clientId;
+    List<ItemJson> items;
+
+    CreateOrderWithIdAndItemsCommand toCommand() {
+      final var itemsToAdd = items.stream()
+        .map(it -> Item.of(VinylId.of(it.productId), Money.of(it.cost.getAmount(), it.cost.getCurrency())))
+        .collect(Collectors.toList());
+      return CreateOrderWithIdAndItemsCommand.of(OrderId.of(orderId), ClientId.of(clientId), itemsToAdd);
+    }
+  }
+
+  @Data
   static class ItemJson {
     String productId;
-    String price;
+    MoneyJson cost;
   }
 
   @Data

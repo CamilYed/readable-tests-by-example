@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class MoneyJson {
-  String value;
+  String amount;
   String currency;
 }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import tech.allegro.blog.vinyl.shop.catalogue.domain.VinylId;
 import tech.allegro.blog.vinyl.shop.common.json.FailureJson;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
+import tech.allegro.blog.vinyl.shop.common.money.MoneyJson;
 import tech.allegro.blog.vinyl.shop.order.application.OrderModificationHandler;
 import tech.allegro.blog.vinyl.shop.order.domain.OrderId;
 
@@ -36,7 +37,7 @@ class OrderModificationEndpoint {
     private final List<ItemJson> items;
     AddItemsToOrderCommand toCommand(String orderId) {
       final var itemsToAdd = items.stream()
-        .map(it -> Item.of(VinylId.of(it.productId), Money.of(it.price)))
+        .map(it -> Item.of(VinylId.of(it.productId), Money.of(it.cost.getAmount(), it.cost.getCurrency())))
         .collect(Collectors.toList());
       return AddItemsToOrderCommand.of(OrderId.of(orderId), itemsToAdd);
     }
@@ -45,7 +46,7 @@ class OrderModificationEndpoint {
   @Data
   static class ItemJson {
     String productId;
-    String price;
+    MoneyJson cost;
   }
 
   @ExceptionHandler(Throwable.class)

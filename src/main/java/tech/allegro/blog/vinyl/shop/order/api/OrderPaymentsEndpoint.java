@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import tech.allegro.blog.vinyl.shop.client.domain.ClientId;
 import tech.allegro.blog.vinyl.shop.common.json.FailureJson;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
+import tech.allegro.blog.vinyl.shop.common.money.MoneyJson;
 import tech.allegro.blog.vinyl.shop.order.application.OrderPaymentHandler;
 import tech.allegro.blog.vinyl.shop.order.application.OrderPaymentHandler.PayOrderCommand;
 import tech.allegro.blog.vinyl.shop.order.domain.OrderId;
@@ -30,13 +31,13 @@ class OrderPaymentsEndpoint {
   @Data
   static class PaymentJson {
     String clientId;
-    String amount;
+    MoneyJson cost;
 
     PayOrderCommand toCommand(String orderId) {
       return PayOrderCommand.of(
         ClientId.of(clientId),
         OrderId.of(orderId),
-        Money.of(amount)
+        Money.of(cost.getAmount(), cost.getCurrency())
       );
     }
   }

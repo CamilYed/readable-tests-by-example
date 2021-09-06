@@ -19,6 +19,6 @@ class HttpCurrentDeliveryCostProvider implements CurrentDeliveryCostProvider {
   }
 
   private Money toDomain(MoneyJson moneyJson) {
-    return Money.of(new BigDecimal(moneyJson.getValue()));
+    return Money.of(moneyJson.getAmount(), moneyJson.getCurrency());
   }
 }

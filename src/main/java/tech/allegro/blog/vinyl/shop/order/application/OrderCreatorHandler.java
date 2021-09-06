@@ -25,8 +25,26 @@ public class OrderCreatorHandler {
     return order.getOrderId();
   }
 
+  public OrderId handle(CreateOrderWithIdAndItemsCommand command) {
+    final var order = orderFactory.createUnpaidOrder(command.orderId, command.clientId, command.getItemsAsMap());
+    orderRepository.save(order);
+    return order.getOrderId();
+  }
+
   @Value(staticConstructor = "of")
   static public class CreateOrderWithItemsCommand {
+    ClientId clientId;
+    List<Item> items;
+
+    Map<VinylId, Money> getItemsAsMap() {
+      return items.stream()
+        .collect(Collectors.toMap(Item::getProductId, Item::getPrice));
+    }
+  }
+
+  @Value(staticConstructor = "of")
+  static public class CreateOrderWithIdAndItemsCommand {
+    OrderId orderId;
     ClientId clientId;
     List<Item> items;
 

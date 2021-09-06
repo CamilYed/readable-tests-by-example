@@ -23,7 +23,8 @@ project.ext.versions = [
   lombok  : '1.18.20',
   feign   : '3.0.3',
   spock   : '2.0-groovy-3.0',
-  wiremock: '2.27.2'
+  wiremock: '2.27.2',
+  groovy  : '3.0.8'
 ]
 
 configurations {
@@ -41,6 +42,7 @@ dependencies {
   testCompileOnly group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   testImplementation group: 'org.spockframework', name: 'spock-core', version: versions.spock
+  testImplementation group: 'org.codehaus.groovy', name: 'groovy-json', version: versions.groovy
 
   integrationTest group: 'org.spockframework', name: 'spock-spring', version: versions.spock
   integrationTest group: 'org.springframework.boot', name: 'spring-boot-starter-test'

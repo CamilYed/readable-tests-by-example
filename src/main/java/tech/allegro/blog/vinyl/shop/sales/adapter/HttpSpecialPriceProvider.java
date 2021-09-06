@@ -17,7 +17,7 @@ class HttpSpecialPriceProvider implements SpecialPriceProvider {
   }
 
   private static Money toDomain(MoneyJson json) {
-    return Money.of(json.getValue());
+    return Money.of(json.getAmount(), json.getCurrency());
   }
 
   private static final String SPECIAL_OFFER_ID = "FREE_DELIVERY_ORDER_PRICE_ID";

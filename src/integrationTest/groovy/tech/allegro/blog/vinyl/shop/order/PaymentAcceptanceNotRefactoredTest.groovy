@@ -42,39 +42,36 @@ class PaymentAcceptanceNotRefactoredTest extends BaseIntegrationNotRefactoredTes
 
   private PollingConditions pollingConditions = new PollingConditions(timeout: 5)
 
-  static final ClientId CLIENT_ID_1 = ClientId.of("CLIENT_ID_1")
-  static final VinylId PRODUCT_ID_1 = VinylId.of("1")
-  static final Money _40_EUR = Money.of(40.00)
+  static final String ORDER_ID_1 = "ORDER_ID_1"
+  static final String CLIENT_ID_1 = "CLIENT_ID_1"
+  static final String PRODUCT_ID_1 = "PRODUCT_ID_001"
 
   def "shouldn't charge for delivery when the client has a VIP status"() {
     given: "There is a client order with amount 40 EUR"
-        def body = """{
-                                "clientId": "$CLIENT_ID_1.value",
+        def body = """{         "orderId" : "${ORDER_ID_1}",
+                                "clientId": "${CLIENT_ID_1}",
                                 "items":  [
                                             {
-                                              "productId": ${PRODUCT_ID_1.value},
-                                              "price": ${_40_EUR.value.toString()}
+                                              "productId": "${PRODUCT_ID_1}",
+                                              "cost": { "amount": "40.00", "currency": "EUR" }
                                              }
                                           ]
                               }
                           """.toString()
         def requestEntity = buildHttpEntity(body, "application/json", "application/json")
-        def response = restTemplate.exchange(localUrl("/orders"), HttpMethod.POST, requestEntity, Map)
+        def response = restTemplate.exchange(localUrl("/orders/$ORDER_ID_1"), HttpMethod.PUT, requestEntity, Map)
 
     and:
-        response.statusCode == HttpStatus.CREATED
-
-    and:
-        def orderId = response.body["orderId"]
+        assert response.statusCode == HttpStatus.CREATED
 
     and: "The client has a VIP reputation"
         wireMockServer.stubFor(
-          get("/reputation/${CLIENT_ID_1.value}")
+          get("/reputation/${CLIENT_ID_1}")
             .withHeader(ACCEPT, equalTo(MediaType.APPLICATION_JSON.toString()))
             .willReturn(aResponse()
               .withBody("""{
                                   "reputation": "VIP",
-                                  "clientId": "${CLIENT_ID_1.value}"
+                                  "clientId": "${CLIENT_ID_1}"
                                  }
                               """)
               .withHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
@@ -83,12 +80,12 @@ class PaymentAcceptanceNotRefactoredTest extends BaseIntegrationNotRefactoredTes
 
     when: "When the client pays the order of 40 EUR"
         body = """{
-                                "clientId": "$CLIENT_ID_1.value",
-                                "amount":   "${_40_EUR.value.toString()}"
+                                "clientId": "${CLIENT_ID_1}",
+                                "cost": { "amount": "40.00", "currency": "EUR" }
                               }
                           """.toString()
         requestEntity = buildHttpEntity(body, "application/json", "application/json")
-        response = restTemplate.exchange(localUrl("/orders/$orderId/payment"), HttpMethod.PUT, requestEntity, Map)
+        response = restTemplate.exchange(localUrl("/orders/$ORDER_ID_1/payment"), HttpMethod.PUT, requestEntity, Map)
 
     then: "The order has been paid correctly"
         response.statusCode == HttpStatus.ACCEPTED
@@ -98,7 +95,7 @@ class PaymentAcceptanceNotRefactoredTest extends BaseIntegrationNotRefactoredTes
 
     and: "The free track music was sent to the client's mailbox"
         pollingConditions.eventually {
-          1 * freeMusicTrackSender.send(CLIENT_ID_1)
+          1 * freeMusicTrackSender.send(ClientId.of(CLIENT_ID_1))
         }
   }
 }

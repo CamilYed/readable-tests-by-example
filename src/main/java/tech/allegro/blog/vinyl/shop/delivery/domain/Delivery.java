@@ -18,7 +18,7 @@ public abstract class Delivery {
   }
 
   public static StandardDelivery standardDeliveryWithDefaultPrice() {
-    return new StandardDelivery(Money.of("20.00"));
+    return new StandardDelivery(Money.of("20.00", "EUR"));
   }
 
   public static final class FreeDelivery extends Delivery {

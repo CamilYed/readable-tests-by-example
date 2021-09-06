@@ -8,17 +8,23 @@ import java.util.Currency;
 @Value(staticConstructor = "of")
 public class Money {
   BigDecimal value;
-  Currency currency = EURO;
+  Currency currency;
 
   public static final Currency EURO = Currency.getInstance("EUR");
-  public static final Money ZERO = new Money(BigDecimal.valueOf(0));
+  public static final Money ZERO = new Money(BigDecimal.valueOf(0), EURO);
 
-  public static Money of(String value) {
-    return Money.of(new BigDecimal(value));
+  public static Money euro(String value) {
+    return Money.of(new BigDecimal(value), EURO);
+  }
+
+  public static Money of(String value, String currency) {
+    return Money.of(new BigDecimal(value), Currency.getInstance(currency));
   }
 
   public Money add(Money money) {
-    return Money.of(this.value.add(money.value));
+    if (money.currency.equals(this.currency)) {
+      return Money.of(this.value.add(money.value), this.currency);
+    } else throw new IllegalArgumentException("Can not add different currency");
   }
 
   public boolean notEqualTo(Money money) {

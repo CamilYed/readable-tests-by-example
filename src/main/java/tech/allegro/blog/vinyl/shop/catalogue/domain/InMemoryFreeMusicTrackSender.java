@@ -1,8 +1,7 @@
-package tech.allegro.blog.vinyl.shop.order.adapters.mail;
+package tech.allegro.blog.vinyl.shop.catalogue.domain;
 
 import lombok.extern.slf4j.Slf4j;
 import tech.allegro.blog.vinyl.shop.client.domain.ClientId;
-import tech.allegro.blog.vinyl.shop.order.domain.FreeMusicTrackSender;
 
 @Slf4j
 class InMemoryFreeMusicTrackSender implements FreeMusicTrackSender {

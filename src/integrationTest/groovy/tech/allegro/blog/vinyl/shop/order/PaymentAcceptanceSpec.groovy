@@ -3,7 +3,7 @@ package tech.allegro.blog.vinyl.shop.order
 import spock.lang.Specification
 
 
-class OrderAcceptanceSpec extends Specification {
+class PaymentAcceptanceSpec extends Specification {
 
   // builder client
   // wiremock stub - trait

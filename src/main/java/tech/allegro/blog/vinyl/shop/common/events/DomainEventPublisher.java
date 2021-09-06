@@ -1,12 +1,20 @@
 package tech.allegro.blog.vinyl.shop.common.events;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import tech.allegro.blog.vinyl.shop.order.domain.DomainEvent;
 
 public interface DomainEventPublisher {
 
   void publish(DomainEvent event);
 
-  default void publish(Iterable<DomainEvent> events) {
-    events.forEach(this::publish);
+  @RequiredArgsConstructor
+  class SpringDomainEventPublisher implements DomainEventPublisher {
+    private final ApplicationEventPublisher applicationEventPublisher;
+
+    @Override
+    public void publish(DomainEvent event) {
+      applicationEventPublisher.publishEvent(event);
+    }
   }
 }

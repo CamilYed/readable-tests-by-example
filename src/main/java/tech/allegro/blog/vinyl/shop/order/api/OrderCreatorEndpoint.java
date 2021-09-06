@@ -1,18 +1,23 @@
 package tech.allegro.blog.vinyl.shop.order.api;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import tech.allegro.blog.vinyl.shop.catalogue.domain.VinylId;
+import tech.allegro.blog.vinyl.shop.client.domain.ClientId;
 import tech.allegro.blog.vinyl.shop.common.json.FailureJson;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
-import tech.allegro.blog.vinyl.shop.order.application.OrderModificationHandler;
-import tech.allegro.blog.vinyl.shop.order.application.OrderModificationHandler.AddItemsToOrderCommand;
-import tech.allegro.blog.vinyl.shop.order.application.OrderModificationHandler.Item;
+import tech.allegro.blog.vinyl.shop.order.application.OrderCreatorHandler;
+import tech.allegro.blog.vinyl.shop.order.application.OrderCreatorHandler.CreateOrderWithItemsCommand;
+import tech.allegro.blog.vinyl.shop.order.application.OrderCreatorHandler.Item;
 import tech.allegro.blog.vinyl.shop.order.domain.OrderId;
 
 import java.util.List;
@@ -22,30 +27,41 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 class OrderCreatorEndpoint {
-  private final OrderModificationHandler orderCreatorHandler;
+  private final OrderCreatorHandler orderCreatorHandler;
 
-  @PutMapping(value = "/orders/{orderId}/items", produces = MediaType.APPLICATION_JSON_VALUE)
-  ResponseEntity<Void> items(@PathVariable String orderId, @RequestBody OrderItemsJson items) {
-    orderCreatorHandler.handle(items.toCommand(orderId));
-    return ResponseEntity.accepted().build();
+  @PostMapping(value = "/orders", produces = MediaType.APPLICATION_JSON_VALUE)
+  ResponseEntity<OrderCreatedJson> create(@RequestBody OrderItemsJson items) {
+    final var orderId = orderCreatorHandler.handle(items.toCommand());
+    return buildResponse(orderId);
+  }
+
+  private ResponseEntity<OrderCreatedJson> buildResponse(OrderId orderId) {
+    return ResponseEntity.status(HttpStatus.CREATED).body(new OrderCreatedJson(orderId.getValue()));
   }
 
   @Data
   static class OrderItemsJson {
-    private final  List<ItemJson> items;
+    private String clientId;
+    private List<ItemJson> items;
 
-    AddItemsToOrderCommand toCommand(String orderId) {
+    CreateOrderWithItemsCommand toCommand() {
       final var itemsToAdd = items.stream()
         .map(it -> Item.of(VinylId.of(it.productId), Money.of(it.price)))
         .collect(Collectors.toList());
-      return AddItemsToOrderCommand.of(OrderId.of(orderId), itemsToAdd);
+      return CreateOrderWithItemsCommand.of(ClientId.of(clientId), itemsToAdd);
     }
   }
 
   @Data
   static class ItemJson {
-    private final String productId;
-    private final String price;
+    String productId;
+    String price;
+  }
+
+  @Data
+  @AllArgsConstructor
+  static class OrderCreatedJson {
+    String orderId;
   }
 
   @ExceptionHandler(Throwable.class)

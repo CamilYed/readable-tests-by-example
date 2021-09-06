@@ -20,7 +20,7 @@ import tech.allegro.blog.vinyl.shop.order.domain.OrderId;
 class OrderPaymentsEndpoint {
   private final OrderPaymentHandler paymentHandler;
 
-  @PostMapping(value = "/orders/{orderId}/payment", produces = MediaType.APPLICATION_JSON_VALUE)
+  @PutMapping(value = "/orders/{orderId}/payment", produces = MediaType.APPLICATION_JSON_VALUE)
   ResponseEntity<Void> payments(@PathVariable String orderId, @RequestBody PaymentJson paymentJson) {
     final var command = paymentJson.toCommand(orderId);
     paymentHandler.handle(command);
@@ -29,8 +29,8 @@ class OrderPaymentsEndpoint {
 
   @Data
   static class PaymentJson {
-    private final String clientId;
-    private final String amount;
+    String clientId;
+    String amount;
 
     PayOrderCommand toCommand(String orderId) {
       return PayOrderCommand.of(

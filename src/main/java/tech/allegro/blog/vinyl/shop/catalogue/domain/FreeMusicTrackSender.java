@@ -1,4 +1,4 @@
-package tech.allegro.blog.vinyl.shop.order.domain;
+package tech.allegro.blog.vinyl.shop.catalogue.domain;
 
 import tech.allegro.blog.vinyl.shop.client.domain.ClientId;
 

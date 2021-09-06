@@ -6,11 +6,17 @@ import tech.allegro.blog.vinyl.shop.order.domain.OrderRepository;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 class ImMemoryDatabase implements OrderRepository  {
 
   private final Map<OrderId, Order> orders = new ConcurrentHashMap<>();
+
+  @Override
+  public OrderId nextId() {
+    return OrderId.of(UUID.randomUUID().toString());
+  }
 
   @Override
   public Optional<Order> findBy(OrderId orderId) {

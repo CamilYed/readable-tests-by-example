@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import tech.allegro.blog.vinyl.shop.catalogue.domain.VinylId;
-import tech.allegro.blog.vinyl.shop.common.commands.CommandHandler;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
 import tech.allegro.blog.vinyl.shop.order.domain.Order;
 import tech.allegro.blog.vinyl.shop.order.domain.Order.CanNotModifyPaidOrder;
@@ -15,11 +14,10 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-public class OrderModificationHandler implements CommandHandler<OrderModificationHandler.AddItemsToOrderCommand> {
+public class OrderModificationHandler {
 
   private final OrderRepository orderRepository;
 
-  @Override
   public void handle(AddItemsToOrderCommand command) {
     final var clientOrder = orderRepository.findBy(command.orderId);
     clientOrder.ifPresent(order -> {

@@ -6,3 +6,7 @@ delivery-cost-service:
 
 special-price-catalogue-service:
   url: http://127.0.0.1:${wiremock.server.port}
+
+spring:
+  main:
+    allow-bean-definition-overriding: true

@@ -5,11 +5,16 @@ import org.springframework.context.annotation.Configuration;
 import tech.allegro.blog.vinyl.shop.client.domain.ClientReputationProvider;
 import tech.allegro.blog.vinyl.shop.common.events.DomainEventPublisher;
 import tech.allegro.blog.vinyl.shop.delivery.domain.DeliveryCostPolicy;
-import tech.allegro.blog.vinyl.shop.order.domain.FreeMusicTrackSender;
+import tech.allegro.blog.vinyl.shop.order.domain.OrderFactory;
 import tech.allegro.blog.vinyl.shop.order.domain.OrderRepository;
 
 @Configuration
-class HandlerConfig {
+class OrderHandlersConfig {
+
+  @Bean
+  OrderCreatorHandler orderCreatorHandler(OrderRepository orderRepository) {
+    return new OrderCreatorHandler(new OrderFactory(), orderRepository);
+  }
 
   @Bean
   OrderModificationHandler orderModificationHandler(OrderRepository orderRepository) {
@@ -21,9 +26,8 @@ class HandlerConfig {
     OrderRepository orderRepository,
     ClientReputationProvider clientReputationProvider,
     DeliveryCostPolicy deliveryCostPolicy,
-    DomainEventPublisher domainEventPublisher,
-    FreeMusicTrackSender mailBoxSystemBox
+    DomainEventPublisher domainEventPublisher
   ) {
-    return new OrderPaymentHandler(orderRepository, clientReputationProvider, deliveryCostPolicy, domainEventPublisher, mailBoxSystemBox);
+    return new OrderPaymentHandler(orderRepository, clientReputationProvider, deliveryCostPolicy, domainEventPublisher);
   }
 }

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Value;
 import tech.allegro.blog.vinyl.shop.catalogue.domain.VinylId;
+import tech.allegro.blog.vinyl.shop.client.domain.ClientId;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
 import tech.allegro.blog.vinyl.shop.common.time.ClockProvider;
 import tech.allegro.blog.vinyl.shop.delivery.domain.Delivery;
@@ -13,11 +14,14 @@ import tech.allegro.blog.vinyl.shop.order.domain.DomainEvent.OrderPayFailed;
 import java.util.ArrayList;
 import java.util.List;
 
-@AllArgsConstructor
+import static lombok.AccessLevel.PACKAGE;
+
+@AllArgsConstructor(access = PACKAGE)
 public class Order {
   @Getter
-  private final OrderId orderId;
-  private final OrderLines orderLines = OrderLines.empty();
+  private OrderId orderId;
+  private ClientId clientId;
+  private OrderLines orderLines;
   private Delivery delivery;
   private boolean unpaid;
 
@@ -35,6 +39,8 @@ public class Order {
   }
 
   public void addItem(VinylId productId, Money price) {
+    if (orderLines == null)
+      orderLines = OrderLines.empty();
     if (unpaid) {
       orderLines.add(productId, price);
     } else throw new CanNotModifyPaidOrder();
@@ -45,7 +51,7 @@ public class Order {
   }
 
   private OrderPaid orderPaidSuccessfully() {
-    return OrderPaid.of(orderId, ClockProvider.systemClock().instant(), orderValue(), delivery);
+    return OrderPaid.of(clientId, orderId, ClockProvider.systemClock().instant(), orderValue(), delivery);
   }
 
   private OrderPayFailed amountToBePaidIsDifferent() {
@@ -59,7 +65,7 @@ public class Order {
   public static final class CanNotModifyPaidOrder extends RuntimeException {
   }
 
-  @Value
+  @Value(staticConstructor = "of")
   static class OrderLines {
     List<OrderLine> lines;
 

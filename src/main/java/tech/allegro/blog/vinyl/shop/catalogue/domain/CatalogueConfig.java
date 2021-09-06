@@ -1,11 +1,10 @@
-package tech.allegro.blog.vinyl.shop.order.adapters.mail;
+package tech.allegro.blog.vinyl.shop.catalogue.domain;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import tech.allegro.blog.vinyl.shop.order.domain.FreeMusicTrackSender;
 
 @Configuration
-class MailConfig {
+class CatalogueConfig {
 
   @Bean
   FreeMusicTrackSender freeMusicTrackSender() {

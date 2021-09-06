@@ -22,14 +22,14 @@ class OrderPaymentsEndpoint {
   private final OrderPaymentHandler paymentHandler;
 
   @PutMapping(value = "/orders/{orderId}/payment", produces = MediaType.APPLICATION_JSON_VALUE)
-  ResponseEntity<Void> payments(@PathVariable String orderId, @RequestBody PaymentJson paymentJson) {
-    final var command = paymentJson.toCommand(orderId);
+  ResponseEntity<Void> payments(@PathVariable String orderId, @RequestBody PayOrderJson payOrderJson) {
+    final var command = payOrderJson.toCommand(orderId);
     paymentHandler.handle(command);
     return ResponseEntity.accepted().build();
   }
 
   @Data
-  static class PaymentJson {
+  static class PayOrderJson {
     String clientId;
     MoneyJson cost;
 

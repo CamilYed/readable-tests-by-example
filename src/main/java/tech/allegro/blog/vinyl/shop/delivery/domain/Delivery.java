@@ -10,7 +10,7 @@ public abstract class Delivery {
   private final Money cost;
 
   public static FreeDelivery freeDelivery() {
-    return new FreeDelivery();
+    return FreeDelivery.freeDelivery;
   }
 
   public static StandardDelivery standardDelivery(Money cost) {
@@ -22,6 +22,7 @@ public abstract class Delivery {
   }
 
   public static final class FreeDelivery extends Delivery {
+    static final FreeDelivery freeDelivery = new FreeDelivery();
     public FreeDelivery() {
       super(Money.ZERO);
     }

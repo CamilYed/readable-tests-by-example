@@ -11,8 +11,14 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.ResponseEntity
 import org.springframework.test.context.ContextConfiguration
+import spock.lang.Shared
 import spock.lang.Specification
 import tech.allegro.blog.vinyl.shop.ability.MakeRequestAbility
+import tech.allegro.blog.vinyl.shop.common.time.ClockProvider
+
+import java.time.Clock
+import java.time.Instant
+import java.time.ZoneId
 
 import static org.springframework.http.HttpHeaders.ACCEPT
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE
@@ -28,6 +34,15 @@ class BaseIntegrationTest extends Specification implements MakeRequestAbility {
 
     @Autowired
     private TestRestTemplate restTemplate
+
+    static final Instant CURRENT_DATE = Instant.parse("2021-11-05T00:00:00.00Z")
+
+    @Shared
+    static final Clock TEST_CLOCK = Clock.fixed(CURRENT_DATE, ZoneId.systemDefault())
+
+    def setupSpec() {
+        ClockProvider.setSystemClock(TEST_CLOCK)
+    }
 
     @NamedVariant
     ResponseEntity<Map> makeRequest(

@@ -4,15 +4,19 @@ import tech.allegro.blog.vinyl.shop.BaseIntegrationTest
 import tech.allegro.blog.vinyl.shop.ability.client.ClientReputationAbility
 import tech.allegro.blog.vinyl.shop.ability.order.CreateOrderAbility
 import tech.allegro.blog.vinyl.shop.ability.order.OrderPaymentAbility
+import tech.allegro.blog.vinyl.shop.assertions.DomainEventPublisherAssertion
+import tech.allegro.blog.vinyl.shop.assertions.FreeTrackMusicSenderAssertion
 
 import static tech.allegro.blog.vinyl.shop.assertions.PaymentResultAssertion.assertThat
 import static tech.allegro.blog.vinyl.shop.builders.money.MoneyJsonBuilder.euro
 import static tech.allegro.blog.vinyl.shop.builders.order.CreateOrderWithItemsJsonBuilder.ItemJsonBuilder.anItem
 import static tech.allegro.blog.vinyl.shop.builders.order.CreateOrderWithItemsJsonBuilder.anOrder
+import static tech.allegro.blog.vinyl.shop.builders.order.OrderPaidEventBuilder.anOrderPaidEvent
 import static tech.allegro.blog.vinyl.shop.builders.order.PayOrderJsonBuilder.aPayment
 
 class PaymentAcceptanceSpec extends BaseIntegrationTest
-    implements CreateOrderAbility, ClientReputationAbility, OrderPaymentAbility {
+    implements CreateOrderAbility, ClientReputationAbility, OrderPaymentAbility,
+        DomainEventPublisherAssertion, FreeTrackMusicSenderAssertion {
 
     static final String ORDER_ID = "ORDER_ID_001"
     static final String VIP_CLIENT_ID = "VIP_CLIENT_001"
@@ -27,8 +31,7 @@ class PaymentAcceptanceSpec extends BaseIntegrationTest
                     .withClientId(VIP_CLIENT_ID)
                     .withItem(anItem()
                         .withProductId(CZESLAW_NIEMEN_ALBUM_ID)
-                        .withCost(euro("40.00"))
-                    )
+                        .withCost(euro("40.00")))
             )
 
         and:
@@ -44,11 +47,18 @@ class PaymentAcceptanceSpec extends BaseIntegrationTest
         then:
             assertThat(payment).madeSuccessfully()
 
-        and: "The payment system was notified"
-            // TODO
+        and:
+            assertThatNotificationAboutSuccessfulPaymentWasSentOnce(
+                anOrderPaidEvent()
+                    .withClientId(VIP_CLIENT_ID)
+                    .withOrderId(ORDER_ID)
+                    .withAmountInEuro("40.00")
+                    .withFreeDelivery()
+                    .withWhen(CURRENT_DATE)
+            )
 
-        and: "The free track music was sent to the client's mailbox"
-            // TODO
+        and:
+            assertThatFreeMusicTrackWasSentToClientOnce(VIP_CLIENT_ID)
     }
     // @formatter:on
 

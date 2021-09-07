@@ -5,11 +5,12 @@ import lombok.Getter;
 import lombok.Value;
 import tech.allegro.blog.vinyl.shop.catalogue.domain.VinylId;
 import tech.allegro.blog.vinyl.shop.client.domain.ClientId;
+import tech.allegro.blog.vinyl.shop.common.events.DomainEvent;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
 import tech.allegro.blog.vinyl.shop.common.time.ClockProvider;
 import tech.allegro.blog.vinyl.shop.delivery.domain.Delivery;
-import tech.allegro.blog.vinyl.shop.order.domain.DomainEvent.OrderPaid;
-import tech.allegro.blog.vinyl.shop.order.domain.DomainEvent.OrderPayFailed;
+import tech.allegro.blog.vinyl.shop.order.domain.OrderDomainEvents.OrderPaid;
+import tech.allegro.blog.vinyl.shop.order.domain.OrderDomainEvents.OrderPayFailed;
 
 import java.util.ArrayList;
 import java.util.List;

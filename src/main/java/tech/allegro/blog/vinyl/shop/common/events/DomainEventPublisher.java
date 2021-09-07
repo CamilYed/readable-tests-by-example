@@ -2,7 +2,6 @@ package tech.allegro.blog.vinyl.shop.common.events;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
-import tech.allegro.blog.vinyl.shop.order.domain.DomainEvent;
 
 public interface DomainEventPublisher {
 

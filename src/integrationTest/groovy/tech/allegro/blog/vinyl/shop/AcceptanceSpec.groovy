@@ -1,20 +1,20 @@
-package tech.allegro.blog.vinyl.shop.order
+package tech.allegro.blog.vinyl.shop
 
-import tech.allegro.blog.vinyl.shop.BaseIntegrationTest
+
 import tech.allegro.blog.vinyl.shop.ability.client.ClientReputationAbility
 import tech.allegro.blog.vinyl.shop.ability.order.CreateOrderAbility
 import tech.allegro.blog.vinyl.shop.ability.order.OrderPaymentAbility
 import tech.allegro.blog.vinyl.shop.assertions.DomainEventPublisherAssertion
 import tech.allegro.blog.vinyl.shop.assertions.FreeTrackMusicSenderAssertion
 
-import static tech.allegro.blog.vinyl.shop.assertions.PaymentResultAssertion.assertThat
+import static tech.allegro.blog.vinyl.shop.assertions.PaymentResultAssertion.assertThatPayment
 import static tech.allegro.blog.vinyl.shop.builders.money.MoneyJsonBuilder.euro
-import static tech.allegro.blog.vinyl.shop.builders.order.CreateOrderWithItemsJsonBuilder.ItemJsonBuilder.anItem
-import static tech.allegro.blog.vinyl.shop.builders.order.CreateOrderWithItemsJsonBuilder.anOrder
+import static tech.allegro.blog.vinyl.shop.builders.order.CreateOrderWithIdJsonBuilder.ItemJsonBuilder.anItem
+import static tech.allegro.blog.vinyl.shop.builders.order.CreateOrderWithIdJsonBuilder.anOrder
 import static tech.allegro.blog.vinyl.shop.builders.order.OrderPaidEventBuilder.anOrderPaidEvent
 import static tech.allegro.blog.vinyl.shop.builders.order.PayOrderJsonBuilder.aPayment
 
-class PaymentAcceptanceSpec extends BaseIntegrationTest
+class AcceptanceSpec extends BaseIntegrationTest
     implements CreateOrderAbility, ClientReputationAbility, OrderPaymentAbility,
         DomainEventPublisherAssertion, FreeTrackMusicSenderAssertion {
 
@@ -23,7 +23,7 @@ class PaymentAcceptanceSpec extends BaseIntegrationTest
     static final String CZESLAW_NIEMEN_ALBUM_ID = "PRODUCT_ID_001"
 
     // @formatter:off
-    def "shouldn't charge for delivery when the client has a VIP status"() {
+    def "shouldn't charge for delivery when the client has a VIP reputation"() {
         given:
             thereIs(
                 anOrder()
@@ -45,7 +45,7 @@ class PaymentAcceptanceSpec extends BaseIntegrationTest
             )
 
         then:
-            assertThat(payment).madeSuccessfully()
+            assertThatPayment(payment).madeSuccessfully()
 
         and:
             assertThatNotificationAboutSuccessfulPaymentWasSentOnce(
@@ -63,7 +63,13 @@ class PaymentAcceptanceSpec extends BaseIntegrationTest
     // @formatter:on
 
     def "shouldn't charge for delivery for order value above or fixed amount based on promotion price list"() {
-        given: "There is a client order with amount 40 EUR"
+        given:
+            thereIs anOrder()
+                .withOrderId(ORDER_ID)
+                .withClientId(VIP_CLIENT_ID)
+                .withItem(anItem()
+                    .withProductId(CZESLAW_NIEMEN_ALBUM_ID)
+                    .withCost(euro("40.00")))
 
         and: "The client is not a VIP"
 
@@ -114,11 +120,7 @@ class PaymentAcceptanceSpec extends BaseIntegrationTest
         and: "The free music track was not sent to the client's mailbox"
     }
 
-    def "shouldn't modify paid order"() {
-        given: "There is a paid client order"
+    def "shouldn't accept payment if the amounts differ"() {
 
-        when: "When the client want to add item to order"
-
-        then: "The payment should reject modification"
     }
 }

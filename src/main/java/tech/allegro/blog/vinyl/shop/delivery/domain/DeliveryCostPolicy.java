@@ -13,7 +13,7 @@ public interface DeliveryCostPolicy {
 
   @RequiredArgsConstructor
   class DefaultDeliveryCostPolicy implements DeliveryCostPolicy {
-    private final CurrentDeliveryCostProvider deliveryCostProvider;
+    private final DeliveryCostProvider deliveryCostProvider;
     private final SpecialPriceProvider specialPriceProvider;
     private final StandardDelivery defaultDelivery = Delivery.standardDeliveryWithDefaultPrice();
 

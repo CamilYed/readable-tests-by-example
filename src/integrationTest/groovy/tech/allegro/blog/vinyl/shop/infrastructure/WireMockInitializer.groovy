@@ -1,4 +1,4 @@
-package tech.allegro.blog.vinyl.shop
+package tech.allegro.blog.vinyl.shop.infrastructure
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
@@ -27,5 +27,4 @@ class WireMockInitializer implements ApplicationContextInitializer<ConfigurableA
       .of(Map.of("wiremock.server.port", "" + wireMockServer.port()))
       .applyTo(configurableApplicationContext);
   }
-
 }

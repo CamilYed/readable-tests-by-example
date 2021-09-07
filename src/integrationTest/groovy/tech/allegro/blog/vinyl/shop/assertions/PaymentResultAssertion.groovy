@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity
 class PaymentResultAssertion {
     private final ResponseEntity<Map> paymentResult
 
-    static PaymentResultAssertion assertThat(ResponseEntity<Map> response) {
+    static PaymentResultAssertion assertThatPayment(ResponseEntity<Map> response) {
         return new PaymentResultAssertion(response)
     }
 

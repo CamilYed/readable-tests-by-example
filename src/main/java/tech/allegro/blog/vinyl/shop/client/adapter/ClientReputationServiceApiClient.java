@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
   value = "client-reputation-service",
   url = "${client-reputation-service.url}"
 )
-interface ClientReputationApiClient {
+interface ClientReputationServiceApiClient {
 
   @GetMapping(value = "/reputation/{clientId}", produces = MediaType.APPLICATION_JSON_VALUE)
   ClientReputationJson get(@PathVariable String clientId);

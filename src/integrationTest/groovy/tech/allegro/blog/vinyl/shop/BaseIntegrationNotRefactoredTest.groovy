@@ -11,6 +11,7 @@ import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 import tech.allegro.blog.vinyl.shop.catalogue.TestFakeFreeMusicTrackSender
 import tech.allegro.blog.vinyl.shop.catalogue.domain.FreeMusicTrackSender
+import tech.allegro.blog.vinyl.shop.infrastructure.WireMockInitializer
 
 import static org.springframework.http.HttpHeaders.ACCEPT
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE

@@ -2,7 +2,7 @@ package tech.allegro.blog.vinyl.shop.order.application
 
 import spock.lang.Specification
 
-class OrderPaymentSpec extends Specification {
+class OrderPaymentHandlerSpec extends Specification {
 
   def "shouldn't charge for delivery when the client has a VIP status"() {
 

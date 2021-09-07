@@ -1,4 +1,4 @@
-package tech.allegro.blog.vinyl.shop.order
+package tech.allegro.blog.vinyl.shop
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import org.spockframework.spring.SpringSpy
@@ -20,7 +20,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get
 import static org.springframework.http.HttpHeaders.ACCEPT
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE
 
-class PaymentAcceptanceNotRefactoredTest extends BaseIntegrationNotRefactoredTest {
+class AcceptanceNotRefactoredTest extends BaseIntegrationNotRefactoredTest {
 
   @Autowired
   private TestRestTemplate restTemplate
@@ -54,7 +54,6 @@ class PaymentAcceptanceNotRefactoredTest extends BaseIntegrationNotRefactoredTes
                           """.toString()
         def requestEntity = buildHttpEntity(body, "application/json", "application/json")
         def response = restTemplate.exchange(localUrl("/orders/$ORDER_ID_1"), HttpMethod.PUT, requestEntity, Map)
-
     and:
         assert response.statusCode == HttpStatus.CREATED
 
@@ -71,7 +70,6 @@ class PaymentAcceptanceNotRefactoredTest extends BaseIntegrationNotRefactoredTes
               .withHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
             )
         )
-
     when: "When the client pays the order of 40 EUR"
         body = """{
                                 "clientId": "${CLIENT_ID_1}",

@@ -8,7 +8,7 @@ import tech.allegro.blog.vinyl.shop.client.domain.ClientReputationProvider;
 class ClientReputationConfig {
 
   @Bean
-  ClientReputationProvider clientReputationProvider(ClientReputationApiClient clientReputationApiClient) {
+  ClientReputationProvider clientReputationProvider(ClientReputationServiceApiClient clientReputationApiClient) {
     return new HttpClientReputationProvider(clientReputationApiClient);
   }
 }

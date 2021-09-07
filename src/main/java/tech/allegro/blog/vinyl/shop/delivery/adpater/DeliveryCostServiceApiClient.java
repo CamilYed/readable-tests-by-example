@@ -8,7 +8,7 @@ import tech.allegro.blog.vinyl.shop.common.money.MoneyJson;
   value = "delivery-cost-service",
   url = "delivery-cost-service.url"
 )
-interface DeliveryCostProviderApiClient {
+interface DeliveryCostServiceApiClient {
 
   @GetMapping("/current-cost")
   MoneyJson currentCost();

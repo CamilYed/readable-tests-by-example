@@ -18,21 +18,21 @@ public class OrderCreatorHandler {
   private final OrderFactory orderFactory;
   private final OrderRepository orderRepository;
 
-  public OrderId handle(CreateOrderWithItemsCommand command) {
+  public OrderId handle(CreateOrderCommand command) {
     final var orderId = orderRepository.nextId();
     final var order = orderFactory.createUnpaidOrder(orderId, command.clientId, command.getItemsAsMap());
     orderRepository.save(order);
     return order.getOrderId();
   }
 
-  public OrderId handle(CreateOrderWithIdAndItemsCommand command) {
+  public OrderId handle(CreateOrderWithIdCommand command) {
     final var order = orderFactory.createUnpaidOrder(command.orderId, command.clientId, command.getItemsAsMap());
     orderRepository.save(order);
     return order.getOrderId();
   }
 
   @Value(staticConstructor = "of")
-  static public class CreateOrderWithItemsCommand {
+  static public class CreateOrderCommand {
     ClientId clientId;
     List<Item> items;
 
@@ -43,7 +43,7 @@ public class OrderCreatorHandler {
   }
 
   @Value(staticConstructor = "of")
-  static public class CreateOrderWithIdAndItemsCommand {
+  static public class CreateOrderWithIdCommand {
     OrderId orderId;
     ClientId clientId;
     List<Item> items;

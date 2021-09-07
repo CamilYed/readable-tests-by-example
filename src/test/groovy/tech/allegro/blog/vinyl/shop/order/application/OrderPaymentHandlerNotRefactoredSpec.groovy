@@ -9,7 +9,7 @@ import tech.allegro.blog.vinyl.shop.client.domain.ClientReputationProvider
 import tech.allegro.blog.vinyl.shop.common.events.DomainEventPublisher
 import tech.allegro.blog.vinyl.shop.common.money.Money
 import tech.allegro.blog.vinyl.shop.common.time.ClockProvider
-import tech.allegro.blog.vinyl.shop.delivery.domain.CurrentDeliveryCostProvider
+import tech.allegro.blog.vinyl.shop.delivery.domain.DeliveryCostProvider
 import tech.allegro.blog.vinyl.shop.delivery.domain.DeliveryCostPolicy
 import tech.allegro.blog.vinyl.shop.order.domain.OrderDomainEvents
 import tech.allegro.blog.vinyl.shop.order.domain.Order
@@ -28,11 +28,11 @@ import static tech.allegro.blog.vinyl.shop.order.application.OrderPaymentHandler
 import static tech.allegro.blog.vinyl.shop.order.domain.OrderDomainEvents.OrderPayFailed.Reason.ALREADY_PAID
 import static tech.allegro.blog.vinyl.shop.order.domain.OrderDomainEvents.OrderPayFailed.Reason.AMOUNT_IS_DIFFERENT
 
-class OrderPaymentNotRefactoredSpec extends Specification {
+class OrderPaymentHandlerNotRefactoredSpec extends Specification {
 
     OrderRepository orderRepository = Stub()
     ClientReputationProvider clientReputationProvider = Stub()
-    CurrentDeliveryCostProvider currentDeliveryCostProvider = Stub()
+    DeliveryCostProvider currentDeliveryCostProvider = Stub()
     SpecialPriceProvider specialPriceProvider = Stub()
     DeliveryCostPolicy deliveryCostPolicy = new DefaultDeliveryCostPolicy(currentDeliveryCostProvider, specialPriceProvider)
     DomainEventPublisher domainEventPublisher = Mock()

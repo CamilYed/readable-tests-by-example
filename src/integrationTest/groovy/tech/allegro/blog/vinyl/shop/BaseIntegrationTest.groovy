@@ -15,6 +15,7 @@ import spock.lang.Shared
 import spock.lang.Specification
 import tech.allegro.blog.vinyl.shop.ability.MakeRequestAbility
 import tech.allegro.blog.vinyl.shop.common.time.ClockProvider
+import tech.allegro.blog.vinyl.shop.infrastructure.WireMockInitializer
 
 import java.time.Clock
 import java.time.Instant
@@ -69,5 +70,4 @@ class BaseIntegrationTest extends Specification implements MakeRequestAbility {
     private String localUrl(String endpoint) {
         return "http://localhost:$port$endpoint"
     }
-
 }

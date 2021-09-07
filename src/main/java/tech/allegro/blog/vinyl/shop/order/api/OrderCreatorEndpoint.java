@@ -14,8 +14,8 @@ import tech.allegro.blog.vinyl.shop.common.json.FailureJson;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
 import tech.allegro.blog.vinyl.shop.common.money.MoneyJson;
 import tech.allegro.blog.vinyl.shop.order.application.OrderCreatorHandler;
-import tech.allegro.blog.vinyl.shop.order.application.OrderCreatorHandler.CreateOrderWithIdAndItemsCommand;
-import tech.allegro.blog.vinyl.shop.order.application.OrderCreatorHandler.CreateOrderWithItemsCommand;
+import tech.allegro.blog.vinyl.shop.order.application.OrderCreatorHandler.CreateOrderWithIdCommand;
+import tech.allegro.blog.vinyl.shop.order.application.OrderCreatorHandler.CreateOrderCommand;
 import tech.allegro.blog.vinyl.shop.order.application.OrderCreatorHandler.Item;
 import tech.allegro.blog.vinyl.shop.order.domain.OrderId;
 
@@ -29,14 +29,14 @@ class OrderCreatorEndpoint {
   private final OrderCreatorHandler orderCreatorHandler;
 
   @PostMapping(value = "/orders", produces = MediaType.APPLICATION_JSON_VALUE)
-  ResponseEntity<OrderCreatedJson> create(@RequestBody CreateOrderWithItemsJson items) {
+  ResponseEntity<OrderCreatedJson> create(@RequestBody CreateOrderJson items) {
     final var orderId = orderCreatorHandler.handle(items.toCommand());
     return buildResponse(orderId);
   }
 
   @PutMapping(value = "/orders/{orderId}", produces = MediaType.APPLICATION_JSON_VALUE)
   ResponseEntity<OrderCreatedJson> upsert(@PathVariable("orderId") String orderId,
-                                          @RequestBody CreateOrderWithIdAndItemsJson items) {
+                                          @RequestBody CreateOrderWithIdJson items) {
     orderCreatorHandler.handle(items.toCommand());
     return buildResponse(OrderId.of(orderId));
   }
@@ -46,29 +46,29 @@ class OrderCreatorEndpoint {
   }
 
   @Data
-  static class CreateOrderWithItemsJson {
+  static class CreateOrderJson {
     String clientId;
     List<ItemJson> items;
 
-    CreateOrderWithItemsCommand toCommand() {
+    CreateOrderCommand toCommand() {
       final var itemsToAdd = items.stream()
         .map(it -> Item.of(VinylId.of(it.productId), Money.of(it.cost.getAmount(), it.cost.getCurrency())))
         .collect(Collectors.toList());
-      return CreateOrderWithItemsCommand.of(ClientId.of(clientId), itemsToAdd);
+      return CreateOrderCommand.of(ClientId.of(clientId), itemsToAdd);
     }
   }
 
   @Data
-  static class CreateOrderWithIdAndItemsJson {
+  static class CreateOrderWithIdJson {
     String orderId;
     String clientId;
     List<ItemJson> items;
 
-    CreateOrderWithIdAndItemsCommand toCommand() {
+    CreateOrderWithIdCommand toCommand() {
       final var itemsToAdd = items.stream()
         .map(it -> Item.of(VinylId.of(it.productId), Money.of(it.cost.getAmount(), it.cost.getCurrency())))
         .collect(Collectors.toList());
-      return CreateOrderWithIdAndItemsCommand.of(OrderId.of(orderId), ClientId.of(clientId), itemsToAdd);
+      return CreateOrderWithIdCommand.of(OrderId.of(orderId), ClientId.of(clientId), itemsToAdd);
     }
   }
 

@@ -76,6 +76,7 @@ task integrationTest(type: Test) {
   useJUnitPlatform()
   include '**/*Spec.*'
   include '**/*Test.*'
+  include '**/*IT.*'
   testClassesDirs = sourceSets.integrationTest.output.classesDirs
   classpath = sourceSets.integrationTest.runtimeClasspath
   systemProperty 'spring.profiles.active', 'integration'

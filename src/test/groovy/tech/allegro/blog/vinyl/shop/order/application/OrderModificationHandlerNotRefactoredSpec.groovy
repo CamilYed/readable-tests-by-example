@@ -13,7 +13,7 @@ import tech.allegro.blog.vinyl.shop.order.domain.SampleOrder
 import static tech.allegro.blog.vinyl.shop.order.application.OrderModificationHandler.AddItemsToOrderCommand
 import static tech.allegro.blog.vinyl.shop.order.domain.Order.CanNotModifyPaidOrder
 
-class OrderModificationNotRefactoredSpec extends Specification {
+class OrderModificationHandlerNotRefactoredSpec extends Specification {
 
   OrderRepository orderRepository = Stub()
 

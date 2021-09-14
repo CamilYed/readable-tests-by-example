@@ -24,7 +24,7 @@ public class Order {
   private ClientId clientId;
   private OrderLines orderLines;
   private Delivery delivery;
-  private boolean unpaid;
+  private boolean unpaid; // TODO replace with enum with values DRAFT, PAID etc.
 
   public DomainEvent pay(Money amount, Delivery delivery) {
     if (unpaid) {
@@ -63,8 +63,7 @@ public class Order {
     return OrderPayFailed.of(orderId, ClockProvider.systemClock().instant(), OrderPayFailed.Reason.ALREADY_PAID);
   }
 
-  public static final class CanNotModifyPaidOrder extends RuntimeException {
-  }
+  public static final class CanNotModifyPaidOrder extends RuntimeException { } // TODO replace with event
 
   @Value(staticConstructor = "of")
   static class OrderLines {

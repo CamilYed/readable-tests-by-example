@@ -35,7 +35,6 @@ class OrderPaidEventBuilder {
     }
 
     OrderDomainEvents.OrderPaid build() {
-        ClientId.of(clientId)
         return OrderDomainEvents.OrderPaid.of(
             ClientId.of(clientId),
             OrderId.of(orderId),

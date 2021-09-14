@@ -20,7 +20,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get
 import static org.springframework.http.HttpHeaders.ACCEPT
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE
 
-class AcceptanceNotRefactoredTest extends BaseIntegrationNotRefactoredTest {
+class AcceptanceNotRefactoredSpec extends BaseIntegrationNotRefactoredTest {
 
   @Autowired
   private TestRestTemplate restTemplate

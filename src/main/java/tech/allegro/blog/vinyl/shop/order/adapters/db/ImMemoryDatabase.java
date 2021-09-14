@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-class ImMemoryDatabase implements OrderRepository  {
+class ImMemoryDatabase implements OrderRepository {
 
   private final Map<OrderId, Order> orders = new ConcurrentHashMap<>();
 

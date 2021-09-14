@@ -36,11 +36,11 @@ class OrderPaidEventBuilder {
 
     OrderDomainEvents.OrderPaid build() {
         return OrderDomainEvents.OrderPaid.of(
-            ClientId.of(clientId),
-            OrderId.of(orderId),
-            when,
-            Money.of(amount.value, amount.currency),
-            delivery
+                ClientId.of(clientId),
+                OrderId.of(orderId),
+                when,
+                Money.of(amount.value, amount.currency),
+                delivery
         )
     }
 }

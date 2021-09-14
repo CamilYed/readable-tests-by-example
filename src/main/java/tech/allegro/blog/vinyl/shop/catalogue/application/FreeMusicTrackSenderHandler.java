@@ -1,4 +1,4 @@
-package tech.allegro.blog.vinyl.shop.catalogue.appication;
+package tech.allegro.blog.vinyl.shop.catalogue.application;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;

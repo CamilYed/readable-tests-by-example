@@ -5,10 +5,10 @@ import tech.allegro.blog.vinyl.shop.client.domain.ClientId
 
 class TestFakeFreeMusicTrackSender implements FreeMusicTrackSender {
 
-  List<ClientId> tracksSent = []
+    List<ClientId> tracksSent = []
 
-  @Override
-  void send(ClientId id) {
-    tracksSent.add(id)
-  }
+    @Override
+    void send(ClientId id) {
+        tracksSent.add(id)
+    }
 }

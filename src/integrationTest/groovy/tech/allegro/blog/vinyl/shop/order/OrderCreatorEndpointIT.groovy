@@ -18,13 +18,13 @@ class OrderCreatorEndpointIT extends BaseIntegrationTest implements CreateOrderA
         when:
             def creationResult = create(
                     anOrder()
-                      .withOrderId(ID)
-                      .withClientId(CLIENT_ID)
-                      .withItem(
-                              anItem()
-                                 .withProductId(PRODUCT_ID)
-                                 .withCost(euro("40.00"))
-                      )
+                            .withOrderId(ID)
+                            .withClientId(CLIENT_ID)
+                            .withItem(
+                                    anItem()
+                                            .withProductId(PRODUCT_ID)
+                                            .withCost(euro("40.00"))
+                            )
             )
 
         then:

@@ -7,7 +7,7 @@ public class ClientReputation {
   ClientId clientId;
   Type type;
 
-  public enum Type{
+  public enum Type {
     STANDARD, VIP
   }
 

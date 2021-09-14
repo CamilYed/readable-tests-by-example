@@ -22,11 +22,11 @@ trait CreateOrderAbility implements MakeRequestAbility {
     private ResponseEntity<Map> upsert(CreateOrderWithIdJsonBuilder anOrder) {
         def jsonBody = toJson(anOrder.toMap())
         return makeRequest(
-            url: "/orders/${anOrder.orderId}",
-            method: HttpMethod.PUT,
-            contentType: "application/json",
-            body: jsonBody,
-            accept: "application/json",
+                url: "/orders/${anOrder.orderId}",
+                method: HttpMethod.PUT,
+                contentType: "application/json",
+                body: jsonBody,
+                accept: "application/json",
         )
     }
 }

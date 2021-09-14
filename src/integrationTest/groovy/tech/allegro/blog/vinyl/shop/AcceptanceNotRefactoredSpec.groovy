@@ -22,27 +22,27 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE
 
 class AcceptanceNotRefactoredSpec extends BaseIntegrationNotRefactoredTest {
 
-  @Autowired
-  private TestRestTemplate restTemplate
+    @Autowired
+    private TestRestTemplate restTemplate
 
-  @SpringSpy
-  private DomainEventPublisher domainEventPublisher
+    @SpringSpy
+    private DomainEventPublisher domainEventPublisher
 
-  @SpringSpy
-  private FreeMusicTrackSender freeMusicTrackSender
+    @SpringSpy
+    private FreeMusicTrackSender freeMusicTrackSender
 
-  @Autowired
-  WireMockServer wireMockServer
+    @Autowired
+    WireMockServer wireMockServer
 
-  private PollingConditions pollingConditions = new PollingConditions(timeout: 5)
+    private PollingConditions pollingConditions = new PollingConditions(timeout: 5)
 
-  static final String ORDER_ID_1 = "ORDER_ID_1"
-  static final String CLIENT_ID_1 = "CLIENT_ID_1"
-  static final String PRODUCT_ID_1 = "PRODUCT_ID_001"
+    static final String ORDER_ID_1 = "ORDER_ID_1"
+    static final String CLIENT_ID_1 = "CLIENT_ID_1"
+    static final String PRODUCT_ID_1 = "PRODUCT_ID_001"
 
-  def "shouldn't charge for delivery when the client has a VIP status"() {
-    given: "There is a client order with amount 40 EUR"
-        def body = """{         "orderId" : "${ORDER_ID_1}",
+    def "shouldn't charge for delivery when the client has a VIP status"() {
+        given: "There is a client order with amount 40 EUR"
+            def body = """{         "orderId" : "${ORDER_ID_1}",
                                 "clientId": "${CLIENT_ID_1}",
                                 "items":  [
                                             {
@@ -52,42 +52,42 @@ class AcceptanceNotRefactoredSpec extends BaseIntegrationNotRefactoredTest {
                                           ]
                               }
                           """.toString()
-        def requestEntity = buildHttpEntity(body, "application/json", "application/json")
-        def response = restTemplate.exchange(localUrl("/orders/$ORDER_ID_1"), HttpMethod.PUT, requestEntity, Map)
-    and:
-        assert response.statusCode == HttpStatus.CREATED
+            def requestEntity = buildHttpEntity(body, "application/json", "application/json")
+            def response = restTemplate.exchange(localUrl("/orders/$ORDER_ID_1"), HttpMethod.PUT, requestEntity, Map)
+        and:
+            assert response.statusCode == HttpStatus.CREATED
 
-    and: "The client has a VIP reputation"
-        wireMockServer.stubFor(
-          get("/reputation/${CLIENT_ID_1}")
-            .withHeader(ACCEPT, equalTo(MediaType.APPLICATION_JSON.toString()))
-            .willReturn(aResponse()
-              .withBody("""{
+        and: "The client has a VIP reputation"
+            wireMockServer.stubFor(
+                    get("/reputation/${CLIENT_ID_1}")
+                            .withHeader(ACCEPT, equalTo(MediaType.APPLICATION_JSON.toString()))
+                            .willReturn(aResponse()
+                                    .withBody("""{
                                   "reputation": "VIP",
                                   "clientId": "${CLIENT_ID_1}"
                                  }
                               """)
-              .withHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+                                    .withHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+                            )
             )
-        )
-    when: "When the client pays the order of 40 EUR"
-        body = """{
+        when: "When the client pays the order of 40 EUR"
+            body = """{
                                 "clientId": "${CLIENT_ID_1}",
                                 "cost": { "amount": "40.00", "currency": "EUR" }
                               }
                           """.toString()
-        requestEntity = buildHttpEntity(body, "application/json", "application/json")
-        response = restTemplate.exchange(localUrl("/orders/$ORDER_ID_1/payment"), HttpMethod.PUT, requestEntity, Map)
+            requestEntity = buildHttpEntity(body, "application/json", "application/json")
+            response = restTemplate.exchange(localUrl("/orders/$ORDER_ID_1/payment"), HttpMethod.PUT, requestEntity, Map)
 
-    then: "The order has been paid correctly"
-        response.statusCode == HttpStatus.ACCEPTED
+        then: "The order has been paid correctly"
+            response.statusCode == HttpStatus.ACCEPTED
 
-    and: "The payment system was notified"
-        1 * domainEventPublisher.publish(_ as OrderDomainEvents)
+        and: "The payment system was notified"
+            1 * domainEventPublisher.publish(_ as OrderDomainEvents.OrderPaid)
 
-    and: "The free track music was sent to the client's mailbox"
-        pollingConditions.eventually {
-          1 * freeMusicTrackSender.send(ClientId.of(CLIENT_ID_1))
-        }
-  }
+        and: "The free track music was sent to the client's mailbox"
+            pollingConditions.eventually {
+                1 * freeMusicTrackSender.send(ClientId.of(CLIENT_ID_1))
+            }
+    }
 }

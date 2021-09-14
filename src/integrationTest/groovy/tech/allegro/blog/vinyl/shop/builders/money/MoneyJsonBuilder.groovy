@@ -7,17 +7,17 @@ import groovy.transform.builder.SimpleStrategy
 @CompileStatic
 @Builder(builderStrategy = SimpleStrategy, prefix = "with")
 class MoneyJsonBuilder {
-  String amount
-  String currency
+    String amount
+    String currency
 
-  static MoneyJsonBuilder euro(String  amount) {
-    return new MoneyJsonBuilder(amount: amount, currency: "EUR")
-  }
+    static MoneyJsonBuilder euro(String amount) {
+        return new MoneyJsonBuilder(amount: amount, currency: "EUR")
+    }
 
-  Map toMap() {
-    return [
-      "amount": amount,
-      "currency": currency
-    ]
-  }
+    Map toMap() {
+        return [
+                "amount"  : amount,
+                "currency": currency
+        ]
+    }
 }

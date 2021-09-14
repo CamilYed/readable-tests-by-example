@@ -29,9 +29,9 @@ class CreateOrderWithIdJsonBuilder {
 
     Map toMap() {
         return [
-            "orderId" : orderId,
-            "clientId": clientId,
-            "items"   : items.collect { it.toMap() }
+                "orderId" : orderId,
+                "clientId": clientId,
+                "items"   : items.collect { it.toMap() }
         ]
     }
 
@@ -42,15 +42,15 @@ class CreateOrderWithIdJsonBuilder {
 
         static ItemJsonBuilder anItem() {
             return new ItemJsonBuilder(productId: "productId", cost: [
-                "amount"  : "40.00",
-                "currency": "EUR"
+                    "amount"  : "40.00",
+                    "currency": "EUR"
             ])
         }
 
         Map toMap() {
             return [
-                "productId": productId,
-                "cost"     : cost
+                    "productId": productId,
+                    "cost"     : cost
             ]
         }
     }

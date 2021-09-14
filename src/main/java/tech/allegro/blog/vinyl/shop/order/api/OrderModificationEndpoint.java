@@ -35,6 +35,7 @@ class OrderModificationEndpoint {
   @Data
   static class OrderItemsJson {
     private final List<ItemJson> items;
+
     AddItemsToOrderCommand toCommand(String orderId) {
       final var itemsToAdd = items.stream()
         .map(it -> Item.of(VinylId.of(it.productId), Money.of(it.cost.getAmount(), it.cost.getCurrency())))

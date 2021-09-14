@@ -10,9 +10,13 @@ import java.util.stream.Collectors;
 public class OrderFactory {
 
   public Order createUnpaidOrder(OrderId orderId, ClientId clientId, Map<VinylId, Money> items) {
+    return create(orderId, clientId, items, true);
+  }
+
+  public Order create(OrderId orderId, ClientId clientId, Map<VinylId, Money> items, boolean unpaid) {
     var lines = items.entrySet().stream()
       .map(it -> OrderLine.create(it.getKey(), it.getValue()))
       .collect(Collectors.toList());
-    return new Order(orderId, clientId, Order.OrderLines.of(lines), null, true);
+    return new Order(orderId, clientId, Order.OrderLines.of(lines), null, unpaid);
   }
 }

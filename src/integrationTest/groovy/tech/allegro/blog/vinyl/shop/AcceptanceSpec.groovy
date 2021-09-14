@@ -15,8 +15,8 @@ import static tech.allegro.blog.vinyl.shop.builders.order.OrderPaidEventBuilder.
 import static tech.allegro.blog.vinyl.shop.builders.order.PayOrderJsonBuilder.aPayment
 
 class AcceptanceSpec extends BaseIntegrationTest
-    implements CreateOrderAbility, ClientReputationAbility, OrderPaymentAbility,
-        DomainEventPublisherAssertion, FreeTrackMusicSenderAssertion {
+        implements CreateOrderAbility, ClientReputationAbility, OrderPaymentAbility,
+                DomainEventPublisherAssertion, FreeTrackMusicSenderAssertion {
 
     static final String ORDER_ID = "ORDER_ID_001"
     static final String VIP_CLIENT_ID = "VIP_CLIENT_001"
@@ -65,11 +65,11 @@ class AcceptanceSpec extends BaseIntegrationTest
     def "shouldn't charge for delivery for order value above or fixed amount based on promotion price list"() {
         given:
             thereIs anOrder()
-                .withOrderId(ORDER_ID)
-                .withClientId(VIP_CLIENT_ID)
-                .withItem(anItem()
-                    .withProductId(CZESLAW_NIEMEN_ALBUM_ID)
-                    .withCost(euro("40.00")))
+                    .withOrderId(ORDER_ID)
+                    .withClientId(VIP_CLIENT_ID)
+                    .withItem(anItem()
+                            .withProductId(CZESLAW_NIEMEN_ALBUM_ID)
+                            .withCost(euro("40.00")))
 
         and: "The client is not a VIP"
 

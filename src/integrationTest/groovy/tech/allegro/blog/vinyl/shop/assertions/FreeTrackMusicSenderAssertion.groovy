@@ -18,7 +18,7 @@ trait FreeTrackMusicSenderAssertion {
     void assertThatFreeMusicTrackWasSentToClientOnce(String clientId) {
         pollingConditions.eventually {
             Mockito.verify(freeMusicTrackSender, times(1))
-                .send(ClientId.of(clientId))
+                    .send(ClientId.of(clientId))
         }
     }
 }

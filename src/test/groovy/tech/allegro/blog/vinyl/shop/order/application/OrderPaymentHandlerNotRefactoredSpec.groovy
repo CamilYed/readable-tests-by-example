@@ -1,5 +1,6 @@
 package tech.allegro.blog.vinyl.shop.order.application
 
+import org.apache.groovy.util.Maps
 import spock.lang.Specification
 import spock.lang.Subject
 import tech.allegro.blog.vinyl.shop.catalogue.domain.VinylId
@@ -13,9 +14,9 @@ import tech.allegro.blog.vinyl.shop.delivery.domain.DeliveryCostProvider
 import tech.allegro.blog.vinyl.shop.delivery.domain.DeliveryCostPolicy
 import tech.allegro.blog.vinyl.shop.order.domain.OrderDomainEvents
 import tech.allegro.blog.vinyl.shop.order.domain.Order
+import tech.allegro.blog.vinyl.shop.order.domain.OrderFactory
 import tech.allegro.blog.vinyl.shop.order.domain.OrderId
 import tech.allegro.blog.vinyl.shop.order.domain.OrderRepository
-import tech.allegro.blog.vinyl.shop.order.domain.SampleOrder
 import tech.allegro.blog.vinyl.shop.sales.domain.SpecialPriceProvider
 
 import java.time.Clock
@@ -36,10 +37,11 @@ class OrderPaymentHandlerNotRefactoredSpec extends Specification {
     SpecialPriceProvider specialPriceProvider = Stub()
     DeliveryCostPolicy deliveryCostPolicy = new DefaultDeliveryCostPolicy(currentDeliveryCostProvider, specialPriceProvider)
     DomainEventPublisher domainEventPublisher = Mock()
+    OrderFactory orderFactory = new OrderFactory()
 
     @Subject
     OrderPaymentHandler paymentHandler = new OrderPaymentHandler(
-        orderRepository, clientReputationProvider, deliveryCostPolicy, domainEventPublisher
+            orderRepository, clientReputationProvider, deliveryCostPolicy, domainEventPublisher
     )
 
     final Instant CURRENT_DATE = Instant.parse("2021-11-05T00:00:00.00Z")
@@ -51,8 +53,8 @@ class OrderPaymentHandlerNotRefactoredSpec extends Specification {
     final ClientId CLIENT_ID = ClientId.of("1")
     final VinylId PRODUCT_ID = VinylId.of("1")
     final OrderId ORDER_ID = OrderId.of("1")
-    final Order UNPAID_ORDER_40_EUR = SampleOrder.build(CLIENT_ID, ORDER_ID, _40_EUR, PRODUCT_ID, true)
-    final Order PAID_ORDER = SampleOrder.build(CLIENT_ID, ORDER_ID, _40_EUR, PRODUCT_ID, false)
+    final Order UNPAID_ORDER_40_EUR = orderFactory.create(ORDER_ID, CLIENT_ID, Maps.of(PRODUCT_ID, _40_EUR), true)
+    final Order PAID_ORDER = orderFactory.create(ORDER_ID, CLIENT_ID, Maps.of(PRODUCT_ID, _40_EUR), false)
     final ClientReputation VIP = ClientReputation.vip(CLIENT_ID)
     final ClientReputation NOT_VIP = ClientReputation.notVip(CLIENT_ID)
     final PayOrderCommand PAY_FOR_ORDER_40_EUR = PayOrderCommand.of(CLIENT_ID, ORDER_ID, _40_EUR)

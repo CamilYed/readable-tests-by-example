@@ -25,8 +25,8 @@ import static org.springframework.http.HttpHeaders.ACCEPT
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE
 
 @SpringBootTest(classes = [AppRunner],
-  properties = "application.environment=integration",
-  webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+        properties = "application.environment=integration",
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(initializers = [WireMockInitializer])
 class BaseIntegrationTest extends Specification implements MakeRequestAbility {
 
@@ -47,12 +47,12 @@ class BaseIntegrationTest extends Specification implements MakeRequestAbility {
 
     @NamedVariant
     ResponseEntity<Map> makeRequest(
-        @NamedParam(required = true) String url,
-        @NamedParam(required = true) HttpMethod method,
-        @NamedParam(required = false) String contentType = null,
-        @NamedParam(required = false) Object body = null,
-        @NamedParam(required = false) String accept = null,
-        @NamedParam(required = false) Map<String, String> headers) {
+            @NamedParam(required = true) String url,
+            @NamedParam(required = true) HttpMethod method,
+            @NamedParam(required = false) String contentType = null,
+            @NamedParam(required = false) Object body = null,
+            @NamedParam(required = false) String accept = null,
+            @NamedParam(required = false) Map<String, String> headers) {
         def httpHeaders = buildHeaders(contentType, accept, headers)
         return restTemplate.exchange(localUrl(url), method, new HttpEntity<>(body, httpHeaders), Map)
     }

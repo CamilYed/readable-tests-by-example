@@ -18,8 +18,8 @@ class PayOrderJsonBuilder {
 
     Map toMap() {
         return [
-            "clientId": clientId,
-            "cost"    : cost.toMap()
+                "clientId": clientId,
+                "cost"    : cost.toMap()
         ]
     }
 }

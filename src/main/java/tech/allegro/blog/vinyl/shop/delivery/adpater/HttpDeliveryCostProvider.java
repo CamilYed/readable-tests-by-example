@@ -6,8 +6,7 @@ import tech.allegro.blog.vinyl.shop.common.money.MoneyJson;
 import tech.allegro.blog.vinyl.shop.delivery.domain.DeliveryCostProvider;
 
 @RequiredArgsConstructor
-class HttpCurrentDeliveryCostProvider implements DeliveryCostProvider {
-
+class HttpDeliveryCostProvider implements DeliveryCostProvider {
   private final DeliveryCostServiceApiClient apiClient;
 
   @Override

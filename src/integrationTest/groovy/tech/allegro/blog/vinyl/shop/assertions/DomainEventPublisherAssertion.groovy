@@ -18,7 +18,7 @@ trait DomainEventPublisherAssertion {
     void assertThatNotificationAboutSuccessfulPaymentWasSentOnce(OrderPaidEventBuilder anEventBuilder) {
         pollingConditions.eventually {
             Mockito.verify(domainEventPublisher, times(1))
-                .publish(anEventBuilder.build())
+                    .publish(anEventBuilder.build())
         }
     }
 }

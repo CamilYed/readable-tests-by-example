@@ -9,6 +9,6 @@ class DeliveryCostProviderConfig {
 
   @Bean
   DeliveryCostProvider currentDeliveryCostProvider(DeliveryCostServiceApiClient deliveryCostProviderApiClient) {
-    return new HttpCurrentDeliveryCostProvider(deliveryCostProviderApiClient);
+    return new HttpDeliveryCostProvider(deliveryCostProviderApiClient);
   }
 }

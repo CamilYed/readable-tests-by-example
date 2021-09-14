@@ -17,37 +17,37 @@ trait ClientReputationAbility {
 
     def aClientHasReputationAsVip(String clientId) {
         wireMockServer.stubFor(get(buildUrl(clientId))
-            .willReturn(
-                getReputationResponse()
-                    .withBody(
-                        """
+                .willReturn(
+                        getReputationResponse()
+                                .withBody(
+                                        """
                                 {
                                     "clientId": "${clientId}",
                                     "reputation": "VIP"
                                 }
                               """
-                    )
-            ))
+                                )
+                ))
     }
 
     def aClientHasReputationAsStandard(String clientId) {
         wireMockServer.stubFor(get(buildUrl(clientId))
-            .willReturn(
-                getReputationResponse()
-                    .withBody(
-                        """
+                .willReturn(
+                        getReputationResponse()
+                                .withBody(
+                                        """
                                 {
                                     "clientId": "${clientId}",
                                     "reputation": "STANDARD"
                                 }
                               """
-                    )
-            ))
+                                )
+                ))
     }
 
     private getReputationResponse() {
         return aResponse()
-            .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
+                .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
     }
 
     private static String buildUrl(String clientId) {

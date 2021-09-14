@@ -12,11 +12,11 @@ trait OrderPaymentAbility implements MakeRequestAbility {
     ResponseEntity<Map> makeThe(PayOrderJsonBuilder aPayment) {
         def jsonBody = toJson(aPayment.toMap())
         return makeRequest(
-            url: "/orders/${aPayment.orderId}/payment",
-            method: HttpMethod.PUT,
-            body: jsonBody,
-            contentType: "application/json",
-            accept: "application/json",
+                url: "/orders/${aPayment.orderId}/payment",
+                method: HttpMethod.PUT,
+                body: jsonBody,
+                contentType: "application/json",
+                accept: "application/json",
         )
     }
 }

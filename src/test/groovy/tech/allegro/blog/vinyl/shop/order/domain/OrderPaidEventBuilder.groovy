@@ -3,6 +3,7 @@ package tech.allegro.blog.vinyl.shop.order.domain
 import groovy.transform.CompileStatic
 import groovy.transform.builder.Builder
 import groovy.transform.builder.SimpleStrategy
+import tech.allegro.blog.vinyl.shop.TestData
 import tech.allegro.blog.vinyl.shop.client.domain.ClientId
 import tech.allegro.blog.vinyl.shop.common.money.Money
 import tech.allegro.blog.vinyl.shop.delivery.domain.Delivery
@@ -12,10 +13,10 @@ import java.time.Instant
 @CompileStatic
 @Builder(builderStrategy = SimpleStrategy, prefix = "with")
 class OrderPaidEventBuilder {
-    String clientId = "CLIENT_ID_001"
-    String orderId = "ORDER_ID_001"
-    Instant when = Instant.parse("2021-11-05T00:00:00.00Z")
-    Money amount = Money.of("40.00", "EUR")
+    String clientId = TestData.CLIENT_ID
+    String orderId = TestData.ORDER_ID
+    Instant when = TestData.DEFAULT_CURRENT_DATE
+    Money amount = TestData._40_EUR
     Delivery delivery
 
     static OrderPaidEventBuilder anOrderPaidEventWithFreeDelivery() {
@@ -26,8 +27,8 @@ class OrderPaidEventBuilder {
         return new OrderPaidEventBuilder()
     }
 
-    OrderPaidEventBuilder withAmountInEuro(String anAmount) {
-        amount = Money.of(anAmount, "EUR")
+    OrderPaidEventBuilder withAmountInEuro(BigDecimal anAmount) {
+        amount = Money.of(anAmount, TestData.EURO_CURRENCY)
         return this
     }
 

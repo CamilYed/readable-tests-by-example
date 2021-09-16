@@ -52,7 +52,7 @@ class AcceptanceSpec extends BaseIntegrationTest
                 anOrderPaidEvent()
                     .withClientId(VIP_CLIENT_ID)
                     .withOrderId(ORDER_ID)
-                    .withAmountInEuro("40.00")
+                    .withAmountInEuro(40.00)
                     .withFreeDelivery()
                     .withWhen(CURRENT_DATE)
             )

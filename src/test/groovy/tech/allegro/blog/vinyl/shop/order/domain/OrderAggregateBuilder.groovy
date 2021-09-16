@@ -1,23 +1,24 @@
 package tech.allegro.blog.vinyl.shop.order.domain
 
 import groovy.transform.CompileStatic
-import groovy.transform.Immutable
 import groovy.transform.builder.Builder
 import groovy.transform.builder.SimpleStrategy
+import tech.allegro.blog.vinyl.shop.TestData
 import tech.allegro.blog.vinyl.shop.catalogue.domain.VinylId
 import tech.allegro.blog.vinyl.shop.client.domain.ClientId
 import tech.allegro.blog.vinyl.shop.common.money.Money
+import tech.allegro.blog.vinyl.shop.common.money.MoneyBuilder
 import tech.allegro.blog.vinyl.shop.delivery.domain.Delivery
 
 @CompileStatic
 @Builder(builderStrategy = SimpleStrategy, prefix = "with")
 class OrderAggregateBuilder {
-    String id
-    String clientId
+    String id = TestData.ORDER_ID
+    String clientId = TestData.CLIENT_ID
     boolean unpaid = false
     BigDecimal deliveryCost = 40.00
-    String currency = "EUR"
-    List<Item> items = [new Item(productId: VinylId.of("PRODUCT_001"), price: 40.00)]
+    String currency = TestData.EURO_CURRENCY_CODE
+    List<Item> items = [new Item(TestData.VINYL_CZESLAW_NIEMEN_ID, TestData._40_EUR)]
 
     static OrderAggregateBuilder anOrder() {
         return new OrderAggregateBuilder()
@@ -27,17 +28,26 @@ class OrderAggregateBuilder {
         return new OrderAggregateBuilder().withUnpaid(true)
     }
 
-    @Immutable
+    OrderAggregateBuilder withAmount(MoneyBuilder amount) {
+        items = [new Item(TestData.VINYL_CZESLAW_NIEMEN_ID, amount.build())]
+        return this
+    }
+
     static class Item {
-        String productId
-        BigDecimal price
+        VinylId productId
+        Money price
+
+        Item(VinylId productId, Money price) {
+            this.productId = productId
+            this.price = price
+        }
     }
 
     Order build() {
         List<OrderLine> lines = items.collect {
             OrderLine.of(
-                    VinylId.of(it.productId),
-                    toMoney(it.price, currency)
+                    it.productId,
+                    it.price
             )
         }
         return new Order(

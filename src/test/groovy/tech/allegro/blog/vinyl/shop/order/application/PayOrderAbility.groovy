@@ -20,20 +20,24 @@ trait PayOrderAbility implements
     @Subject
     private OrderPaymentHandler orderPaymentHandler
 
-    void setup() {
+    def setup() {
         setDefaultCurrentTime()
         orderPaymentHandler = new OrderPaymentHandler(orderRepository, clientReputationProvider, deliveryCostPolicy, domainEventPublisher)
     }
 
-    void pay(PayOrderCommandBuilder payOrderCommand) {
+    void makeThe(PayOrderCommandBuilder payOrderCommand) {
         orderPaymentHandler.handle(payOrderCommand.build())
     }
-    
+
     void assertThatClientHasNotPaidForDelivery() {
-        assertThatOrderPaidEventWasSentOnce(anOrderPaidEventWithFreeDelivery())
+        assertThatOrderWasPaid(anOrderPaidEventWithFreeDelivery())
     }
 
-    void assertThatOrderPaidEventWasSentOnce(OrderPaidEventBuilder anEvent) {
+    void assertThatOrderWasPaid(OrderPaidEventBuilder anEvent) {
+        assertThatOrderPaidEventWasSentOnce(anEvent)
+    }
+
+    private void assertThatOrderPaidEventWasSentOnce(OrderPaidEventBuilder anEvent) {
         assertThatEventWasPublishedOnce(anEvent.build())
     }
 }

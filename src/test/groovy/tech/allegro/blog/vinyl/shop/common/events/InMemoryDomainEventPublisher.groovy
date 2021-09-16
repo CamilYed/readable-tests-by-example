@@ -19,4 +19,8 @@ class InMemoryDomainEventPublisher implements DomainEventPublisher {
     boolean contains(DomainEvent domainEvent) {
         return published.contains(domainEvent)
     }
+
+    DomainEvent first() {
+        return published.first()
+    }
 }

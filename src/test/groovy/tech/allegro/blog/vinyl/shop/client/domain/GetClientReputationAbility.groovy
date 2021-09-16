@@ -1,15 +1,26 @@
 package tech.allegro.blog.vinyl.shop.client.domain
 
+import tech.allegro.blog.vinyl.shop.TestData
+
 trait GetClientReputationAbility {
 
-    final ClientReputationProvider clientReputationProvider = new InMemoryClientReputationProvider()
+    static final ClientReputationProvider clientReputationProvider = new InMemoryClientReputationProvider()
+
+    void clientIsVip() {
+        clientWithIdIsVip(TestData.CLIENT_ID)
+    }
+
+    void clientIsNotVip() {
+        clientWithIdIsStandard(TestData.CLIENT_ID)
+    }
 
     void clientWithIdIsVip(String id) {
         ClientId clientId = ClientId.of(id)
         clientReputationProvider.setReputation([(clientId): ClientReputation.of(clientId, ClientReputation.Type.VIP)])
     }
 
-    void clientWithIdIsStandard(ClientId clientId) {
+    void clientWithIdIsStandard(String id) {
+        ClientId clientId = ClientId.of(id)
         clientReputationProvider.setReputation([(clientId): ClientReputation.of(clientId, ClientReputation.Type.STANDARD)])
     }
 }

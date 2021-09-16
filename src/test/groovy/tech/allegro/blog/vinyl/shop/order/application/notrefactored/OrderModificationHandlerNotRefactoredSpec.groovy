@@ -1,4 +1,4 @@
-package tech.allegro.blog.vinyl.shop.order.application
+package tech.allegro.blog.vinyl.shop.order.application.notrefactored
 
 import org.apache.groovy.util.Maps
 import spock.lang.Specification
@@ -6,6 +6,7 @@ import spock.lang.Subject
 import tech.allegro.blog.vinyl.shop.catalogue.domain.VinylId
 import tech.allegro.blog.vinyl.shop.client.domain.ClientId
 import tech.allegro.blog.vinyl.shop.common.money.Money
+import tech.allegro.blog.vinyl.shop.order.application.OrderModificationHandler
 import tech.allegro.blog.vinyl.shop.order.domain.Order
 import tech.allegro.blog.vinyl.shop.order.domain.OrderFactory
 import tech.allegro.blog.vinyl.shop.order.domain.OrderId

@@ -11,7 +11,7 @@ import static tech.allegro.blog.vinyl.shop.assertions.PaymentResultAssertion.ass
 import static tech.allegro.blog.vinyl.shop.builders.money.MoneyJsonBuilder.euro
 import static tech.allegro.blog.vinyl.shop.builders.order.CreateOrderWithIdJsonBuilder.ItemJsonBuilder.anItem
 import static tech.allegro.blog.vinyl.shop.builders.order.CreateOrderWithIdJsonBuilder.anOrder
-import static tech.allegro.blog.vinyl.shop.builders.order.OrderPaidEventBuilder.anOrderPaidEvent
+import static tech.allegro.blog.vinyl.shop.order.domain.OrderPaidEventBuilder.anOrderPaidEvent
 import static tech.allegro.blog.vinyl.shop.builders.order.PayOrderJsonBuilder.aPayment
 
 class AcceptanceSpec extends BaseIntegrationTest

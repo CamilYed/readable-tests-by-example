@@ -1,4 +1,4 @@
-package tech.allegro.blog.vinyl.shop.common.commands;
+package tech.allegro.blog.vinyl.shop.common.result;
 
 
 import lombok.AccessLevel;

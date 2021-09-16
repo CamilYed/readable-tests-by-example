@@ -1,5 +1,6 @@
 package tech.allegro.blog.vinyl.shop.common.time;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
 
@@ -7,7 +8,7 @@ import java.time.Clock;
 
 @AllArgsConstructor
 public class ClockProvider {
-  @Setter
+  @Setter(AccessLevel.PRIVATE)
   private Clock clock;
 
   private static final ClockProvider INSTANCE = new ClockProvider(Clock.systemDefaultZone());

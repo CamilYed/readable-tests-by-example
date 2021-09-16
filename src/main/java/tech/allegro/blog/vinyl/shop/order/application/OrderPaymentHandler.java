@@ -35,7 +35,7 @@ public class OrderPaymentHandler {
   }
 
   @Value(staticConstructor = "of")
-  static public class PayOrderCommand {
+  public static class PayOrderCommand {
     ClientId clientId;
     OrderId orderId;
     Money amount;

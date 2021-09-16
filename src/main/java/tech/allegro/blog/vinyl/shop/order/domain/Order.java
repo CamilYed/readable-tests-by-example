@@ -40,11 +40,11 @@ public class Order {
     }
 
     public void addItem(VinylId productId, Money price) {
-        if (orderLines == null)
+        if (orderLines == null) //TODO remove
             orderLines = OrderLines.empty();
         if (unpaid) {
             orderLines.add(productId, price);
-        } else throw new CanNotModifyPaidOrder();
+        } else throw new CanNotModifyPaidOrder(); // else return orderAlreadyPaid();
     }
 
     public Money orderValue() {

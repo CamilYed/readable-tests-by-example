@@ -1,4 +1,4 @@
-package tech.allegro.blog.vinyl.shop.order.application
+package tech.allegro.blog.vinyl.shop.order.application.notrefactored
 
 import org.apache.groovy.util.Maps
 import spock.lang.Specification
@@ -10,10 +10,11 @@ import tech.allegro.blog.vinyl.shop.client.domain.ClientReputationProvider
 import tech.allegro.blog.vinyl.shop.common.events.DomainEventPublisher
 import tech.allegro.blog.vinyl.shop.common.money.Money
 import tech.allegro.blog.vinyl.shop.common.time.ClockProvider
-import tech.allegro.blog.vinyl.shop.delivery.domain.DeliveryCostProvider
 import tech.allegro.blog.vinyl.shop.delivery.domain.DeliveryCostPolicy
-import tech.allegro.blog.vinyl.shop.order.domain.OrderDomainEvents
+import tech.allegro.blog.vinyl.shop.delivery.domain.DeliveryCostProvider
+import tech.allegro.blog.vinyl.shop.order.application.OrderPaymentHandler
 import tech.allegro.blog.vinyl.shop.order.domain.Order
+import tech.allegro.blog.vinyl.shop.order.domain.OrderDomainEvents
 import tech.allegro.blog.vinyl.shop.order.domain.OrderFactory
 import tech.allegro.blog.vinyl.shop.order.domain.OrderId
 import tech.allegro.blog.vinyl.shop.order.domain.OrderRepository
@@ -23,9 +24,9 @@ import java.time.Clock
 import java.time.Instant
 import java.time.ZoneId
 
-import static tech.allegro.blog.vinyl.shop.order.domain.OrderDomainEvents.OrderPaid
 import static tech.allegro.blog.vinyl.shop.delivery.domain.DeliveryCostPolicy.DefaultDeliveryCostPolicy
 import static tech.allegro.blog.vinyl.shop.order.application.OrderPaymentHandler.PayOrderCommand
+import static tech.allegro.blog.vinyl.shop.order.domain.OrderDomainEvents.OrderPaid
 import static tech.allegro.blog.vinyl.shop.order.domain.OrderDomainEvents.OrderPayFailed.Reason.ALREADY_PAID
 import static tech.allegro.blog.vinyl.shop.order.domain.OrderDomainEvents.OrderPayFailed.Reason.AMOUNT_IS_DIFFERENT
 

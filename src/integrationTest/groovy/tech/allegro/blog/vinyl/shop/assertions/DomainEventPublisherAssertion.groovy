@@ -3,7 +3,7 @@ package tech.allegro.blog.vinyl.shop.assertions
 import org.mockito.Mockito
 import org.springframework.boot.test.mock.mockito.SpyBean
 import spock.util.concurrent.PollingConditions
-import tech.allegro.blog.vinyl.shop.builders.order.OrderPaidEventBuilder
+import tech.allegro.blog.vinyl.shop.order.domain.OrderPaidEventBuilder
 import tech.allegro.blog.vinyl.shop.common.events.DomainEventPublisher
 
 import static org.mockito.Mockito.times

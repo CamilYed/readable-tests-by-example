@@ -1,10 +1,10 @@
-package tech.allegro.blog.vinyl.shop.sales.domain
+package tech.allegro.blog.vinyl.shop.delivery.domain
 
-import groovy.transform.PackageScope
+
 import tech.allegro.blog.vinyl.shop.TestData
 import tech.allegro.blog.vinyl.shop.common.money.Money
+import tech.allegro.blog.vinyl.shop.sales.domain.SpecialPriceProvider
 
-@PackageScope
 class InMemorySpecialPriceProvider implements SpecialPriceProvider {
 
     private Money mov = Money.of(80.00, TestData.EURO_CURRENCY)

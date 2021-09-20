@@ -1,10 +1,8 @@
 package tech.allegro.blog.vinyl.shop.client.domain
 
-import groovy.transform.PackageScope
 
 import java.util.concurrent.ConcurrentHashMap
 
-@PackageScope
 class InMemoryClientReputationProvider implements ClientReputationProvider {
 
     private final Map<ClientId, ClientReputation> reputations = new ConcurrentHashMap<>()

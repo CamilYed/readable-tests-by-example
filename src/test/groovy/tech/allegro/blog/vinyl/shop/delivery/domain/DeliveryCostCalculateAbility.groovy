@@ -1,20 +1,24 @@
 package tech.allegro.blog.vinyl.shop.delivery.domain
 
-import tech.allegro.blog.vinyl.shop.client.domain.ClientReputation
-import tech.allegro.blog.vinyl.shop.common.money.Money
+
 import tech.allegro.blog.vinyl.shop.common.money.MoneyBuilder
-import tech.allegro.blog.vinyl.shop.sales.domain.GetMinimumOrderDeliveryValueForFreeDeliveryAbility
+import tech.allegro.blog.vinyl.shop.sales.domain.SpecialPriceProvider
 
-trait DeliveryCostCalculateAbility implements GetMinimumOrderDeliveryValueForFreeDeliveryAbility {
+trait DeliveryCostCalculateAbility {
 
-    static final DeliveryCostProvider deliveryCostProvider = new InMemoryDeliveryCostProvider()
-    static final DeliveryCostPolicy deliveryCostPolicy = new DeliveryCostPolicy.DefaultDeliveryCostPolicy(deliveryCostProvider, specialPriceProvider)
+    final DeliveryCostProvider deliveryCostProvider = new InMemoryDeliveryCostProvider()
+    final SpecialPriceProvider specialPriceProvider = new InMemorySpecialPriceProvider()
+    final DeliveryCostPolicy deliveryCostPolicy = new DeliveryCostPolicy.DefaultDeliveryCostPolicy(deliveryCostProvider, specialPriceProvider)
 
     void currentDeliveryCostIs(MoneyBuilder cost) {
         deliveryCostProvider.set(cost.build())
     }
 
-    Delivery calculate(Money orderValue, ClientReputation clientReputation) {
-        return deliveryCostPolicy.calculate(orderValue, clientReputation)
+    void minimumOrderValueForFreeDeliveryIs(MoneyBuilder anAmount) {
+        specialPriceProvider.set(anAmount.build())
+    }
+
+    void externalCourierSystemIsUnavailable() {
+        deliveryCostProvider.simulateUnavailability()
     }
 }

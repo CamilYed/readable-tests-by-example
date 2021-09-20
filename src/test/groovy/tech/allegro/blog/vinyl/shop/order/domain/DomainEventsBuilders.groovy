@@ -10,6 +10,8 @@ import tech.allegro.blog.vinyl.shop.delivery.domain.Delivery
 
 import java.time.Instant
 
+import static tech.allegro.blog.vinyl.shop.order.domain.OrderDomainEvents.OrderPayFailed.Reason.valueOf
+
 @CompileStatic
 @Builder(builderStrategy = SimpleStrategy, prefix = "with")
 class OrderPaidEventBuilder {
@@ -44,6 +46,30 @@ class OrderPaidEventBuilder {
                 when,
                 Money.of(amount.value, amount.currency),
                 delivery
+        )
+    }
+}
+
+@CompileStatic
+@Builder(builderStrategy = SimpleStrategy, prefix = "with")
+class OrderPayFailedEventBuilder {
+    String orderId = TestData.ORDER_ID
+    Instant when = TestData.DEFAULT_CURRENT_DATE
+    String reason
+
+    static OrderPayFailedEventBuilder anOrderAlreadyPaid() {
+        return new OrderPayFailedEventBuilder().withReason("ALREADY_PAID")
+    }
+
+    static OrderPayFailedEventBuilder aDifferentAmount() {
+        return new OrderPayFailedEventBuilder().withReason("AMOUNT_IS_DIFFERENT")
+    }
+
+    OrderDomainEvents.OrderPayFailed build() {
+        return OrderDomainEvents.OrderPayFailed.of(
+                OrderId.of(orderId),
+                when,
+                valueOf(reason)
         )
     }
 }

@@ -3,7 +3,7 @@ package tech.allegro.blog.vinyl.shop.delivery.domain;
 import lombok.Value;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
 
-@Value
+@Value(staticConstructor = "of")
 public class Delivery {
   Money cost;
 

@@ -20,7 +20,7 @@ class OrderAggregateBuilder {
     String currency = TestData.EURO_CURRENCY_CODE
     List<Item> items = [new Item(TestData.VINYL_CZESLAW_NIEMEN_ID, TestData._40_EUR)]
 
-    static OrderAggregateBuilder anOrder() {
+    static OrderAggregateBuilder aPaidOrder() {
         return new OrderAggregateBuilder()
     }
 
@@ -54,7 +54,7 @@ class OrderAggregateBuilder {
                 OrderId.of(id),
                 ClientId.of(clientId),
                 Order.OrderLines.of(lines),
-                new Delivery(toMoney(deliveryCost, currency)),
+                Delivery.of(toMoney(deliveryCost, currency)),
                 unpaid
         )
     }

@@ -1,8 +1,5 @@
 package tech.allegro.blog.vinyl.shop.common.events
 
-import groovy.transform.PackageScope
-
-@PackageScope
 class InMemoryDomainEventPublisher implements DomainEventPublisher {
 
     private final List<DomainEvent> published = []
@@ -18,9 +15,5 @@ class InMemoryDomainEventPublisher implements DomainEventPublisher {
 
     boolean contains(DomainEvent domainEvent) {
         return published.contains(domainEvent)
-    }
-
-    DomainEvent first() {
-        return published.first()
     }
 }

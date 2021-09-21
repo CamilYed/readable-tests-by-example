@@ -18,7 +18,6 @@ import tech.allegro.blog.vinyl.shop.order.domain.Values.OrderLines;
 import static java.util.stream.Collectors.toList;
 import static lombok.AccessLevel.PACKAGE;
 import static tech.allegro.blog.vinyl.shop.order.domain.OrderDomainEvents.OrderPayFailed.Reason;
-import static tech.allegro.blog.vinyl.shop.order.domain.OrderDomainEvents.OrderPayFailed.of;
 
 @AllArgsConstructor(access = PACKAGE)
 public class Order {
@@ -73,11 +72,11 @@ public class Order {
   }
 
   private OrderPayFailed amountToBePaidIsDifferent() {
-    return of(orderId, ClockProvider.systemClock().instant(), Reason.AMOUNT_IS_DIFFERENT);
+    return OrderPayFailed.of(orderId, ClockProvider.systemClock().instant(), Reason.AMOUNT_IS_DIFFERENT);
   }
 
   private OrderPayFailed orderAlreadyPaid() {
-    return of(orderId, ClockProvider.systemClock().instant(), Reason.ALREADY_PAID);
+    return OrderPayFailed.of(orderId, ClockProvider.systemClock().instant(), Reason.ALREADY_PAID);
   }
 }
 

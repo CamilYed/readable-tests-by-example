@@ -10,8 +10,8 @@ import tech.allegro.blog.vinyl.shop.common.events.DomainEventPublisher;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
 import tech.allegro.blog.vinyl.shop.delivery.domain.Delivery;
 import tech.allegro.blog.vinyl.shop.delivery.domain.DeliveryCostPolicy;
-import tech.allegro.blog.vinyl.shop.order.domain.OrderId;
 import tech.allegro.blog.vinyl.shop.order.domain.OrderRepository;
+import tech.allegro.blog.vinyl.shop.order.domain.Values.OrderId;
 
 @Slf4j
 @RequiredArgsConstructor

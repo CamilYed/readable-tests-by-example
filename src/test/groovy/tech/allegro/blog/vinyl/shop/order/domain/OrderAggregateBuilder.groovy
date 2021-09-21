@@ -10,6 +10,8 @@ import tech.allegro.blog.vinyl.shop.common.money.Money
 import tech.allegro.blog.vinyl.shop.common.money.MoneyBuilder
 import tech.allegro.blog.vinyl.shop.delivery.domain.Delivery
 
+import static tech.allegro.blog.vinyl.shop.order.domain.Values.*
+
 @CompileStatic
 @Builder(builderStrategy = SimpleStrategy, prefix = "with")
 class OrderAggregateBuilder {
@@ -53,7 +55,7 @@ class OrderAggregateBuilder {
         return new Order(
                 OrderId.of(id),
                 ClientId.of(clientId),
-                Order.OrderLines.of(lines),
+                OrderLines.of(lines),
                 Delivery.of(toMoney(deliveryCost, currency)),
                 unpaid
         )

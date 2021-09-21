@@ -6,9 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import tech.allegro.blog.vinyl.shop.catalogue.domain.VinylId;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
 import tech.allegro.blog.vinyl.shop.order.domain.Order;
-import tech.allegro.blog.vinyl.shop.order.domain.Order.CanNotModifyPaidOrder;
-import tech.allegro.blog.vinyl.shop.order.domain.OrderId;
 import tech.allegro.blog.vinyl.shop.order.domain.OrderRepository;
+import tech.allegro.blog.vinyl.shop.order.domain.Values.OrderId;
 
 import java.util.List;
 
@@ -30,7 +29,7 @@ public class OrderModificationHandler {
   private void tryAddItemToOrder(Order order, Item item) {
     try {
       order.addItem(item.productId, item.price);
-    } catch (CanNotModifyPaidOrder e) {
+    } catch (Order.CanNotModifyPaidOrder e) {
       log.error("Can not modify paid order", e);
       throw e;
     }

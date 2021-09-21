@@ -1,17 +1,21 @@
 package tech.allegro.blog.vinyl.shop.builders.order
 
 
-import groovy.transform.CompileStatic
 import groovy.transform.builder.Builder
 import groovy.transform.builder.SimpleStrategy
+import tech.allegro.blog.vinyl.shop.TestData
 import tech.allegro.blog.vinyl.shop.builders.money.MoneyJsonBuilder
 
-@CompileStatic
+import static tech.allegro.blog.vinyl.shop.builders.money.MoneyJsonBuilder.euro
+import static tech.allegro.blog.vinyl.shop.builders.order.CreateOrderWithIdJsonBuilder.ItemJsonBuilder.anItem
+
 @Builder(builderStrategy = SimpleStrategy, prefix = "with")
 class CreateOrderWithIdJsonBuilder {
-    String orderId = "orderId"
-    String clientId = "clientId"
-    List<ItemJsonBuilder> items = []
+    String orderId = TestData.ORDER_ID
+    String clientId = TestData.CLIENT_ID
+    List<ItemJsonBuilder> items = [anItem()
+                                           .withProductId(TestData.CZESLAW_NIEMEN_ALBUM_ID)
+                                           .withCost(euro(40.00))]
 
     static CreateOrderWithIdJsonBuilder anOrder() {
         return new CreateOrderWithIdJsonBuilder()
@@ -37,7 +41,7 @@ class CreateOrderWithIdJsonBuilder {
 
     @Builder(builderStrategy = SimpleStrategy, prefix = "with")
     static class ItemJsonBuilder {
-        String productId
+        String productId = TestData.CZESLAW_NIEMEN_ALBUM_ID
         MoneyJsonBuilder cost
 
         static ItemJsonBuilder anItem() {

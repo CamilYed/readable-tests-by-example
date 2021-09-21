@@ -5,7 +5,7 @@ trait AddOrderAbility {
     final OrderRepository orderRepository = new InMemoryOrderRepository()
 
     void thereIs(OrderAggregateBuilder anOrder) {
-        orderRepository.save(anOrder.build())
+        orderRepository.save()
     }
 
     void clear() {

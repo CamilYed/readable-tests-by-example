@@ -6,10 +6,11 @@ import tech.allegro.blog.vinyl.shop.ability.MakeRequestAbility
 import tech.allegro.blog.vinyl.shop.builders.order.PayOrderJsonBuilder
 
 import static groovy.json.JsonOutput.toJson
+import static tech.allegro.blog.vinyl.shop.builders.order.PayOrderJsonBuilder.aPayment
 
 trait OrderPaymentAbility implements MakeRequestAbility {
 
-    ResponseEntity<Map> makeThe(PayOrderJsonBuilder aPayment) {
+    ResponseEntity<Map> makeThe(PayOrderJsonBuilder aPayment = aPayment()) {
         def jsonBody = toJson(aPayment.toMap())
         return makeRequest(
                 url: "/orders/${aPayment.orderId}/payment",

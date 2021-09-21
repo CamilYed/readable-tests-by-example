@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpHeaders
+import tech.allegro.blog.vinyl.shop.TestData
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import static com.github.tomakehurst.wiremock.client.WireMock.get
@@ -15,7 +16,7 @@ trait ClientReputationAbility {
 
     private static final String CLIENT_REPUTATION_SERVICE_URL = "/reputation"
 
-    def aClientHasReputationAsVip(String clientId) {
+    def clientIsVip(String clientId = TestData.CLIENT_ID) {
         wireMockServer.stubFor(get(buildUrl(clientId))
                 .willReturn(
                         getReputationResponse()
@@ -30,7 +31,7 @@ trait ClientReputationAbility {
                 ))
     }
 
-    def aClientHasReputationAsStandard(String clientId) {
+    def clientIsNotVip(String clientId = TestData.CLIENT_ID) {
         wireMockServer.stubFor(get(buildUrl(clientId))
                 .willReturn(
                         getReputationResponse()

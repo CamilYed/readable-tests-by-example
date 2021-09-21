@@ -6,8 +6,8 @@ import tech.allegro.blog.vinyl.shop.catalogue.domain.VinylId;
 import tech.allegro.blog.vinyl.shop.client.domain.ClientId;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
 import tech.allegro.blog.vinyl.shop.order.domain.OrderFactory;
-import tech.allegro.blog.vinyl.shop.order.domain.OrderId;
 import tech.allegro.blog.vinyl.shop.order.domain.OrderRepository;
+import tech.allegro.blog.vinyl.shop.order.domain.Values.OrderId;
 
 import java.util.List;
 import java.util.Map;

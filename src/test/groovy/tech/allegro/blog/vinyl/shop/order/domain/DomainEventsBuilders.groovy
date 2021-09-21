@@ -11,6 +11,7 @@ import tech.allegro.blog.vinyl.shop.delivery.domain.Delivery
 import java.time.Instant
 
 import static tech.allegro.blog.vinyl.shop.order.domain.OrderDomainEvents.OrderPayFailed.Reason.valueOf
+import static tech.allegro.blog.vinyl.shop.order.domain.Values.*
 
 @CompileStatic
 @Builder(builderStrategy = SimpleStrategy, prefix = "with")
@@ -44,7 +45,7 @@ class OrderPaidEventBuilder {
                 ClientId.of(clientId),
                 OrderId.of(orderId),
                 when,
-                Money.of(amount.value, amount.currency),
+                amount,
                 delivery
         )
     }

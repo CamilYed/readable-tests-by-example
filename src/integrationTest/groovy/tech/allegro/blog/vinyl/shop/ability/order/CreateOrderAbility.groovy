@@ -10,7 +10,7 @@ import static groovy.json.JsonOutput.toJson
 
 trait CreateOrderAbility implements MakeRequestAbility {
 
-    void thereIs(CreateOrderWithIdJsonBuilder anOrder) {
+    void thereIsUnpaid(CreateOrderWithIdJsonBuilder anOrder) {
         def response = upsert(anOrder)
         assert response.statusCode == HttpStatus.CREATED
     }

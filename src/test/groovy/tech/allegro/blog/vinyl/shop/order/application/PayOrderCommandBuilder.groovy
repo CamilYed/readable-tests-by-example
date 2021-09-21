@@ -7,7 +7,8 @@ import tech.allegro.blog.vinyl.shop.TestData
 import tech.allegro.blog.vinyl.shop.client.domain.ClientId
 import tech.allegro.blog.vinyl.shop.common.money.Money
 import tech.allegro.blog.vinyl.shop.common.money.MoneyBuilder
-import tech.allegro.blog.vinyl.shop.order.domain.OrderId
+
+import static tech.allegro.blog.vinyl.shop.order.domain.Values.OrderId
 
 @CompileStatic
 @Builder(builderStrategy = SimpleStrategy, prefix = "with")

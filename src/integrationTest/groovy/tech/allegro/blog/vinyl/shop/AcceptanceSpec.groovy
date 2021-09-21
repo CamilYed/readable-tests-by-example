@@ -18,36 +18,22 @@ class AcceptanceSpec extends BaseIntegrationTest
         implements CreateOrderAbility, ClientReputationAbility, OrderPaymentAbility,
                 DomainEventPublisherAssertion, FreeTrackMusicSenderAssertion {
 
-    static final String ORDER_ID = "ORDER_ID_001"
-    static final String VIP_CLIENT_ID = "VIP_CLIENT_001"
-    static final String CZESLAW_NIEMEN_ALBUM_ID = "PRODUCT_ID_001"
-
     // @formatter:off
     def "shouldn't charge for delivery when the client has a VIP reputation"() {
         given:
-            thereIs(
-                anOrder()
-                    .withOrderId(ORDER_ID)
-                    .withClientId(VIP_CLIENT_ID)
-                    .withItem(anItem()
-                        .withProductId(CZESLAW_NIEMEN_ALBUM_ID)
-                        .withCost(euro("40.00")))
-            )
+            thereIsUnpaid(anOrder())
 
         and:
-            aClientHasReputationAsVip(VIP_CLIENT_ID)
+            clientIsVip()
 
         when:
-            def payment = makeThe(aPayment()
-                                    .withOrderId(ORDER_ID)
-                                    .withClientId(VIP_CLIENT_ID)
-                                    .withCost(euro("40.00"))
-            )
+            // TODO sprawdzic czy to porpawnie jezykowo (dokonac platnosc)
+            def payment = makeThe(aPayment())
 
         then:
             assertThatPayment(payment).madeSuccessfully()
 
-        and:
+        and: // TODO remove from acceptance spec
             assertThatNotificationAboutSuccessfulPaymentWasSentOnce(
                 anOrderPaidEvent()
                     .withClientId(VIP_CLIENT_ID)
@@ -59,12 +45,14 @@ class AcceptanceSpec extends BaseIntegrationTest
 
         and:
             assertThatFreeMusicTrackWasSentToClientOnce(VIP_CLIENT_ID)
+
+        // when i go to /order list endpoint i see my order
     }
     // @formatter:on
 
     def "shouldn't charge for delivery for order value above or fixed amount based on promotion price list"() {
         given:
-            thereIs anOrder()
+            thereIsUnpaid anOrder()
                     .withOrderId(ORDER_ID)
                     .withClientId(VIP_CLIENT_ID)
                     .withItem(anItem()

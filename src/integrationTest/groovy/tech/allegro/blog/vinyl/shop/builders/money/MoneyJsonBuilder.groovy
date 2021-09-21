@@ -7,10 +7,10 @@ import groovy.transform.builder.SimpleStrategy
 @CompileStatic
 @Builder(builderStrategy = SimpleStrategy, prefix = "with")
 class MoneyJsonBuilder {
-    String amount
+    Double amount
     String currency
 
-    static MoneyJsonBuilder euro(String amount) {
+    static MoneyJsonBuilder euro(Double amount) {
         return new MoneyJsonBuilder(amount: amount, currency: "EUR")
     }
 

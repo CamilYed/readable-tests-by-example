@@ -9,6 +9,6 @@ class DbConfig {
 
   @Bean
   OrderRepository orderRepository() {
-    return new ImMemoryDatabase();
+    return new InMemoryDatabase();
   }
 }

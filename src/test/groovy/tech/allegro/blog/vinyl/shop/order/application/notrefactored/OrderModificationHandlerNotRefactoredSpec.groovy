@@ -9,11 +9,11 @@ import tech.allegro.blog.vinyl.shop.common.money.Money
 import tech.allegro.blog.vinyl.shop.order.application.OrderModificationHandler
 import tech.allegro.blog.vinyl.shop.order.domain.Order
 import tech.allegro.blog.vinyl.shop.order.domain.OrderFactory
-import tech.allegro.blog.vinyl.shop.order.domain.OrderId
+
 import tech.allegro.blog.vinyl.shop.order.domain.OrderRepository
 
 import static tech.allegro.blog.vinyl.shop.order.application.OrderModificationHandler.AddItemsToOrderCommand
-import static tech.allegro.blog.vinyl.shop.order.domain.Order.CanNotModifyPaidOrder
+import static tech.allegro.blog.vinyl.shop.order.domain.Values.*
 
 class OrderModificationHandlerNotRefactoredSpec extends Specification {
 
@@ -38,6 +38,6 @@ class OrderModificationHandlerNotRefactoredSpec extends Specification {
             orderModificationHandler.handle(AddItemsToOrderCommand.of(ORDER_ID, ITEMS))
 
         then:
-            thrown(CanNotModifyPaidOrder)
+            thrown(Order.CanNotModifyPaidOrder)
     }
 }

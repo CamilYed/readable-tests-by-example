@@ -16,8 +16,9 @@ import tech.allegro.blog.vinyl.shop.order.application.OrderPaymentHandler
 import tech.allegro.blog.vinyl.shop.order.domain.Order
 import tech.allegro.blog.vinyl.shop.order.domain.OrderDomainEvents
 import tech.allegro.blog.vinyl.shop.order.domain.OrderFactory
-import tech.allegro.blog.vinyl.shop.order.domain.OrderId
+
 import tech.allegro.blog.vinyl.shop.order.domain.OrderRepository
+import tech.allegro.blog.vinyl.shop.order.domain.Values
 import tech.allegro.blog.vinyl.shop.sales.domain.SpecialPriceProvider
 
 import java.time.Clock
@@ -29,6 +30,7 @@ import static tech.allegro.blog.vinyl.shop.order.application.OrderPaymentHandler
 import static tech.allegro.blog.vinyl.shop.order.domain.OrderDomainEvents.OrderPaid
 import static tech.allegro.blog.vinyl.shop.order.domain.OrderDomainEvents.OrderPayFailed.Reason.ALREADY_PAID
 import static tech.allegro.blog.vinyl.shop.order.domain.OrderDomainEvents.OrderPayFailed.Reason.AMOUNT_IS_DIFFERENT
+import static tech.allegro.blog.vinyl.shop.order.domain.Values.*
 
 class OrderPaymentHandlerNotRefactoredSpec extends Specification {
 

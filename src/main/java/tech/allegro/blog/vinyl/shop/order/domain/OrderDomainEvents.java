@@ -6,6 +6,7 @@ import tech.allegro.blog.vinyl.shop.client.domain.ClientId;
 import tech.allegro.blog.vinyl.shop.common.events.DomainEvent;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
 import tech.allegro.blog.vinyl.shop.delivery.domain.Delivery;
+import tech.allegro.blog.vinyl.shop.order.domain.Values.OrderId;
 
 import java.time.Instant;
 

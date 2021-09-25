@@ -1,5 +1,6 @@
 package tech.allegro.blog.vinyl.shop.order.api;
 
+import lombok.Data;
 import org.slf4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,6 +30,7 @@ class OrderPaymentsEndpoint {
     return ResponseEntity.accepted().build();
   }
 
+  @Data
   static class PayOrderJson {
     String clientId;
     MoneyJson cost;
@@ -42,54 +44,6 @@ class OrderPaymentsEndpoint {
         OrderId.of(orderId),
         Money.of(cost.getAmount(), cost.getCurrency())
       );
-    }
-
-    public String getClientId() {
-      return this.clientId;
-    }
-
-    public MoneyJson getCost() {
-      return this.cost;
-    }
-
-    public void setClientId(String clientId) {
-      this.clientId = clientId;
-    }
-
-    public void setCost(MoneyJson cost) {
-      this.cost = cost;
-    }
-
-    public boolean equals(final Object o) {
-      if (o == this) return true;
-      if (!(o instanceof PayOrderJson)) return false;
-      final PayOrderJson other = (PayOrderJson) o;
-      if (!other.canEqual((Object) this)) return false;
-      final Object this$clientId = this.getClientId();
-      final Object other$clientId = other.getClientId();
-      if (this$clientId == null ? other$clientId != null : !this$clientId.equals(other$clientId)) return false;
-      final Object this$cost = this.getCost();
-      final Object other$cost = other.getCost();
-      if (this$cost == null ? other$cost != null : !this$cost.equals(other$cost)) return false;
-      return true;
-    }
-
-    protected boolean canEqual(final Object other) {
-      return other instanceof PayOrderJson;
-    }
-
-    public int hashCode() {
-      final int PRIME = 59;
-      int result = 1;
-      final Object $clientId = this.getClientId();
-      result = result * PRIME + ($clientId == null ? 43 : $clientId.hashCode());
-      final Object $cost = this.getCost();
-      result = result * PRIME + ($cost == null ? 43 : $cost.hashCode());
-      return result;
-    }
-
-    public String toString() {
-      return "OrderPaymentsEndpoint.PayOrderJson(clientId=" + this.getClientId() + ", cost=" + this.getCost() + ")";
     }
   }
 

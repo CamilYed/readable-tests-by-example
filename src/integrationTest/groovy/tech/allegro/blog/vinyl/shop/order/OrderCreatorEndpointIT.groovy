@@ -14,20 +14,19 @@ class OrderCreatorEndpointIT extends BaseIntegrationTest implements CreateOrderA
     static final String CLIENT_ID = "CLIENT_ID_001"
     static final String PRODUCT_ID = "PRODUCT_ID_001"
 
+    // @formatter:off
     def "should create unpaid order when not exists"() {
         when:
-            def creationResult = create(
-                    anOrder()
-                            .withOrderId(ID)
-                            .withClientId(CLIENT_ID)
-                            .withItem(
-                                    anItem()
-                                            .withProductId(PRODUCT_ID)
-                                            .withCost(euro("40.00"))
-                            )
+            def creationResult = create(anOrder()
+                                            .withOrderId(ID)
+                                            .withClientId(CLIENT_ID)
+                                            .withItem(anItem()
+                                                        .withProductId(PRODUCT_ID)
+                                                        .withCost(euro(40.00)))
             )
 
         then:
             assertThatOrder(creationResult).succeeded()
     }
+    // @formatter:on
 }

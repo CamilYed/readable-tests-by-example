@@ -31,7 +31,7 @@ trait PayOrderAbility implements
         orderPaymentHandler = new OrderPaymentHandler(orderRepository, clientReputationProvider, deliveryCostPolicy, domainEventPublisher)
     }
 
-    void makeThe(PayOrderCommandBuilder payOrderCommand) {
+    void clientMakeThe(PayOrderCommandBuilder payOrderCommand) {
         orderPaymentHandler.handle(payOrderCommand.build())
     }
 

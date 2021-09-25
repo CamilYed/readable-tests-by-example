@@ -13,8 +13,7 @@ import static tech.allegro.blog.vinyl.shop.builders.order.CreateOrderWithIdJsonB
 class CreateOrderWithIdJsonBuilder {
     String orderId = TestData.ORDER_ID
     String clientId = TestData.CLIENT_ID
-    List<ItemJsonBuilder> items = [anItem()
-                                           .withProductId(TestData.CZESLAW_NIEMEN_ALBUM_ID)
+    List<ItemJsonBuilder> items = [anItem().withProductId(TestData.CZESLAW_NIEMEN_ALBUM_ID)
                                            .withCost(euro(40.00))]
 
     static CreateOrderWithIdJsonBuilder anOrder() {

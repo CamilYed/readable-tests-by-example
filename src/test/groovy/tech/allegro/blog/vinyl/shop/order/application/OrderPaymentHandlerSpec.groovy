@@ -17,7 +17,7 @@ class OrderPaymentHandlerSpec extends Specification implements PayOrderAbility {
             clientIsVip()
 
         when:
-            makeThe(aPayment())
+            clientMakeThe(aPayment())
 
         then:
             assertThatClientHasNotPaidForDelivery()
@@ -34,7 +34,7 @@ class OrderPaymentHandlerSpec extends Specification implements PayOrderAbility {
             clientIsNotVip()
 
         when:
-            makeThe(aPayment().withAmount(euro(40.00)))
+            clientMakeThe(aPayment().withAmount(euro(40.00)))
 
         then:
             assertThatClientHasNotPaidForDelivery()
@@ -51,7 +51,7 @@ class OrderPaymentHandlerSpec extends Specification implements PayOrderAbility {
             currentDeliveryCostIs(euro(12.00))
 
         when:
-            makeThe(aPayment().withAmount(euro(52.00)))
+            clientMakeThe(aPayment().withAmount(euro(52.00)))
 
         then:
             assertThatClientPaidForDeliveryWithAmount(euro(12.00))
@@ -65,7 +65,7 @@ class OrderPaymentHandlerSpec extends Specification implements PayOrderAbility {
             externalCourierSystemIsUnavailable()
 
         when:
-            makeThe(aPayment().withAmount(euro(60.00)))
+            clientMakeThe(aPayment().withAmount(euro(60.00)))
 
         then:
             assertThatClientPaidForDeliveryWithAmount(euro(20.00))
@@ -76,7 +76,7 @@ class OrderPaymentHandlerSpec extends Specification implements PayOrderAbility {
             thereIs(aPaidOrder())
 
         when:
-            makeThe(aPayment())
+            clientMakeThe(aPayment())
 
         then:
             assertThatPaymentNotAcceptedBecauseOrderAlreadyPaid()
@@ -87,7 +87,7 @@ class OrderPaymentHandlerSpec extends Specification implements PayOrderAbility {
             thereIs(anUnpaidOrder().withAmount(euro(10.00)))
 
         when:
-            makeThe(aPayment().withAmount(euro(9.00)))
+            clientMakeThe(aPayment().withAmount(euro(9.00)))
 
         then:
             assertThatPaymentNotAcceptedBecauseDifferentAmounts()

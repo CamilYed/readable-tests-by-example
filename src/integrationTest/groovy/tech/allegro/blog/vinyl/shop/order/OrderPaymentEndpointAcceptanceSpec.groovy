@@ -2,6 +2,7 @@ package tech.allegro.blog.vinyl.shop.order
 
 import tech.allegro.blog.vinyl.shop.BaseIntegrationTest
 import tech.allegro.blog.vinyl.shop.ability.client.ClientReputationAbility
+import tech.allegro.blog.vinyl.shop.ability.delivery.CourierSystemAbility
 import tech.allegro.blog.vinyl.shop.ability.order.CreateOrderAbility
 import tech.allegro.blog.vinyl.shop.ability.order.OrderPaymentAbility
 import tech.allegro.blog.vinyl.shop.ability.sales.SpecialPriceProviderAbility
@@ -16,6 +17,7 @@ class OrderPaymentEndpointAcceptanceSpec extends BaseIntegrationTest implements
         CreateOrderAbility,
         ClientReputationAbility,
         SpecialPriceProviderAbility,
+        CourierSystemAbility,
         OrderPaymentAbility,
         FreeTrackMusicSenderAssertion {
 
@@ -63,21 +65,29 @@ class OrderPaymentEndpointAcceptanceSpec extends BaseIntegrationTest implements
     }
 
     def "should charge for delivery based on price provided by courier system"() {
-        given: "There is a client order with amount 40 EUR"
+        given:
+            thereIsUnpaid(anOrder().withAmount(euro(40.00)))
 
-        and: "The client is not a VIP"
+        and:
+            clientIsNotVip()
 
-        and: "Free delivery is valid from an amount equal to 50 EUR"
+        and:
+            currentDeliveryCostIs(euro(30.00))
 
-        and: "The delivery costs according to the courier's price list equal to 25 EUR"
+        and:
+            minimumOrderValueForFreeDeliveryIs(euro(50.00))
 
-        when: "When the client pays the order of 40 EUR"
+        when:
+            def payment = clientMakeThe(aPayment().withAmount(euro(70.00)))
 
-        then: "The order has been paid correctly with delivery cost equal to 25 EUR"
+        then:
+            assertThatPayment(payment).madeSuccessfully()
 
-        and: "The payment system was notified"
+        and:
+            assertThatClientPaidForDeliveryWithAmount(euro(30.00))
 
-        and: "The free music track was not sent to the client's mailbox"
+        and:
+            assertThatFreeMusicTrackWasNotSentToClient()
     }
 
     def "should charge always 20 euro for delivery when the courier system is unavailable"() {

@@ -6,8 +6,11 @@ import org.springframework.http.HttpMethod
 import org.springframework.http.ResponseEntity
 import spock.util.concurrent.PollingConditions
 import tech.allegro.blog.vinyl.shop.ability.MakeRequestAbility
+import tech.allegro.blog.vinyl.shop.builders.money.MoneyJsonBuilder
 import tech.allegro.blog.vinyl.shop.builders.order.PayOrderJsonBuilder
 import tech.allegro.blog.vinyl.shop.common.events.DomainEventPublisher
+import tech.allegro.blog.vinyl.shop.common.money.Money
+import tech.allegro.blog.vinyl.shop.delivery.domain.Delivery
 import tech.allegro.blog.vinyl.shop.order.domain.OrderPaidEventBuilder
 
 import static groovy.json.JsonOutput.toJson
@@ -37,6 +40,17 @@ trait OrderPaymentAbility implements MakeRequestAbility {
         pollingConditions.eventually {
             Mockito.verify(domainEventPublisher, times(1))
                     .publish(anEventBuilder.build())
+        }
+    }
+
+    void assertThatClientPaidForDeliveryWithAmount(MoneyJsonBuilder anAmount) {
+
+        pollingConditions.eventually {
+            Mockito.verify(domainEventPublisher, times(1))
+                    .publish(anOrderPaidEvent()
+                            .withDelivery(Delivery.standardDelivery(Money.of(anAmount.amount, anAmount.currency)))
+                            .build()
+                    )
         }
     }
 }

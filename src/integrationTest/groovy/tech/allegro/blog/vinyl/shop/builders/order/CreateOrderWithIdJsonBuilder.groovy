@@ -25,8 +25,9 @@ class CreateOrderWithIdJsonBuilder {
         return this
     }
 
-    CreateOrderWithIdJsonBuilder withItems(List<ItemJsonBuilder> anItems) {
-        items += anItems
+    CreateOrderWithIdJsonBuilder withAmount(MoneyJsonBuilder anAmount) {
+        items = [anItem().withProductId(TestData.CZESLAW_NIEMEN_ALBUM_ID)
+                         .withCost(anAmount)]
         return this
     }
 
@@ -45,7 +46,7 @@ class CreateOrderWithIdJsonBuilder {
 
         static ItemJsonBuilder anItem() {
             return new ItemJsonBuilder(productId: "productId", cost: [
-                    "amount"  : "40.00",
+                    "amount"  : 40.00,
                     "currency": "EUR"
             ])
         }

@@ -1,4 +1,4 @@
-package tech.allegro.blog.vinyl.shop.ability
+package tech.allegro.blog.vinyl.shop.ability.delivery
 
 trait CourierSystemAbility {
 

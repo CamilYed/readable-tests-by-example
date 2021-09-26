@@ -34,7 +34,7 @@ class AcceptanceSpec extends BaseIntegrationTest implements
             assertThatClientHasNotPaidForDelivery()
 
         and:
-            assertThatFreeMusicTrackWasSentToClientOnce()
+            assertThatFreeMusicTrackWasSentToClient()
 
         // when i go to /order list endpoint i see my order
 

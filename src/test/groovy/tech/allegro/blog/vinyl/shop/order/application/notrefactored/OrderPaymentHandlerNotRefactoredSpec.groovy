@@ -79,9 +79,6 @@ class OrderPaymentHandlerNotRefactoredSpec extends Specification {
             paymentHandler.handle(PAY_FOR_ORDER_40_EUR)
 
         then:
-            noExceptionThrown()
-
-        then:
             1 * domainEventPublisher.publish({ OrderPaid event ->
                 assert event.orderId == ORDER_ID
                 assert event.amount == _40_EUR

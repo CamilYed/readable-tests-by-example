@@ -7,10 +7,10 @@ import tech.allegro.blog.vinyl.shop.common.money.MoneyJson;
 
 @FeignClient(
   value = "special-price-catalogue-service",
-  url = "special-price-catalogue-service.url"
+  url = "${special-price-catalogue-service.url}"
 )
 interface SpecialPriceCatalogueApiClient {
 
-  @GetMapping("/{id}")
+  @GetMapping("/promotion/{id}")
   MoneyJson getSpecialPrice(@PathVariable String id);
 }

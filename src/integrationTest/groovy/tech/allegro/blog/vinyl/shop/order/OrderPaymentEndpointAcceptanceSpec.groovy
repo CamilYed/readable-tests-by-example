@@ -4,19 +4,21 @@ import tech.allegro.blog.vinyl.shop.BaseIntegrationTest
 import tech.allegro.blog.vinyl.shop.ability.client.ClientReputationAbility
 import tech.allegro.blog.vinyl.shop.ability.order.CreateOrderAbility
 import tech.allegro.blog.vinyl.shop.ability.order.OrderPaymentAbility
+import tech.allegro.blog.vinyl.shop.ability.sales.SpecialPriceProviderAbility
 import tech.allegro.blog.vinyl.shop.assertions.FreeTrackMusicSenderAssertion
 
 import static tech.allegro.blog.vinyl.shop.assertions.PaymentResultAssertion.assertThatPayment
+import static tech.allegro.blog.vinyl.shop.builders.money.MoneyJsonBuilder.euro
 import static tech.allegro.blog.vinyl.shop.builders.order.CreateOrderWithIdJsonBuilder.anOrder
 import static tech.allegro.blog.vinyl.shop.builders.order.PayOrderJsonBuilder.aPayment
 
-class OrderPaymentEndpointIT extends BaseIntegrationTest implements
+class OrderPaymentEndpointAcceptanceSpec extends BaseIntegrationTest implements
         CreateOrderAbility,
         ClientReputationAbility,
+        SpecialPriceProviderAbility,
         OrderPaymentAbility,
         FreeTrackMusicSenderAssertion {
 
-    // @formatter:off
     def "shouldn't charge for delivery when the client has a VIP reputation"() {
         given:
             thereIsUnpaid(anOrder())
@@ -34,26 +36,30 @@ class OrderPaymentEndpointIT extends BaseIntegrationTest implements
             assertThatClientHasNotPaidForDelivery()
 
         and:
-            assertThatFreeMusicTrackWasSentToClientOnce()
-
-            // when i go to /order list endpoint i see my order
+            assertThatFreeMusicTrackWasSentToClient()
     }
-    // @formatter:on
 
     def "shouldn't charge for delivery for order value above or fixed amount based on promotion price list"() {
-        given: "There is a client order with amount 40 EUR"
+        given:
+            thereIsUnpaid(anOrder().withAmount(euro(40.00)))
 
-        and: "The client is not a VIP"
+        and:
+            clientIsNotVip()
 
-        and: "Free delivery is valid from an amount equal to 40 EUR"
+        and:
+            minimumOrderValueForFreeDeliveryIs(euro(39.99))
 
-        when: "When the client pays the order of 40 EUR"
+        when:
+            def payment = clientMakeThe(aPayment().withAmount(euro(40.00)))
 
-        then: "The order has been paid correctly"
+        then:
+            assertThatPayment(payment).madeSuccessfully()
 
-        and: "The payment system was notified"
+        and:
+            assertThatClientHasNotPaidForDelivery()
 
-        and: "The free music track was not sent to the client's mailbox"
+        and:
+            assertThatFreeMusicTrackWasNotSentToClient()
     }
 
     def "should charge for delivery based on price provided by courier system"() {

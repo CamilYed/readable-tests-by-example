@@ -1,4 +1,4 @@
-package tech.allegro.blog.vinyl.shop
+package tech.allegro.blog.vinyl.shop.order
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import org.spockframework.spring.SpringSpy
@@ -20,7 +20,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get
 import static org.springframework.http.HttpHeaders.ACCEPT
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE
 
-class AcceptanceNotRefactoredSpec extends BaseIntegrationNotRefactoredTest {
+class OrderPaymentEndpointNotRefactoredAcceptanceSpec extends BaseIntegrationNotRefactoredTest {
 
     @Autowired
     private TestRestTemplate restTemplate

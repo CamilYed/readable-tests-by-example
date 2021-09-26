@@ -6,7 +6,7 @@ import tech.allegro.blog.vinyl.shop.common.money.MoneyJson;
 
 @FeignClient(
   value = "delivery-cost-service",
-  url = "delivery-cost-service.url"
+  url = "${delivery-cost-service.url}"
 )
 interface DeliveryCostServiceApiClient {
 

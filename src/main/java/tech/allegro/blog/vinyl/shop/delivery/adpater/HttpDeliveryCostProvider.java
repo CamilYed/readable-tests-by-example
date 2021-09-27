@@ -16,6 +16,6 @@ class HttpDeliveryCostProvider implements DeliveryCostProvider {
   }
 
   private Money toDomain(MoneyJson moneyJson) {
-    return Money.of(moneyJson.getAmount(), moneyJson.getCurrency());
+    return Money.of(moneyJson.amount(), moneyJson.currency());
   }
 }

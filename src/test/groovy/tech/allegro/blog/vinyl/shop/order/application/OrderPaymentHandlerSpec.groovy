@@ -4,8 +4,8 @@ import spock.lang.Specification
 
 import static tech.allegro.blog.vinyl.shop.common.money.MoneyBuilder.euro
 import static tech.allegro.blog.vinyl.shop.order.application.PayOrderCommandBuilder.aPayment
-import static tech.allegro.blog.vinyl.shop.order.domain.OrderAggregateBuilder.aPaidOrder
-import static tech.allegro.blog.vinyl.shop.order.domain.OrderAggregateBuilder.anUnpaidOrder
+import static tech.allegro.blog.vinyl.shop.order.domain.OrderDataSnapshotBuilder.aPaidOrder
+import static tech.allegro.blog.vinyl.shop.order.domain.OrderDataSnapshotBuilder.anUnpaidOrder
 
 class OrderPaymentHandlerSpec extends Specification implements PayOrderAbility {
 
@@ -76,10 +76,10 @@ class OrderPaymentHandlerSpec extends Specification implements PayOrderAbility {
             thereIs(aPaidOrder())
 
         when:
-            clientMakeThe(aPayment())
+            def paymentResult = clientMakeThe(aPayment())
 
         then:
-            assertThatPaymentNotAcceptedBecauseOrderAlreadyPaid()
+            assertThatPaymentNotAcceptedBecauseOrderAlreadyPaid(paymentResult)
     }
 
     def "shouldn't accept payment if the amounts differ"() {
@@ -87,9 +87,9 @@ class OrderPaymentHandlerSpec extends Specification implements PayOrderAbility {
             thereIs(anUnpaidOrder().withAmount(euro(10.00)))
 
         when:
-            clientMakeThe(aPayment().withAmount(euro(9.00)))
+            def paymentResult = clientMakeThe(aPayment().withAmount(euro(9.00)))
 
         then:
-            assertThatPaymentNotAcceptedBecauseDifferentAmounts()
+            assertThatPaymentNotAcceptedBecauseDifferentAmounts(paymentResult)
     }
 }

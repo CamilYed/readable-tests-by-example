@@ -12,12 +12,10 @@ import tech.allegro.blog.vinyl.shop.common.events.DomainEventPublisher
 import tech.allegro.blog.vinyl.shop.common.money.Money
 import tech.allegro.blog.vinyl.shop.delivery.domain.Delivery
 import tech.allegro.blog.vinyl.shop.order.domain.OrderPaidEventBuilder
-import tech.allegro.blog.vinyl.shop.order.domain.OrderPayFailedEventBuilder
 
 import static groovy.json.JsonOutput.toJson
 import static org.mockito.Mockito.times
 import static tech.allegro.blog.vinyl.shop.order.domain.OrderPaidEventBuilder.anOrderPaidEvent
-import static tech.allegro.blog.vinyl.shop.order.domain.OrderPayFailedEventBuilder.aDifferentAmount
 
 trait OrderPaymentAbility implements MakeRequestAbility {
 
@@ -52,13 +50,6 @@ trait OrderPaymentAbility implements MakeRequestAbility {
                             .withDelivery(Delivery.standardDelivery(Money.of(anAmount.amount, anAmount.currency)))
                             .build()
                     )
-        }
-    }
-
-    void assertThatPaymentNotAcceptedBecauseDifferentAmounts() {
-        pollingConditions.eventually {
-            Mockito.verify(domainEventPublisher, times(1))
-                    .publish(aDifferentAmount().build())
         }
     }
 }

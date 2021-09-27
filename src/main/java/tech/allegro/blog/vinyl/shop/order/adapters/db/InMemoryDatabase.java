@@ -3,9 +3,8 @@ package tech.allegro.blog.vinyl.shop.order.adapters.db;
 import tech.allegro.blog.vinyl.shop.client.domain.ClientId;
 import tech.allegro.blog.vinyl.shop.order.application.search.FindClientOrders;
 import tech.allegro.blog.vinyl.shop.order.application.search.PaidClientOrdersView;
-import tech.allegro.blog.vinyl.shop.order.domain.Order;
 import tech.allegro.blog.vinyl.shop.order.domain.OrderRepository;
-import tech.allegro.blog.vinyl.shop.order.domain.Values;
+import tech.allegro.blog.vinyl.shop.order.domain.Values.OrderDataSnapshot;
 import tech.allegro.blog.vinyl.shop.order.domain.Values.OrderId;
 
 import java.util.Map;
@@ -18,33 +17,32 @@ import static java.util.stream.Collectors.toList;
 
 class InMemoryDatabase implements OrderRepository, FindClientOrders {
 
-  private final Map<OrderId, Order> orders = new ConcurrentHashMap<>();
+  private final Map<OrderId, OrderDataSnapshot> orders = new ConcurrentHashMap<>();
 
   @Override
   public OrderId nextId() {
-    return OrderId.of(UUID.randomUUID().toString());
+    return new OrderId(UUID.randomUUID().toString());
   }
 
   @Override
-  public Optional<Order> findBy(OrderId orderId) {
+  public Optional<OrderDataSnapshot> findBy(OrderId orderId) {
     return Optional.ofNullable(orders.get(orderId));
   }
 
   @Override
-  public void save(Order order) {
-    orders.put(order.getOrderId(), order);
+  public void save(OrderDataSnapshot order) {
+    orders.put(order.orderId(), order);
   }
 
   @Override
   public PaidClientOrdersView findPaidOrders(ClientId clientId) {
     final var paidOrdersView = orders.values().stream()
-      .map(Order::toSnapshot)
       .filter(onlyPaidOrders())
       .collect(toList());
-    return PaidClientOrdersView.of(paidOrdersView);
+    return new PaidClientOrdersView(paidOrdersView);
   }
 
-  private static Predicate<Values.OrderDataSnapshot> onlyPaidOrders() {
-    return it -> !it.isUnpaid();
+  private static Predicate<OrderDataSnapshot> onlyPaidOrders() {
+    return it -> !it.unpaid();
   }
 }

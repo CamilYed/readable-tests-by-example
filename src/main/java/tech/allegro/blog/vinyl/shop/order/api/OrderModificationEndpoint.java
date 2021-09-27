@@ -1,6 +1,5 @@
 package tech.allegro.blog.vinyl.shop.order.api;
 
-import lombok.Data;
 import org.slf4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,22 +33,18 @@ class OrderModificationEndpoint {
     return ResponseEntity.accepted().build();
   }
 
-  @Data
-  static class OrderItemsJson {
-    private final List<ItemJson> items;
-
+  record OrderItemsJson(List<ItemJson> items) {
     AddItemsToOrderCommand toCommand(String orderId) {
       final var itemsToAdd = items.stream()
-        .map(it -> Item.of(VinylId.of(it.productId), Money.of(it.cost.getAmount(), it.cost.getCurrency())))
+        .map(it -> new Item(new VinylId(it.productId), Money.of(it.cost.amount(), it.cost.currency())))
         .collect(Collectors.toList());
-      return AddItemsToOrderCommand.of(OrderId.of(orderId), itemsToAdd);
+      return new AddItemsToOrderCommand(new OrderId(orderId), itemsToAdd);
     }
   }
 
-  @Data
-  static class ItemJson {
-    String productId;
-    MoneyJson cost;
+  static record ItemJson(String productId,
+                         MoneyJson cost) {
+
   }
 
   @ExceptionHandler(Throwable.class)

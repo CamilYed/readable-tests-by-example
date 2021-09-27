@@ -7,7 +7,7 @@ import tech.allegro.blog.vinyl.shop.sales.domain.SpecialPriceProvider
 
 class InMemorySpecialPriceProvider implements SpecialPriceProvider {
 
-    private Money mov = Money.of(80.00, TestData.EURO_CURRENCY)
+    private Money mov = new Money(80.00, TestData.EURO_CURRENCY)
 
     @Override
     Money getMinimumOrderValueForFreeDelivery() {

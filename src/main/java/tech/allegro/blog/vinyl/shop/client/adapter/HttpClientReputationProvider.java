@@ -13,11 +13,11 @@ class HttpClientReputationProvider implements ClientReputationProvider {
 
   @Override
   public ClientReputation get(ClientId clientId) {
-    ClientReputationJson clientReputationJson = apiClient.get(clientId.getValue());
+    ClientReputationJson clientReputationJson = apiClient.get(clientId.value());
     return toDomain(clientReputationJson);
   }
 
   private ClientReputation toDomain(ClientReputationJson json) {
-    return ClientReputation.of(ClientId.of(json.clientId), Type.valueOf(json.getReputation()));
+    return ClientReputation.of(new ClientId(json.clientId), Type.valueOf(json.getReputation()));
   }
 }

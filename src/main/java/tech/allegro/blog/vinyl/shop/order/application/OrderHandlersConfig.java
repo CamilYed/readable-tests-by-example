@@ -18,7 +18,7 @@ class OrderHandlersConfig {
 
   @Bean
   OrderModificationHandler orderModificationHandler(OrderRepository orderRepository) {
-    return new OrderModificationHandler(orderRepository);
+    return new OrderModificationHandler(orderRepository, new OrderFactory());
   }
 
   @Bean
@@ -28,6 +28,11 @@ class OrderHandlersConfig {
     DeliveryCostPolicy deliveryCostPolicy,
     DomainEventPublisher domainEventPublisher
   ) {
-    return new OrderPaymentHandler(orderRepository, clientReputationProvider, deliveryCostPolicy, domainEventPublisher);
+    return new OrderPaymentHandler(
+      orderRepository,
+      new OrderFactory(),
+      clientReputationProvider,
+      deliveryCostPolicy,
+      domainEventPublisher);
   }
 }

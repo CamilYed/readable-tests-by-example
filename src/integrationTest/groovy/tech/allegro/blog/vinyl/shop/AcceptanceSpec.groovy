@@ -1,12 +1,11 @@
 package tech.allegro.blog.vinyl.shop
 
-
+import tech.allegro.blog.vinyl.shop.ability.catalogue.FreeTrackMusicSenderAbility
 import tech.allegro.blog.vinyl.shop.ability.client.ClientReputationAbility
 import tech.allegro.blog.vinyl.shop.ability.order.CreateOrderAbility
 import tech.allegro.blog.vinyl.shop.ability.order.OrderPaymentAbility
-import tech.allegro.blog.vinyl.shop.assertions.FreeTrackMusicSenderAssertion
 
-import static tech.allegro.blog.vinyl.shop.assertions.PaymentResultAssertion.assertThatPayment
+import static tech.allegro.blog.vinyl.shop.assertions.PaymentResultAssertion.assertThat
 import static tech.allegro.blog.vinyl.shop.builders.order.CreateOrderWithIdJsonBuilder.anOrder
 import static tech.allegro.blog.vinyl.shop.builders.order.PayOrderJsonBuilder.aPayment
 
@@ -14,7 +13,7 @@ class AcceptanceSpec extends BaseIntegrationTest implements
         CreateOrderAbility,
         ClientReputationAbility,
         OrderPaymentAbility,
-        FreeTrackMusicSenderAssertion {
+        FreeTrackMusicSenderAbility {
 
     // @formatter:off
     def "positive payment process with the participation of VIP client"() {
@@ -28,7 +27,7 @@ class AcceptanceSpec extends BaseIntegrationTest implements
             def payment = clientMakeThe(aPayment())
 
         then:
-            assertThatPayment(payment).madeSuccessfully()
+            assertThat(payment).succeeded()
 
         and:
             assertThatClientHasNotPaidForDelivery()

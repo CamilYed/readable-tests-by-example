@@ -13,6 +13,6 @@ class TestData {
     public static final Currency EURO_CURRENCY = Currency.getInstance(EURO_CURRENCY_CODE)
     public static final Money _40_EUR = Money.of(40.00, EURO_CURRENCY_CODE)
     public static final String CZESLAW_NIEMEN_ALBUM_ID = "PRODUCT_ID_001"
-    public static final VinylId VINYL_CZESLAW_NIEMEN_ID = VinylId.of(CZESLAW_NIEMEN_ALBUM_ID)
+    public static final VinylId VINYL_CZESLAW_NIEMEN_ID = new VinylId(CZESLAW_NIEMEN_ALBUM_ID)
 
 }

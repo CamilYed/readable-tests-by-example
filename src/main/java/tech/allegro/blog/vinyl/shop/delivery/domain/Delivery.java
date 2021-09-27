@@ -1,12 +1,8 @@
 package tech.allegro.blog.vinyl.shop.delivery.domain;
 
-import lombok.Value;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
 
-@Value(staticConstructor = "of")
-public class Delivery {
-  Money cost;
-
+public record Delivery(Money cost) {
   public static Delivery freeDelivery() {
     return new Delivery(Money.ZERO);
   }

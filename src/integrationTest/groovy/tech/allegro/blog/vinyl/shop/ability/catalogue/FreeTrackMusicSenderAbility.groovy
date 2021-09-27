@@ -1,4 +1,4 @@
-package tech.allegro.blog.vinyl.shop.assertions
+package tech.allegro.blog.vinyl.shop.ability.catalogue
 
 import org.mockito.Mockito
 import org.springframework.boot.test.mock.mockito.SpyBean
@@ -9,7 +9,7 @@ import tech.allegro.blog.vinyl.shop.client.domain.ClientId
 
 import static org.mockito.Mockito.times
 
-trait FreeTrackMusicSenderAssertion {
+trait FreeTrackMusicSenderAbility {
 
     @SpyBean
     private FreeMusicTrackSender freeMusicTrackSender
@@ -19,14 +19,14 @@ trait FreeTrackMusicSenderAssertion {
     void assertThatFreeMusicTrackWasSentToClient(String clientId = TestData.CLIENT_ID) {
         pollingConditions.eventually {
             Mockito.verify(freeMusicTrackSender, times(1))
-                    .send(ClientId.of(clientId))
+                    .send(new ClientId(clientId))
         }
     }
 
     void assertThatFreeMusicTrackWasNotSentToClient(String clientId = TestData.CLIENT_ID) {
         pollingConditions.eventually {
             Mockito.verify(freeMusicTrackSender, times(0))
-                    .send(ClientId.of(clientId))
+                    .send(new ClientId(clientId))
         }
     }
 }

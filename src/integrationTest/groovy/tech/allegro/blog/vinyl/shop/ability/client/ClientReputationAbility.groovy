@@ -1,7 +1,6 @@
 package tech.allegro.blog.vinyl.shop.ability.client
 
 import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpHeaders
 import tech.allegro.blog.vinyl.shop.TestData

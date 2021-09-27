@@ -8,36 +8,36 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.function.Predicate
 
 import static java.util.stream.Collectors.toList
+import static tech.allegro.blog.vinyl.shop.order.domain.Values.OrderDataSnapshot
 import static tech.allegro.blog.vinyl.shop.order.domain.Values.OrderId
 
 class InMemoryOrderRepository implements OrderRepository, FindClientOrders {
 
-    private final Map<OrderId, Order> orders = new ConcurrentHashMap<OrderId, Order>()
+    private final Map<OrderId, OrderDataSnapshot> orders = new ConcurrentHashMap<OrderId, OrderDataSnapshot>()
 
     @Override
-    Optional<Order> findBy(OrderId orderId) {
+    Optional<OrderDataSnapshot> findBy(OrderId orderId) {
         return Optional.ofNullable(orders.get(orderId))
     }
 
     @Override
-    void save(Order order) {
-        orders.put(order.getOrderId(), order)
+    void save(OrderDataSnapshot order) {
+        orders.put(order.orderId(), order)
     }
 
     @Override
     PaidClientOrdersView findPaidOrders(ClientId clientId) {
         final var paidOrdersView = orders.values().stream()
-                .map(Order::toSnapshot)
                 .filter(onlyPaidOrders())
                 .collect(toList());
-        return PaidClientOrdersView.of(paidOrdersView);
+        return new PaidClientOrdersView(paidOrdersView);
     }
 
     void clear() {
         orders.clear()
     }
 
-    private static Predicate<Values.OrderDataSnapshot> onlyPaidOrders() {
-        return (it) -> !it.isUnpaid();
+    private static Predicate<OrderDataSnapshot> onlyPaidOrders() {
+        return (it) -> !it.unpaid();
     }
 }

@@ -4,8 +4,12 @@ trait DomainEventPublisherAbility {
 
     final DomainEventPublisher domainEventPublisher = new InMemoryDomainEventPublisher()
 
-    void assertThatEventWasPublishedOnce(Event.DomainEvent domainEvent) {
+    void assertThatEventWasPublishedOnce(DomainEvent domainEvent) {
         assert domainEventPublisher.count() == 1
         assert domainEventPublisher.contains(domainEvent)
+    }
+
+    void assertThatAnyEventWasNotPublished() {
+        assert domainEventPublisher.count() == 0
     }
 }

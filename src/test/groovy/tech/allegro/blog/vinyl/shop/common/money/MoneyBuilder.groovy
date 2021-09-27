@@ -14,6 +14,6 @@ class MoneyBuilder {
     }
 
     Money build() {
-        return Money.of(amount, Currency.getInstance(currency))
+        return new Money(amount, Currency.getInstance(currency))
     }
 }

@@ -15,12 +15,12 @@ trait GetClientReputationAbility {
     }
 
     void clientWithIdIsVip(String id) {
-        ClientId clientId = ClientId.of(id)
+        ClientId clientId = new ClientId(id)
         clientReputationProvider.setReputation([(clientId): ClientReputation.of(clientId, ClientReputation.Type.VIP)])
     }
 
     void clientWithIdIsStandard(String id) {
-        ClientId clientId = ClientId.of(id)
+        ClientId clientId = new ClientId(id)
         clientReputationProvider.setReputation([(clientId): ClientReputation.of(clientId, ClientReputation.Type.STANDARD)])
     }
 }

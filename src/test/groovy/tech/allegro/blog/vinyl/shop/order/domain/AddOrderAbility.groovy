@@ -4,7 +4,7 @@ trait AddOrderAbility {
 
     final OrderRepository orderRepository = new InMemoryOrderRepository()
 
-    void thereIs(OrderAggregateBuilder anOrder) {
+    void thereIs(OrderDataSnapshotBuilder anOrder) {
         orderRepository.save(anOrder.build())
     }
 

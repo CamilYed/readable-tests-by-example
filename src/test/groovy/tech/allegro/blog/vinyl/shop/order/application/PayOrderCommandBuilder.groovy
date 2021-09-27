@@ -27,9 +27,9 @@ class PayOrderCommandBuilder {
     }
 
     OrderPaymentHandler.PayOrderCommand build() {
-        return OrderPaymentHandler.PayOrderCommand.of(
-                ClientId.of(clientId),
-                OrderId.of(orderId),
+        return new OrderPaymentHandler.PayOrderCommand(
+                new ClientId(clientId),
+                new OrderId(orderId),
                 amount
         )
     }

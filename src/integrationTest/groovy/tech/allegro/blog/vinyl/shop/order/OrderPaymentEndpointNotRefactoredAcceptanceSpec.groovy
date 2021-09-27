@@ -12,7 +12,7 @@ import tech.allegro.blog.vinyl.shop.BaseIntegrationNotRefactoredTest
 import tech.allegro.blog.vinyl.shop.catalogue.domain.FreeMusicTrackSender
 import tech.allegro.blog.vinyl.shop.client.domain.ClientId
 import tech.allegro.blog.vinyl.shop.common.events.DomainEventPublisher
-import tech.allegro.blog.vinyl.shop.order.domain.OrderDomainEvents
+import tech.allegro.blog.vinyl.shop.order.domain.Events
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo
@@ -83,11 +83,11 @@ class OrderPaymentEndpointNotRefactoredAcceptanceSpec extends BaseIntegrationNot
             response.statusCode == HttpStatus.ACCEPTED
 
         and: "The payment system was notified"
-            1 * domainEventPublisher.publish(_ as OrderDomainEvents.OrderPaid)
+            1 * domainEventPublisher.publish(_ as Events.OrderPaid)
 
         and: "The free track music was sent to the client's mailbox"
             pollingConditions.eventually {
-                1 * freeMusicTrackSender.send(ClientId.of(CLIENT_ID_1))
+                1 * freeMusicTrackSender.send(new ClientId(CLIENT_ID_1))
             }
     }
 }

@@ -1,8 +1,6 @@
 package tech.allegro.blog.vinyl.shop.order.api;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import org.slf4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +19,9 @@ import tech.allegro.blog.vinyl.shop.order.domain.Values.OrderId;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 class OrderCreatorEndpoint {
-  private static final Logger log = org.slf4j.LoggerFactory.getLogger(OrderCreatorEndpoint.class);
   private final OrderCreatorHandler orderCreatorHandler;
 
   public OrderCreatorEndpoint(OrderCreatorHandler orderCreatorHandler) {
@@ -40,51 +38,48 @@ class OrderCreatorEndpoint {
   ResponseEntity<OrderCreatedJson> upsert(@PathVariable("orderId") String orderId,
                                           @RequestBody CreateOrderWithIdJson items) {
     orderCreatorHandler.handle(items.toCommand());
-    return buildResponse(OrderId.of(orderId));
+    return buildResponse(new OrderId(orderId));
   }
 
   private ResponseEntity<OrderCreatedJson> buildResponse(OrderId orderId) {
-    return ResponseEntity.status(HttpStatus.CREATED).body(new OrderCreatedJson(orderId.getValue()));
+    return ResponseEntity.status(HttpStatus.CREATED).body(new OrderCreatedJson(orderId.value()));
   }
 
-  @Data
-  static class CreateOrderJson {
-    String clientId;
-    List<ItemJson> items;
-
+  static record CreateOrderJson(
+    String clientId,
+    List<ItemJson> items
+  ) {
     CreateOrderCommand toCommand() {
       final var itemsToAdd = items.stream()
-        .map(it -> Item.of(VinylId.of(it.productId), Money.of(it.cost.getAmount(), it.cost.getCurrency())))
+        .map(it -> new Item(new VinylId(it.productId), Money.of(it.cost.amount(), it.cost.currency())))
         .collect(Collectors.toList());
-      return CreateOrderCommand.of(ClientId.of(clientId), itemsToAdd);
+      return new CreateOrderCommand(new ClientId(clientId), itemsToAdd);
     }
   }
 
-  @Data
-  static class CreateOrderWithIdJson {
-    String orderId;
-    String clientId;
-    List<ItemJson> items;
+  static record CreateOrderWithIdJson(
+    String orderId,
+    String clientId,
+    List<ItemJson> items
+  ) {
 
     CreateOrderWithIdCommand toCommand() {
       final var itemsToAdd = items.stream()
-        .map(it -> Item.of(VinylId.of(it.productId), Money.of(it.cost.getAmount(), it.cost.getCurrency())))
+        .map(it -> new Item(new VinylId(it.productId), Money.of(it.cost.amount(), it.cost.currency())))
         .collect(Collectors.toList());
-      return CreateOrderWithIdCommand.of(OrderId.of(orderId), ClientId.of(clientId), itemsToAdd);
+      return new CreateOrderWithIdCommand(new OrderId(orderId), new ClientId(clientId), itemsToAdd);
     }
   }
 
-  @Data
-  static class ItemJson {
-    String productId;
-    MoneyJson cost;
-
+  static record ItemJson(
+    String productId,
+    MoneyJson cost
+  ) {
   }
 
-  @Data
-  @AllArgsConstructor
-  static class OrderCreatedJson {
-    String orderId;
+  static record OrderCreatedJson(
+    String orderId
+  ) {
   }
 
   @ExceptionHandler(Throwable.class)

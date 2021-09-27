@@ -1,22 +1,15 @@
 package tech.allegro.blog.vinyl.shop.common.result;
 
 
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-
 import java.util.function.Supplier;
 
-@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
-public class Result<SUCCESS> {
-
-  private final SUCCESS success;
-  private final Failure error;
+public record Result<SUCCESS>(SUCCESS success, Error error) {
 
   public static <SUCCESS> Result<SUCCESS> of(Supplier<SUCCESS> block) {
     try {
       return new Result<>(block.get(), null);
-    } catch (Throwable t) {
-      return new Result<>(null, new Failure(t));
+    } catch (Throwable ex) {
+      return new Result<>(null, new Error(ex));
     }
   }
 
@@ -24,28 +17,26 @@ public class Result<SUCCESS> {
     try {
       runnable.run();
       return new Result<>(null, null);
-    } catch (Throwable t) {
-      return new Result<>(null, new Failure(t));
+    } catch (Throwable ex) {
+      return new Result<>(null, new Error(ex));
     }
   }
 
   public boolean isSuccess() {
-    return error == null;
+    return !isError();
+  }
+
+  public boolean isError() {
+    return error != null;
   }
 
   public SUCCESS getSuccessOrDefault(SUCCESS defaultV) {
-    if (!isSuccess())
+    if (isError())
       return defaultV;
     return success;
   }
 
-  public static class Success {}
-
-  public static class Failure extends RuntimeException {
-
-    public Failure(Throwable cause) {
-      super(cause);
-    }
+  public record Error(Throwable cause) {
   }
 
   @FunctionalInterface

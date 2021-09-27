@@ -2,8 +2,8 @@ package tech.allegro.blog.vinyl.shop.delivery.domain;
 
 import lombok.RequiredArgsConstructor;
 import tech.allegro.blog.vinyl.shop.client.domain.ClientReputation;
-import tech.allegro.blog.vinyl.shop.common.result.Result;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
+import tech.allegro.blog.vinyl.shop.common.result.Result;
 import tech.allegro.blog.vinyl.shop.sales.domain.SpecialPriceProvider;
 
 public interface DeliveryCostPolicy {

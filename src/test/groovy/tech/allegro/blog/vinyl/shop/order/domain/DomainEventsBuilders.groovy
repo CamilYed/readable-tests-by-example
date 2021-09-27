@@ -10,7 +10,10 @@ import tech.allegro.blog.vinyl.shop.delivery.domain.Delivery
 
 import java.time.Instant
 
-import static tech.allegro.blog.vinyl.shop.order.domain.Values.*
+import static tech.allegro.blog.vinyl.shop.order.domain.Events.OrderPaid
+import static tech.allegro.blog.vinyl.shop.order.domain.Events.OrderPayFailedBecauseAlreadyPaid
+import static tech.allegro.blog.vinyl.shop.order.domain.Events.OrderPayFailedBecauseDifferentAmounts
+import static tech.allegro.blog.vinyl.shop.order.domain.Values.OrderId
 
 @CompileStatic
 @Builder(builderStrategy = SimpleStrategy, prefix = "with")
@@ -34,10 +37,10 @@ class OrderPaidEventBuilder {
         return this
     }
 
-    OrderDomainEvents.OrderPaid build() {
-        return new OrderDomainEvents.OrderPaid(
-                ClientId.of(clientId),
-                OrderId.of(orderId),
+    OrderPaid build() {
+        return new OrderPaid(
+                new ClientId(clientId),
+                new OrderId(orderId),
                 when,
                 amount,
                 delivery
@@ -47,30 +50,38 @@ class OrderPaidEventBuilder {
 
 @CompileStatic
 @Builder(builderStrategy = SimpleStrategy, prefix = "with")
-class OrderPayFailedEventBuilder {
+class OrderPayFailedBecauseDifferentAmountEventBuilder {
     String orderId = TestData.ORDER_ID
     Instant when = TestData.DEFAULT_CURRENT_DATE
-    String reason
+    Money different
 
-    static OrderPayFailedEventBuilder anOrderAlreadyPaid() {
-        return new OrderPayFailedEventBuilder().withReason("ALREADY_PAID")
+    static OrderPayFailedBecauseDifferentAmountEventBuilder anOrderAlreadyPaid() {
+        return new OrderPayFailedBecauseDifferentAmountEventBuilder()
     }
 
-    static OrderPayFailedEventBuilder aDifferentAmount() {
-        return new OrderPayFailedEventBuilder().withReason("AMOUNT_IS_DIFFERENT")
+    OrderPayFailedBecauseDifferentAmounts build() {
+        return new OrderPayFailedBecauseDifferentAmounts(
+                new OrderId(orderId),
+                when,
+                different
+        )
+    }
+}
+
+@CompileStatic
+@Builder(builderStrategy = SimpleStrategy, prefix = "with")
+class OrderPayFailedBecauseAlreadyPaidEventBuilder {
+    String orderId = TestData.ORDER_ID
+    Instant when = TestData.DEFAULT_CURRENT_DATE
+
+    static OrderPayFailedBecauseAlreadyPaidEventBuilder anOrderAlreadyPaid() {
+        return new OrderPayFailedBecauseAlreadyPaidEventBuilder()
     }
 
-    OrderDomainEvents.OrderFailureEvent build() {
-        if ("AMOUNT_IS_DIFFERENT" == reason) {
-            return new OrderDomainEvents.OrderPayFailedBecauseAmountIsDifferent(
-                    OrderId.of(orderId),
-                    when
-            )
-        } else {
-            return new OrderDomainEvents.OrderPayFailedBecauseAlreadyPaid(
-                    OrderId.of(orderId),
-                    when
-            )
-        }
+    OrderPayFailedBecauseAlreadyPaid build() {
+        return new OrderPayFailedBecauseAlreadyPaid(
+                new OrderId(orderId),
+                when
+        )
     }
 }

@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import tech.allegro.blog.vinyl.shop.catalogue.domain.FreeMusicTrackSender;
 import tech.allegro.blog.vinyl.shop.client.domain.ClientReputationProvider;
-import tech.allegro.blog.vinyl.shop.order.domain.OrderDomainEvents.OrderPaid;
+import tech.allegro.blog.vinyl.shop.order.domain.Events.OrderPaid;
 
 @RequiredArgsConstructor
 public class FreeMusicTrackSenderHandler {

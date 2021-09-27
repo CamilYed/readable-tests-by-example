@@ -1,14 +1,14 @@
 package tech.allegro.blog.vinyl.shop.order
 
 import tech.allegro.blog.vinyl.shop.BaseIntegrationTest
+import tech.allegro.blog.vinyl.shop.ability.catalogue.FreeTrackMusicSenderAbility
 import tech.allegro.blog.vinyl.shop.ability.client.ClientReputationAbility
 import tech.allegro.blog.vinyl.shop.ability.delivery.CourierSystemAbility
 import tech.allegro.blog.vinyl.shop.ability.order.CreateOrderAbility
 import tech.allegro.blog.vinyl.shop.ability.order.OrderPaymentAbility
 import tech.allegro.blog.vinyl.shop.ability.sales.SpecialPriceProviderAbility
-import tech.allegro.blog.vinyl.shop.assertions.FreeTrackMusicSenderAssertion
 
-import static tech.allegro.blog.vinyl.shop.assertions.PaymentResultAssertion.assertThatPayment
+import static tech.allegro.blog.vinyl.shop.assertions.PaymentResultAssertion.assertThat
 import static tech.allegro.blog.vinyl.shop.builders.money.MoneyJsonBuilder.euro
 import static tech.allegro.blog.vinyl.shop.builders.order.CreateOrderWithIdJsonBuilder.anOrder
 import static tech.allegro.blog.vinyl.shop.builders.order.PayOrderJsonBuilder.aPayment
@@ -19,7 +19,7 @@ class OrderPaymentEndpointAcceptanceSpec extends BaseIntegrationTest implements
         SpecialPriceProviderAbility,
         CourierSystemAbility,
         OrderPaymentAbility,
-        FreeTrackMusicSenderAssertion {
+        FreeTrackMusicSenderAbility {
 
     def setup() {
         clientIsNotVip()
@@ -37,7 +37,7 @@ class OrderPaymentEndpointAcceptanceSpec extends BaseIntegrationTest implements
             def payment = clientMakeThe(aPayment())
 
         then:
-            assertThatPayment(payment).madeSuccessfully()
+            assertThat(payment).succeeded()
 
         and:
             assertThatClientHasNotPaidForDelivery()
@@ -57,7 +57,7 @@ class OrderPaymentEndpointAcceptanceSpec extends BaseIntegrationTest implements
             def payment = clientMakeThe(aPayment().withAmount(euro(40.00)))
 
         then:
-            assertThatPayment(payment).madeSuccessfully()
+            assertThat(payment).succeeded()
 
         and:
             assertThatClientHasNotPaidForDelivery()
@@ -80,7 +80,7 @@ class OrderPaymentEndpointAcceptanceSpec extends BaseIntegrationTest implements
             def payment = clientMakeThe(aPayment().withAmount(euro(70.00)))
 
         then:
-            assertThatPayment(payment).madeSuccessfully()
+            assertThat(payment).succeeded()
 
         and:
             assertThatClientPaidForDeliveryWithAmount(euro(30.00))
@@ -100,7 +100,7 @@ class OrderPaymentEndpointAcceptanceSpec extends BaseIntegrationTest implements
             def payment = clientMakeThe(aPayment().withAmount(euro(60.00)))
 
         then:
-            assertThatPayment(payment).madeSuccessfully()
+            assertThat(payment).succeeded()
 
         and:
             assertThatClientPaidForDeliveryWithAmount(euro(20.00))
@@ -113,11 +113,15 @@ class OrderPaymentEndpointAcceptanceSpec extends BaseIntegrationTest implements
         given:
             thereIsUnpaid(anOrder().withAmount(euro(10.00)))
 
+        and:
+            currentDeliveryCostIs(euro(30.00))
+
+
         when:
-            def payment = clientMakeThe(aPayment().withAmount(euro(12.00)))
-            //  TODO 422
+            def payment = clientMakeThe(aPayment().withAmount(euro(39.00)))
 
         then:
-            assertThatPaymentNotAcceptedBecauseDifferentAmounts()
+            assertThat(payment).failed()
+                    .dueToDifferentAmounts("Incorrect amount, difference is: -1.00 !")
     }
 }

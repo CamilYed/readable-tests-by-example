@@ -13,10 +13,7 @@ import tech.allegro.blog.vinyl.shop.common.time.ClockProvider
 import tech.allegro.blog.vinyl.shop.delivery.domain.DeliveryCostPolicy
 import tech.allegro.blog.vinyl.shop.delivery.domain.DeliveryCostProvider
 import tech.allegro.blog.vinyl.shop.order.application.OrderPaymentHandler
-import tech.allegro.blog.vinyl.shop.order.domain.Order
-import tech.allegro.blog.vinyl.shop.order.domain.OrderDomainEvents
 import tech.allegro.blog.vinyl.shop.order.domain.OrderFactory
-
 import tech.allegro.blog.vinyl.shop.order.domain.OrderRepository
 import tech.allegro.blog.vinyl.shop.sales.domain.SpecialPriceProvider
 
@@ -26,8 +23,9 @@ import java.time.ZoneId
 
 import static tech.allegro.blog.vinyl.shop.delivery.domain.DeliveryCostPolicy.DefaultDeliveryCostPolicy
 import static tech.allegro.blog.vinyl.shop.order.application.OrderPaymentHandler.PayOrderCommand
-import static tech.allegro.blog.vinyl.shop.order.domain.OrderDomainEvents.OrderPaid
-import static tech.allegro.blog.vinyl.shop.order.domain.Values.*
+import static tech.allegro.blog.vinyl.shop.order.domain.Events.OrderPaid
+import static tech.allegro.blog.vinyl.shop.order.domain.Values.OrderDataSnapshot
+import static tech.allegro.blog.vinyl.shop.order.domain.Values.OrderId
 
 class OrderPaymentHandlerNotRefactoredSpec extends Specification {
 
@@ -41,7 +39,11 @@ class OrderPaymentHandlerNotRefactoredSpec extends Specification {
 
     @Subject
     OrderPaymentHandler paymentHandler = new OrderPaymentHandler(
-            orderRepository, clientReputationProvider, deliveryCostPolicy, domainEventPublisher
+            orderRepository,
+            new OrderFactory(),
+            clientReputationProvider,
+            deliveryCostPolicy,
+            domainEventPublisher
     )
 
     final Instant CURRENT_DATE = Instant.parse("2021-11-05T00:00:00.00Z")
@@ -50,16 +52,16 @@ class OrderPaymentHandlerNotRefactoredSpec extends Specification {
     final Money _25_EUR = Money.of("25.00", "EUR")
     final Money _40_EUR = Money.of("40.00", "EUR")
     final Money _50_EUR = Money.of("50.00", "EUR")
-    final ClientId CLIENT_ID = ClientId.of("1")
-    final VinylId PRODUCT_ID = VinylId.of("1")
-    final OrderId ORDER_ID = OrderId.of("1")
-    final Order UNPAID_ORDER_40_EUR = orderFactory.create(ORDER_ID, CLIENT_ID, Maps.of(PRODUCT_ID, _40_EUR), true)
-    final Order PAID_ORDER = orderFactory.create(ORDER_ID, CLIENT_ID, Maps.of(PRODUCT_ID, _40_EUR), false)
+    final ClientId CLIENT_ID = new ClientId("1")
+    final VinylId PRODUCT_ID = new VinylId("1")
+    final OrderId ORDER_ID = new OrderId("1")
+    final OrderDataSnapshot UNPAID_ORDER_40_EUR = orderFactory.create(ORDER_ID, CLIENT_ID, Maps.of(PRODUCT_ID, _40_EUR), true).toSnapshot()
+    final OrderDataSnapshot PAID_ORDER = orderFactory.create(ORDER_ID, CLIENT_ID, Maps.of(PRODUCT_ID, _40_EUR), false).toSnapshot()
     final ClientReputation VIP = ClientReputation.vip(CLIENT_ID)
     final ClientReputation NOT_VIP = ClientReputation.notVip(CLIENT_ID)
-    final PayOrderCommand PAY_FOR_ORDER_40_EUR = PayOrderCommand.of(CLIENT_ID, ORDER_ID, _40_EUR)
-    final PayOrderCommand PAY_FOR_ORDER_40_EUR_PLUS_20_EUR_DELIVERY = PayOrderCommand.of(CLIENT_ID, ORDER_ID, _40_EUR.add(_20_EUR))
-    final PayOrderCommand PAY_FOR_ORDER_40_EUR_PLUS_25_EUR_DELIVERY = PayOrderCommand.of(CLIENT_ID, ORDER_ID, _40_EUR.add(_25_EUR))
+    final PayOrderCommand PAY_FOR_ORDER_40_EUR = new PayOrderCommand(CLIENT_ID, ORDER_ID, _40_EUR)
+    final PayOrderCommand PAY_FOR_ORDER_40_EUR_PLUS_20_EUR_DELIVERY = new PayOrderCommand(CLIENT_ID, ORDER_ID, _40_EUR.add(_20_EUR))
+    final PayOrderCommand PAY_FOR_ORDER_40_EUR_PLUS_25_EUR_DELIVERY = new PayOrderCommand(CLIENT_ID, ORDER_ID, _40_EUR.add(_25_EUR))
 
     def setup() {
         ClockProvider.setSystemClock(TEST_CLOCK)
@@ -73,13 +75,16 @@ class OrderPaymentHandlerNotRefactoredSpec extends Specification {
             clientReputationProvider.get(CLIENT_ID) >> VIP
 
         when:
-            paymentHandler.handle(PAY_FOR_ORDER_40_EUR)
+            def result = paymentHandler.handle(PAY_FOR_ORDER_40_EUR)
 
         then:
+            result.isSuccess()
+
+        and:
             1 * domainEventPublisher.publish({ OrderPaid event ->
                 assert event.orderId() == ORDER_ID
                 assert event.amount() == _40_EUR
-                assert event.delivery().cost == Money.ZERO
+                assert event.delivery().cost() == Money.ZERO
                 assert event.when() == CURRENT_DATE
             })
     }
@@ -95,13 +100,16 @@ class OrderPaymentHandlerNotRefactoredSpec extends Specification {
             specialPriceProvider.getMinimumOrderValueForFreeDelivery() >> _40_EUR
 
         when:
-            paymentHandler.handle(PAY_FOR_ORDER_40_EUR)
+            def result =paymentHandler.handle(PAY_FOR_ORDER_40_EUR)
 
         then:
+            result.isSuccess()
+
+        and:
             1 * domainEventPublisher.publish({ OrderPaid event ->
                 assert event.orderId() == ORDER_ID
                 assert event.amount() == _40_EUR
-                assert event.delivery().cost == Money.ZERO
+                assert event.delivery().cost() == Money.ZERO
                 assert event.when() == CURRENT_DATE
             })
     }
@@ -120,14 +128,17 @@ class OrderPaymentHandlerNotRefactoredSpec extends Specification {
             currentDeliveryCostProvider.currentCost() >> _25_EUR
 
         when:
-            paymentHandler.handle(PAY_FOR_ORDER_40_EUR_PLUS_25_EUR_DELIVERY)
+            def result = paymentHandler.handle(PAY_FOR_ORDER_40_EUR_PLUS_25_EUR_DELIVERY)
 
         then:
+            result.isSuccess()
+
+        and:
             1 * domainEventPublisher.publish({ OrderPaid event ->
                 assert event.clientId() == CLIENT_ID
                 assert event.orderId() == ORDER_ID
                 assert event.amount() == _40_EUR
-                assert event.delivery().cost == _25_EUR
+                assert event.delivery().cost() == _25_EUR
                 assert event.when() == CURRENT_DATE
             })
     }
@@ -146,13 +157,16 @@ class OrderPaymentHandlerNotRefactoredSpec extends Specification {
             currentDeliveryCostProvider.currentCost() >> { throw new RuntimeException() }
 
         when:
-            paymentHandler.handle(PAY_FOR_ORDER_40_EUR_PLUS_20_EUR_DELIVERY)
+            def result = paymentHandler.handle(PAY_FOR_ORDER_40_EUR_PLUS_20_EUR_DELIVERY)
 
         then:
+            result.isSuccess()
+
+        and:
             1 * domainEventPublisher.publish({ OrderPaid event ->
                 assert event.orderId() == ORDER_ID
                 assert event.amount() == _40_EUR
-                assert event.delivery().cost == _20_EUR
+                assert event.delivery().cost() == _20_EUR
                 assert event.when() == CURRENT_DATE
             })
     }
@@ -168,13 +182,13 @@ class OrderPaymentHandlerNotRefactoredSpec extends Specification {
             specialPriceProvider.getMinimumOrderValueForFreeDelivery() >> _40_EUR
 
         when:
-            paymentHandler.handle(PAY_FOR_ORDER_40_EUR)
+            def result = paymentHandler.handle(PAY_FOR_ORDER_40_EUR)
 
         then:
-            1 * domainEventPublisher.publish({ OrderDomainEvents.OrderPayFailedBecauseAlreadyPaid event ->
-                assert event.orderId() == ORDER_ID
-                assert event.when() == CURRENT_DATE
-            })
+            result.isError()
+
+        and:
+            0 * domainEventPublisher.publish(_)
     }
 
     def "shouldn't accept payment if the amounts differ"() {
@@ -188,12 +202,12 @@ class OrderPaymentHandlerNotRefactoredSpec extends Specification {
             specialPriceProvider.getMinimumOrderValueForFreeDelivery() >> _40_EUR
 
         when:
-            paymentHandler.handle(PayOrderCommand.of(CLIENT_ID, ORDER_ID, _50_EUR))
+            def result = paymentHandler.handle(new PayOrderCommand(CLIENT_ID, ORDER_ID, _50_EUR))
 
         then:
-            1 * domainEventPublisher.publish({ OrderDomainEvents.OrderPayFailedBecauseAmountIsDifferent event ->
-                assert event.orderId() == ORDER_ID
-                assert event.when() == CURRENT_DATE
-            })
+            result.isError()
+
+        and:
+            0 * domainEventPublisher.publish(_)
     }
 }

@@ -21,6 +21,11 @@ class OrderPaymentEndpointAcceptanceSpec extends BaseIntegrationTest implements
         OrderPaymentAbility,
         FreeTrackMusicSenderAssertion {
 
+    def setup() {
+        clientIsNotVip()
+        minimumOrderValueForFreeDeliveryIs(euro(80.00))
+    }
+
     def "shouldn't charge for delivery when the client has a VIP reputation"() {
         given:
             thereIsUnpaid(anOrder())
@@ -46,9 +51,6 @@ class OrderPaymentEndpointAcceptanceSpec extends BaseIntegrationTest implements
             thereIsUnpaid(anOrder().withAmount(euro(40.00)))
 
         and:
-            clientIsNotVip()
-
-        and:
             minimumOrderValueForFreeDeliveryIs(euro(39.99))
 
         when:
@@ -67,9 +69,6 @@ class OrderPaymentEndpointAcceptanceSpec extends BaseIntegrationTest implements
     def "should charge for delivery based on price provided by courier system"() {
         given:
             thereIsUnpaid(anOrder().withAmount(euro(40.00)))
-
-        and:
-            clientIsNotVip()
 
         and:
             currentDeliveryCostIs(euro(30.00))
@@ -91,24 +90,34 @@ class OrderPaymentEndpointAcceptanceSpec extends BaseIntegrationTest implements
     }
 
     def "should charge always 20 euro for delivery when the courier system is unavailable"() {
-        given: "There is a client order with amount 40 EUR"
+        given:
+            thereIsUnpaid(anOrder().withAmount(euro(40.00)))
 
-        and: "The client is not a VIP"
+        and:
+            externalCourierSystemIsUnavailable()
 
-        and: "Free delivery is valid from an amount equal to 50 EUR"
+        when:
+            def payment = clientMakeThe(aPayment().withAmount(euro(60.00)))
 
-        and: "The courier system is unavailable and default price of delivery is 20 EUR"
+        then:
+            assertThatPayment(payment).madeSuccessfully()
 
-        when: "When the client pays the order of 40 EUR"
+        and:
+            assertThatClientPaidForDeliveryWithAmount(euro(20.00))
 
-        then: "The order has been paid correctly with delivery cost equal to 20 EUR"
-
-        and: "The payment system was notified"
-
-        and: "The free music track was not sent to the client's mailbox"
+        and:
+            assertThatFreeMusicTrackWasNotSentToClient()
     }
 
     def "shouldn't accept payment if the amounts differ"() {
+        given:
+            thereIsUnpaid(anOrder().withAmount(euro(10.00)))
 
+        when:
+            def payment = clientMakeThe(aPayment().withAmount(euro(12.00)))
+            //  TODO 422
+
+        then:
+            assertThatPaymentNotAcceptedBecauseDifferentAmounts()
     }
 }

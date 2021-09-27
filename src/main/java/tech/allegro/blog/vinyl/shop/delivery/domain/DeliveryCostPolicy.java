@@ -23,7 +23,7 @@ public interface DeliveryCostPolicy {
       var MOV = specialPriceProvider.getMinimumOrderValueForFreeDelivery();
       if (orderValue.greaterOrEqualTo(MOV))
         return Delivery.freeDelivery();
-      final var resultOfGettingCurrentDeliveryCost = Result.run(() -> Delivery.standardDelivery(deliveryCostProvider.currentCost()));
+      final var resultOfGettingCurrentDeliveryCost = Result.of(() -> Delivery.standardDelivery(deliveryCostProvider.currentCost()));
       return resultOfGettingCurrentDeliveryCost.getSuccessOrDefault(defaultDelivery);
     }
   }

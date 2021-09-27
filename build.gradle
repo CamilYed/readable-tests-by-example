@@ -11,7 +11,7 @@ version = '0.0.1-SNAPSHOT'
 
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(11)
+    languageVersion = JavaLanguageVersion.of(17)
   }
 }
 
@@ -24,12 +24,20 @@ project.ext.versions = [
   feign   : '3.0.3',
   spock   : '2.0-groovy-3.0',
   wiremock: '2.27.2',
-  groovy  : '3.0.8'
+  groovy  : '3.0.9'
 ]
 
 configurations {
   integrationTest {
     extendsFrom testRuntimeClasspath
+  }
+}
+
+configurations.all {
+  resolutionStrategy {
+    dependencySubstitution {
+      substitute module('org.codehaus.groovy:groovy:3.0.8') with module("org.codehaus.groovy:groovy:${versions.groovy}")
+    }
   }
 }
 
@@ -89,6 +97,11 @@ task integrationTest(type: Test) {
 
 compileJava {
   options.encoding = 'UTF-8'
+  options.compilerArgs += ['--enable-preview']
+}
+
+tasks.withType(Test).all {
+  jvmArgs += '--enable-preview'
 }
 
 wrapper {

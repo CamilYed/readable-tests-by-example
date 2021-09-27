@@ -10,7 +10,6 @@ import tech.allegro.blog.vinyl.shop.delivery.domain.Delivery
 
 import java.time.Instant
 
-import static tech.allegro.blog.vinyl.shop.order.domain.OrderDomainEvents.OrderPayFailed.Reason.valueOf
 import static tech.allegro.blog.vinyl.shop.order.domain.Values.*
 
 @CompileStatic
@@ -23,16 +22,11 @@ class OrderPaidEventBuilder {
     Delivery delivery
 
     static OrderPaidEventBuilder anOrderPaidEventWithFreeDelivery() {
-        anOrderPaidEvent().withDelivery(Delivery.freeDelivery())
+        anOrderPaidEvent().withFreeDelivery()
     }
 
     static OrderPaidEventBuilder anOrderPaidEvent() {
         return new OrderPaidEventBuilder()
-    }
-
-    OrderPaidEventBuilder withAmountInEuro(BigDecimal anAmount) {
-        amount = Money.of(anAmount, TestData.EURO_CURRENCY)
-        return this
     }
 
     OrderPaidEventBuilder withFreeDelivery() {
@@ -41,7 +35,7 @@ class OrderPaidEventBuilder {
     }
 
     OrderDomainEvents.OrderPaid build() {
-        return OrderDomainEvents.OrderPaid.of(
+        return new OrderDomainEvents.OrderPaid(
                 ClientId.of(clientId),
                 OrderId.of(orderId),
                 when,
@@ -66,11 +60,17 @@ class OrderPayFailedEventBuilder {
         return new OrderPayFailedEventBuilder().withReason("AMOUNT_IS_DIFFERENT")
     }
 
-    OrderDomainEvents.OrderPayFailed build() {
-        return OrderDomainEvents.OrderPayFailed.of(
-                OrderId.of(orderId),
-                when,
-                valueOf(reason)
-        )
+    OrderDomainEvents.OrderFailureEvent build() {
+        if ("AMOUNT_IS_DIFFERENT" == reason) {
+            return new OrderDomainEvents.OrderPayFailedBecauseAmountIsDifferent(
+                    OrderId.of(orderId),
+                    when
+            )
+        } else {
+            return new OrderDomainEvents.OrderPayFailedBecauseAlreadyPaid(
+                    OrderId.of(orderId),
+                    when
+            )
+        }
     }
 }

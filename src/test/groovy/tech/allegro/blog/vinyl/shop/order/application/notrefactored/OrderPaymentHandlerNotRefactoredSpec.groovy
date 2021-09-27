@@ -18,7 +18,6 @@ import tech.allegro.blog.vinyl.shop.order.domain.OrderDomainEvents
 import tech.allegro.blog.vinyl.shop.order.domain.OrderFactory
 
 import tech.allegro.blog.vinyl.shop.order.domain.OrderRepository
-import tech.allegro.blog.vinyl.shop.order.domain.Values
 import tech.allegro.blog.vinyl.shop.sales.domain.SpecialPriceProvider
 
 import java.time.Clock
@@ -28,8 +27,6 @@ import java.time.ZoneId
 import static tech.allegro.blog.vinyl.shop.delivery.domain.DeliveryCostPolicy.DefaultDeliveryCostPolicy
 import static tech.allegro.blog.vinyl.shop.order.application.OrderPaymentHandler.PayOrderCommand
 import static tech.allegro.blog.vinyl.shop.order.domain.OrderDomainEvents.OrderPaid
-import static tech.allegro.blog.vinyl.shop.order.domain.OrderDomainEvents.OrderPayFailed.Reason.ALREADY_PAID
-import static tech.allegro.blog.vinyl.shop.order.domain.OrderDomainEvents.OrderPayFailed.Reason.AMOUNT_IS_DIFFERENT
 import static tech.allegro.blog.vinyl.shop.order.domain.Values.*
 
 class OrderPaymentHandlerNotRefactoredSpec extends Specification {
@@ -80,10 +77,10 @@ class OrderPaymentHandlerNotRefactoredSpec extends Specification {
 
         then:
             1 * domainEventPublisher.publish({ OrderPaid event ->
-                assert event.orderId == ORDER_ID
-                assert event.amount == _40_EUR
-                assert event.delivery.cost == Money.ZERO
-                assert event.when == CURRENT_DATE
+                assert event.orderId() == ORDER_ID
+                assert event.amount() == _40_EUR
+                assert event.delivery().cost == Money.ZERO
+                assert event.when() == CURRENT_DATE
             })
     }
 
@@ -102,10 +99,10 @@ class OrderPaymentHandlerNotRefactoredSpec extends Specification {
 
         then:
             1 * domainEventPublisher.publish({ OrderPaid event ->
-                assert event.orderId == ORDER_ID
-                assert event.amount == _40_EUR
-                assert event.delivery.cost == Money.ZERO
-                assert event.when == CURRENT_DATE
+                assert event.orderId() == ORDER_ID
+                assert event.amount() == _40_EUR
+                assert event.delivery().cost == Money.ZERO
+                assert event.when() == CURRENT_DATE
             })
     }
 
@@ -127,11 +124,11 @@ class OrderPaymentHandlerNotRefactoredSpec extends Specification {
 
         then:
             1 * domainEventPublisher.publish({ OrderPaid event ->
-                assert event.clientId == CLIENT_ID
-                assert event.orderId == ORDER_ID
-                assert event.amount == _40_EUR
-                assert event.delivery.cost == _25_EUR
-                assert event.when == CURRENT_DATE
+                assert event.clientId() == CLIENT_ID
+                assert event.orderId() == ORDER_ID
+                assert event.amount() == _40_EUR
+                assert event.delivery().cost == _25_EUR
+                assert event.when() == CURRENT_DATE
             })
     }
 
@@ -153,10 +150,10 @@ class OrderPaymentHandlerNotRefactoredSpec extends Specification {
 
         then:
             1 * domainEventPublisher.publish({ OrderPaid event ->
-                assert event.orderId == ORDER_ID
-                assert event.amount == _40_EUR
-                assert event.delivery.cost == _20_EUR
-                assert event.when == CURRENT_DATE
+                assert event.orderId() == ORDER_ID
+                assert event.amount() == _40_EUR
+                assert event.delivery().cost == _20_EUR
+                assert event.when() == CURRENT_DATE
             })
     }
 
@@ -174,10 +171,9 @@ class OrderPaymentHandlerNotRefactoredSpec extends Specification {
             paymentHandler.handle(PAY_FOR_ORDER_40_EUR)
 
         then:
-            1 * domainEventPublisher.publish({ OrderDomainEvents.OrderPayFailed event ->
-                assert event.orderId == ORDER_ID
-                assert event.when == CURRENT_DATE
-                assert event.reason == ALREADY_PAID
+            1 * domainEventPublisher.publish({ OrderDomainEvents.OrderPayFailedBecauseAlreadyPaid event ->
+                assert event.orderId() == ORDER_ID
+                assert event.when() == CURRENT_DATE
             })
     }
 
@@ -195,10 +191,9 @@ class OrderPaymentHandlerNotRefactoredSpec extends Specification {
             paymentHandler.handle(PayOrderCommand.of(CLIENT_ID, ORDER_ID, _50_EUR))
 
         then:
-            1 * domainEventPublisher.publish({ OrderDomainEvents.OrderPayFailed event ->
-                assert event.orderId == ORDER_ID
-                assert event.when == CURRENT_DATE
-                assert event.reason == AMOUNT_IS_DIFFERENT
+            1 * domainEventPublisher.publish({ OrderDomainEvents.OrderPayFailedBecauseAmountIsDifferent event ->
+                assert event.orderId() == ORDER_ID
+                assert event.when() == CURRENT_DATE
             })
     }
 }

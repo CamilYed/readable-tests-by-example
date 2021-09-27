@@ -4,12 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import tech.allegro.blog.vinyl.shop.catalogue.domain.VinylId;
 import tech.allegro.blog.vinyl.shop.client.domain.ClientId;
-import tech.allegro.blog.vinyl.shop.common.events.DomainEvent;
+import tech.allegro.blog.vinyl.shop.common.events.Event;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
 import tech.allegro.blog.vinyl.shop.common.time.ClockProvider;
 import tech.allegro.blog.vinyl.shop.delivery.domain.Delivery;
 import tech.allegro.blog.vinyl.shop.order.domain.OrderDomainEvents.OrderPaid;
-import tech.allegro.blog.vinyl.shop.order.domain.OrderDomainEvents.OrderPayFailed;
+import tech.allegro.blog.vinyl.shop.order.domain.OrderDomainEvents.OrderPayFailedBecauseAlreadyPaid;
+import tech.allegro.blog.vinyl.shop.order.domain.OrderDomainEvents.OrderPayFailedBecauseAmountIsDifferent;
 import tech.allegro.blog.vinyl.shop.order.domain.Values.OrderDataSnapshot;
 import tech.allegro.blog.vinyl.shop.order.domain.Values.OrderDataSnapshot.Item;
 import tech.allegro.blog.vinyl.shop.order.domain.Values.OrderId;
@@ -17,7 +18,6 @@ import tech.allegro.blog.vinyl.shop.order.domain.Values.OrderLines;
 
 import static java.util.stream.Collectors.toList;
 import static lombok.AccessLevel.PACKAGE;
-import static tech.allegro.blog.vinyl.shop.order.domain.OrderDomainEvents.OrderPayFailed.Reason;
 
 @AllArgsConstructor(access = PACKAGE)
 public class Order {
@@ -28,7 +28,7 @@ public class Order {
   private Delivery delivery;
   private boolean unpaid; // TODO replace with enum with values DRAFT, PAID etc.
 
-  public DomainEvent pay(Money amount, Delivery delivery) {
+  public Event pay(Money amount, Delivery delivery) {
     if (unpaid) {
       final var toPay = orderLines.total().add(delivery.getCost());
       if (amount.equalTo(toPay)) {
@@ -62,21 +62,20 @@ public class Order {
       orderId,
       orderLines.total(),
       delivery.getCost(),
-      orderLines.getLines().stream().map( it -> Item.of(it.getProductId(), it.getPrice())).collect(toList()),
+      orderLines.getLines().stream().map(it -> Item.of(it.getProductId(), it.getPrice())).collect(toList()),
       unpaid
     );
   }
 
   private OrderPaid orderPaidSuccessfully() {
-    return OrderPaid.of(clientId, orderId, ClockProvider.systemClock().instant(), orderValue(), delivery);
+    return new OrderPaid(clientId, orderId, ClockProvider.systemClock().instant(), orderValue(), delivery);
   }
 
-  private OrderPayFailed amountToBePaidIsDifferent() {
-    return OrderPayFailed.of(orderId, ClockProvider.systemClock().instant(), Reason.AMOUNT_IS_DIFFERENT);
+  private OrderPayFailedBecauseAmountIsDifferent amountToBePaidIsDifferent() {
+    return new OrderPayFailedBecauseAmountIsDifferent(orderId, ClockProvider.systemClock().instant());
   }
 
-  private OrderPayFailed orderAlreadyPaid() {
-    return OrderPayFailed.of(orderId, ClockProvider.systemClock().instant(), Reason.ALREADY_PAID);
+  private OrderPayFailedBecauseAlreadyPaid orderAlreadyPaid() {
+    return new OrderPayFailedBecauseAlreadyPaid(orderId, ClockProvider.systemClock().instant());
   }
 }
-

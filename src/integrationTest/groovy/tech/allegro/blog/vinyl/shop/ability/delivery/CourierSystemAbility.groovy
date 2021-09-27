@@ -1,6 +1,7 @@
 package tech.allegro.blog.vinyl.shop.ability.delivery
 
 import com.github.tomakehurst.wiremock.WireMockServer
+import com.github.tomakehurst.wiremock.http.Fault
 import groovy.json.JsonOutput
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpHeaders
@@ -22,6 +23,12 @@ trait CourierSystemAbility {
                 .willReturn(getCurrentCostResponse()
                         .withBody(body)
                 )
+        )
+    }
+
+    void externalCourierSystemIsUnavailable() {
+        wireMockServer.stubFor(get(DELIVERY_COST_SERVICE_URL)
+                .willReturn(aResponse().withFixedDelay(5000))
         )
     }
 

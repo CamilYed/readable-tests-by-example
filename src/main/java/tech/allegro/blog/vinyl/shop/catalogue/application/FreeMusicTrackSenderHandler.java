@@ -13,9 +13,9 @@ public class FreeMusicTrackSenderHandler {
 
   @EventListener
   public void handle(OrderPaid event) {
-    final var clientReputation = clientReputationProvider.get(event.getClientId());
+    final var clientReputation = clientReputationProvider.get(event.clientId());
     if (clientReputation.isVip()) {
-      freeMusicTrackSender.send(event.getClientId());
+      freeMusicTrackSender.send(event.clientId());
     }
   }
 }

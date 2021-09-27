@@ -18,6 +18,4 @@ class OrderCreationAssertion {
         assert creationResult.statusCode == HttpStatus.CREATED
         return this
     }
-
-
 }

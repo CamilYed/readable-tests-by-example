@@ -2,10 +2,10 @@ package tech.allegro.blog.vinyl.shop.common.events
 
 class InMemoryDomainEventPublisher implements DomainEventPublisher {
 
-    private final List<DomainEvent> published = []
+    private final List<Event.DomainEvent> published = []
 
     @Override
-    void publish(DomainEvent event) {
+    void publish(Event.DomainEvent event) {
         published.add(event)
     }
 
@@ -13,7 +13,7 @@ class InMemoryDomainEventPublisher implements DomainEventPublisher {
         return published.size()
     }
 
-    boolean contains(DomainEvent domainEvent) {
+    boolean contains(Event.DomainEvent domainEvent) {
         return published.contains(domainEvent)
     }
 }

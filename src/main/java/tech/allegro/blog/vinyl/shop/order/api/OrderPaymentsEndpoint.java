@@ -26,8 +26,11 @@ class OrderPaymentsEndpoint {
   @PutMapping(value = "/orders/{orderId}/payment", produces = MediaType.APPLICATION_JSON_VALUE)
   ResponseEntity<Void> payments(@PathVariable String orderId, @RequestBody PayOrderJson payOrderJson) {
     final var command = payOrderJson.toCommand(orderId);
-    paymentHandler.handle(command);
-    return ResponseEntity.accepted().build();
+    final var result = paymentHandler.handle(command);
+    if (result.isSuccess())
+      return ResponseEntity.accepted().build();
+    else
+      return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
   }
 
   @Data

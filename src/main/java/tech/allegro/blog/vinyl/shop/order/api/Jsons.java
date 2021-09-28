@@ -78,7 +78,11 @@ public interface Jsons {
     }
   }
 
-  record OrderCreatedResponseJson(String orderId) {
+  record OrderCreatedResponseJson(
+    String orderId,
+    String clientId,
+    List<ItemAndQuantityJson> items
+  ) {
   }
 
   private static Map<Vinyl, Quantity> mapItemsJsonToDomain(List<ItemAndQuantityJson> items) {

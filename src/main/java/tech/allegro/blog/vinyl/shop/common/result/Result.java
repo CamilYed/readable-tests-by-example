@@ -36,7 +36,22 @@ public record Result<SUCCESS>(SUCCESS success, Error error) {
     return success;
   }
 
+  public SUCCESS getSuccessOrThrowError() {
+    if (isError())
+      error.throwCause();
+    return success;
+  }
+
   public record Error(Throwable cause) {
+    static class ErrorExceptionWrapper extends RuntimeException {
+      public ErrorExceptionWrapper(Throwable cause) {
+        super(cause);
+      }
+    }
+
+    void throwCause() {
+      throw new ErrorExceptionWrapper(cause);
+    }
   }
 
   @FunctionalInterface

@@ -22,11 +22,19 @@ class OrderCreatorEndpointIT extends BaseIntegrationTest implements CreateOrderA
                                             .withClientId(CLIENT_ID)
                                             .withItem(anItem()
                                                         .withProductId(PRODUCT_ID)
-                                                        .withCost(euro(40.00)))
+                                                        .withCost(euro(40.00))
+                                                        .withQuantity(1)
+                                            )
             )
 
         then:
             assertThatOrder(creationResult).succeeded()
+                    .hasOrderId(ID)
+                    .hasClientId(CLIENT_ID)
+                    .hasItemThat()
+                        .hasProductId(PRODUCT_ID)
+                        .withCost(euro(40.00))
+                        .withQuantity(1)
     }
     // @formatter:on
 }

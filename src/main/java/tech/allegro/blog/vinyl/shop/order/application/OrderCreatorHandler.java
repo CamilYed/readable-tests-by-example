@@ -3,9 +3,11 @@ package tech.allegro.blog.vinyl.shop.order.application;
 import lombok.RequiredArgsConstructor;
 import tech.allegro.blog.vinyl.shop.catalogue.domain.Vinyl;
 import tech.allegro.blog.vinyl.shop.client.domain.ClientId;
+import tech.allegro.blog.vinyl.shop.common.result.Result;
 import tech.allegro.blog.vinyl.shop.common.volume.Quantity;
 import tech.allegro.blog.vinyl.shop.order.domain.OrderFactory;
 import tech.allegro.blog.vinyl.shop.order.domain.OrderRepository;
+import tech.allegro.blog.vinyl.shop.order.domain.Values.OrderDataSnapshot;
 import tech.allegro.blog.vinyl.shop.order.domain.Values.OrderId;
 
 import java.util.Map;
@@ -15,17 +17,21 @@ public class OrderCreatorHandler {
   private final OrderFactory orderFactory;
   private final OrderRepository orderRepository;
 
-  public OrderId handle(CreateOrderCommand command) {
-    final var orderId = orderRepository.nextId();
-    final var order = orderFactory.createUnpaidOrder(orderId, command.clientId, command.items);
-    orderRepository.save(order.toSnapshot());
-    return order.getOrderId();
+  public Result<OrderDataSnapshot> handle(CreateOrderCommand command) {
+    return Result.of(() -> {
+      final var orderId = orderRepository.nextId();
+      final var order = orderFactory.createUnpaidOrder(orderId, command.clientId, command.items);
+      orderRepository.save(order.toSnapshot());
+      return order.toSnapshot();
+    });
   }
 
-  public OrderId handle(CreateOrderWithIdCommand command) {
-    final var order = orderFactory.createUnpaidOrder(command.orderId, command.clientId, command.items);
-    orderRepository.save(order.toSnapshot());
-    return order.getOrderId();
+  public Result<OrderDataSnapshot> handle(CreateOrderWithIdCommand command) {
+    return Result.of(() -> {
+      final var order = orderFactory.createUnpaidOrder(command.orderId, command.clientId, command.items);
+      orderRepository.save(order.toSnapshot());
+      return order.toSnapshot();
+    });
   }
 
   public record CreateOrderCommand(ClientId clientId,

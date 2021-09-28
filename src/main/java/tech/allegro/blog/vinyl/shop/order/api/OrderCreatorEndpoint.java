@@ -7,11 +7,17 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tech.allegro.blog.vinyl.shop.common.json.FailureJson;
+import tech.allegro.blog.vinyl.shop.common.money.MoneyJson;
 import tech.allegro.blog.vinyl.shop.order.api.Jsons.CreateOrderJson;
 import tech.allegro.blog.vinyl.shop.order.api.Jsons.CreateOrderWithIdJson;
+import tech.allegro.blog.vinyl.shop.order.api.Jsons.ItemAndQuantityJson;
+import tech.allegro.blog.vinyl.shop.order.api.Jsons.ItemAndQuantityJson.Item;
+import tech.allegro.blog.vinyl.shop.order.api.Jsons.ItemAndQuantityJson.Quantity;
 import tech.allegro.blog.vinyl.shop.order.api.Jsons.OrderCreatedResponseJson;
 import tech.allegro.blog.vinyl.shop.order.application.OrderCreatorHandler;
-import tech.allegro.blog.vinyl.shop.order.domain.Values.OrderId;
+import tech.allegro.blog.vinyl.shop.order.domain.Values;
+
+import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @RestController
@@ -21,19 +27,36 @@ class OrderCreatorEndpoint {
 
   @PostMapping(value = "/orders", produces = MediaType.APPLICATION_JSON_VALUE)
   ResponseEntity<OrderCreatedResponseJson> create(@RequestBody CreateOrderJson items) {
-    final var orderId = orderCreatorHandler.handle(items.toCommand());
-    return buildResponse(orderId);
+    final var resultOrError = orderCreatorHandler.handle(items.toCommand());
+    final var success = resultOrError.getSuccessOrThrowError();
+    return buildResponse(success);
   }
 
   @PutMapping(value = "/orders/{orderId}", produces = MediaType.APPLICATION_JSON_VALUE)
   ResponseEntity<OrderCreatedResponseJson> upsert(@PathVariable("orderId") String orderId,
                                                   @RequestBody CreateOrderWithIdJson items) {
-    orderCreatorHandler.handle(items.toCommand());
-    return buildResponse(new OrderId(orderId));
+    final var resultOrError = orderCreatorHandler.handle(items.toCommand());
+    final var success = resultOrError.getSuccessOrThrowError();
+    return buildResponse(success);
   }
 
-  private ResponseEntity<OrderCreatedResponseJson> buildResponse(OrderId orderId) {
-    return ResponseEntity.status(HttpStatus.CREATED).body(new OrderCreatedResponseJson(orderId.value()));
+  private ResponseEntity<OrderCreatedResponseJson> buildResponse(Values.OrderDataSnapshot data) {
+    return ResponseEntity.status(HttpStatus.CREATED).body(
+      new OrderCreatedResponseJson(
+        data.orderId().value(),
+        data.clientId().value(),
+        data.items().entrySet().stream()
+          .map(it ->
+            new ItemAndQuantityJson(
+              new Item(
+                it.getKey().vinylId().value(),
+                new MoneyJson(it.getKey().price().value().toString(), it.getKey().price().currency().getCurrencyCode())
+              ),
+              new Quantity(it.getValue().value())
+            )
+          ).collect(toList())
+      )
+    );
   }
 
   @ExceptionHandler(Throwable.class)

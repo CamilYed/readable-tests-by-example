@@ -42,14 +42,19 @@ class OrderPaymentEndpointNotRefactoredAcceptanceSpec extends BaseIntegrationNot
 
     def "shouldn't charge for delivery when the client has a VIP status"() {
         given: "There is a client order with amount 40 EUR"
-            def body = """{         "orderId" : "${ORDER_ID_1}",
+            def body = """{     "orderId" : "${ORDER_ID_1}",
                                 "clientId": "${CLIENT_ID_1}",
                                 "items":  [
-                                            {
+                                           {
+                                            "item": {
                                               "productId": "${PRODUCT_ID_1}",
                                               "cost": { "amount": "40.00", "currency": "EUR" }
+                                             },
+                                             "quantity": {
+                                                "value": 1
                                              }
-                                          ]
+                                           }
+                                         ]
                               }
                           """.toString()
             def requestEntity = buildHttpEntity(body, "application/json", "application/json")

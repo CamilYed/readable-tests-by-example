@@ -1,5 +1,6 @@
 package tech.allegro.blog.vinyl.shop
 
+import tech.allegro.blog.vinyl.shop.catalogue.domain.Vinyl
 import tech.allegro.blog.vinyl.shop.catalogue.domain.VinylId
 import tech.allegro.blog.vinyl.shop.common.money.Money
 
@@ -14,5 +15,6 @@ class TestData {
     public static final Money _40_EUR = Money.of(40.00, EURO_CURRENCY_CODE)
     public static final String CZESLAW_NIEMEN_ALBUM_ID = "PRODUCT_ID_001"
     public static final VinylId VINYL_CZESLAW_NIEMEN_ID = new VinylId(CZESLAW_NIEMEN_ALBUM_ID)
+    public static final Vinyl VINYL_CZESLAW_NIEMEN = new Vinyl(VINYL_CZESLAW_NIEMEN_ID, _40_EUR)
 
 }

@@ -1,5 +1,7 @@
 package tech.allegro.blog.vinyl.shop.common.money;
 
+import tech.allegro.blog.vinyl.shop.common.volume.Quantity;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Currency;
@@ -26,6 +28,10 @@ public record Money(BigDecimal value, Currency currency) {
     if (money.currency.equals(this.currency)) {
       return new Money(this.value.subtract(money.value), this.currency);
     } else throw new IllegalArgumentException("Can not add different currency");
+  }
+
+  public Money multiply(Quantity quantity) {
+    return new Money(this.value.multiply(BigDecimal.valueOf(quantity.value())), this.currency);
   }
 
   public boolean notEqualTo(Money money) {

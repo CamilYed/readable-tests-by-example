@@ -3,6 +3,7 @@ package tech.allegro.blog.vinyl.shop.order.application.notrefactored
 import org.apache.groovy.util.Maps
 import spock.lang.Specification
 import spock.lang.Subject
+import tech.allegro.blog.vinyl.shop.catalogue.domain.Vinyl
 import tech.allegro.blog.vinyl.shop.catalogue.domain.VinylId
 import tech.allegro.blog.vinyl.shop.client.domain.ClientId
 import tech.allegro.blog.vinyl.shop.client.domain.ClientReputation
@@ -10,6 +11,7 @@ import tech.allegro.blog.vinyl.shop.client.domain.ClientReputationProvider
 import tech.allegro.blog.vinyl.shop.common.events.DomainEventPublisher
 import tech.allegro.blog.vinyl.shop.common.money.Money
 import tech.allegro.blog.vinyl.shop.common.time.ClockProvider
+import tech.allegro.blog.vinyl.shop.common.volume.Quantity
 import tech.allegro.blog.vinyl.shop.delivery.domain.DeliveryCostPolicy
 import tech.allegro.blog.vinyl.shop.delivery.domain.DeliveryCostProvider
 import tech.allegro.blog.vinyl.shop.order.application.OrderPaymentHandler
@@ -53,10 +55,11 @@ class OrderPaymentHandlerNotRefactoredSpec extends Specification {
     final Money _40_EUR = Money.of("40.00", "EUR")
     final Money _50_EUR = Money.of("50.00", "EUR")
     final ClientId CLIENT_ID = new ClientId("1")
-    final VinylId PRODUCT_ID = new VinylId("1")
+    final Vinyl VINYL_1 = new Vinyl(new VinylId("1"), _40_EUR)
+    final Quantity ONE = new Quantity(1)
     final OrderId ORDER_ID = new OrderId("1")
-    final OrderDataSnapshot UNPAID_ORDER_40_EUR = orderFactory.create(ORDER_ID, CLIENT_ID, Maps.of(PRODUCT_ID, _40_EUR), true).toSnapshot()
-    final OrderDataSnapshot PAID_ORDER = orderFactory.create(ORDER_ID, CLIENT_ID, Maps.of(PRODUCT_ID, _40_EUR), false).toSnapshot()
+    final OrderDataSnapshot UNPAID_ORDER_40_EUR = orderFactory.create(ORDER_ID, CLIENT_ID, Maps.of(VINYL_1, ONE), true).toSnapshot()
+    final OrderDataSnapshot PAID_ORDER = orderFactory.create(ORDER_ID, CLIENT_ID, Maps.of(VINYL_1, ONE), false).toSnapshot()
     final ClientReputation VIP = ClientReputation.vip(CLIENT_ID)
     final ClientReputation NOT_VIP = ClientReputation.notVip(CLIENT_ID)
     final PayOrderCommand PAY_FOR_ORDER_40_EUR = new PayOrderCommand(CLIENT_ID, ORDER_ID, _40_EUR)
@@ -100,7 +103,7 @@ class OrderPaymentHandlerNotRefactoredSpec extends Specification {
             specialPriceProvider.getMinimumOrderValueForFreeDelivery() >> _40_EUR
 
         when:
-            def result =paymentHandler.handle(PAY_FOR_ORDER_40_EUR)
+            def result = paymentHandler.handle(PAY_FOR_ORDER_40_EUR)
 
         then:
             result.isSuccess()

@@ -1,6 +1,7 @@
 package tech.allegro.blog.vinyl.shop.order.api;
 
-import org.slf4j.Logger;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -8,25 +9,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import tech.allegro.blog.vinyl.shop.client.domain.ClientId;
 import tech.allegro.blog.vinyl.shop.common.json.FailureJson;
-import tech.allegro.blog.vinyl.shop.common.money.Money;
-import tech.allegro.blog.vinyl.shop.common.money.MoneyJson;
+import tech.allegro.blog.vinyl.shop.order.api.Jsons.PayOrderJson;
 import tech.allegro.blog.vinyl.shop.order.application.OrderPaymentHandler;
 import tech.allegro.blog.vinyl.shop.order.application.OrderPaymentHandler.IncorrectAmount;
 import tech.allegro.blog.vinyl.shop.order.application.OrderPaymentHandler.OrderAlreadyPaid;
 import tech.allegro.blog.vinyl.shop.order.application.OrderPaymentHandler.OrderNotFound;
-import tech.allegro.blog.vinyl.shop.order.application.OrderPaymentHandler.PayOrderCommand;
-import tech.allegro.blog.vinyl.shop.order.domain.Values.OrderId;
 
+@Slf4j
 @RestController
+@RequiredArgsConstructor
 class OrderPaymentsEndpoint {
-  private static final Logger log = org.slf4j.LoggerFactory.getLogger(OrderPaymentsEndpoint.class);
   private final OrderPaymentHandler paymentHandler;
-
-  public OrderPaymentsEndpoint(OrderPaymentHandler paymentHandler) {
-    this.paymentHandler = paymentHandler;
-  }
 
   @PutMapping(value = "/orders/{orderId}/payment", produces = MediaType.APPLICATION_JSON_VALUE)
   ResponseEntity<?> payments(@PathVariable String orderId, @RequestBody PayOrderJson payOrderJson) {
@@ -63,16 +57,4 @@ class OrderPaymentsEndpoint {
     return ResponseEntity.unprocessableEntity().body(message);
   }
 
-  static record PayOrderJson(String clientId,
-                             MoneyJson cost
-  ) {
-
-    PayOrderCommand toCommand(String orderId) {
-      return new PayOrderCommand(
-        new ClientId(clientId),
-        new OrderId(orderId),
-        Money.of(cost.amount(), cost.currency())
-      );
-    }
-  }
 }

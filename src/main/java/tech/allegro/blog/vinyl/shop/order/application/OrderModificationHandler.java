@@ -2,14 +2,17 @@ package tech.allegro.blog.vinyl.shop.order.application;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import tech.allegro.blog.vinyl.shop.catalogue.domain.Vinyl;
 import tech.allegro.blog.vinyl.shop.catalogue.domain.VinylId;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
+import tech.allegro.blog.vinyl.shop.common.volume.Quantity;
 import tech.allegro.blog.vinyl.shop.order.domain.Order;
 import tech.allegro.blog.vinyl.shop.order.domain.OrderFactory;
 import tech.allegro.blog.vinyl.shop.order.domain.OrderRepository;
 import tech.allegro.blog.vinyl.shop.order.domain.Values.OrderId;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -21,15 +24,15 @@ public class OrderModificationHandler {
     final var snapshot = orderRepository.findBy(command.orderId);
     snapshot.ifPresent(orderDataSnapshot -> {
         final var order = orderFactory.fromSnapshot(orderDataSnapshot);
-        command.items.forEach(item -> tryAddItemToOrder(order, item));
+        command.items.forEach((vinyl, quantity) -> tryAddItemToOrder(order, vinyl, quantity));
         orderRepository.save(order.toSnapshot());
       }
     );
   }
 
-  private void tryAddItemToOrder(Order order, Item item) {
+  private void tryAddItemToOrder(Order order, Vinyl item, Quantity quantity) {
     try {
-      order.addItem(item.productId, item.price);
+      order.addItem(item, quantity);
     } catch (Order.CanNotModifyPaidOrder e) {
       log.error("Can not modify paid order", e);
       throw e;
@@ -37,10 +40,6 @@ public class OrderModificationHandler {
   }
 
   public record AddItemsToOrderCommand(OrderId orderId,
-                                       List<Item> items) {
-  }
-
-  public record Item(VinylId productId,
-                     Money price) {
+                                       Map<Vinyl, Quantity> items) {
   }
 }

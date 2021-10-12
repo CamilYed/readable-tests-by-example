@@ -17,40 +17,40 @@ import static org.springframework.http.HttpHeaders.ACCEPT
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE
 
 @SpringBootTest(classes = [AppRunner, TestConfig],
-        properties = "application.environment=integration",
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+  properties = "application.environment=integration",
+  webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(initializers = [WireMockInitializer])
 abstract class BaseIntegrationNotRefactoredTest extends Specification {
 
-    @Value('${local.server.port}')
-    protected int port
+  @Value('${local.server.port}')
+  protected int port
 
-    protected String localUrl(String endpoint) {
-        return "http://localhost:$port$endpoint"
+  protected String localUrl(String endpoint) {
+    return "http://localhost:$port$endpoint"
+  }
+
+  protected static <T> HttpEntity<T> buildHttpEntity(T body, String contentType, String accept, Map<String, String> additionalHeaders = null) {
+    def headers = buildHeaders(contentType, accept, additionalHeaders)
+    return new HttpEntity<T>(body, headers)
+  }
+
+  protected static HttpHeaders buildHeaders(String contentType, String accept, Map<String, String> headers) {
+    def httpHeaders = new HttpHeaders()
+    !contentType ?: httpHeaders.add(CONTENT_TYPE, contentType)
+    !accept ?: httpHeaders.add(ACCEPT, accept)
+    (headers ?: [:]).forEach { key, value ->
+      httpHeaders.add(key, value)
     }
+    return httpHeaders
+  }
 
-    protected static <T> HttpEntity<T> buildHttpEntity(T body, String contentType, String accept, Map<String, String> additionalHeaders = null) {
-        def headers = buildHeaders(contentType, accept, additionalHeaders)
-        return new HttpEntity<T>(body, headers)
+  @TestConfiguration
+  static class TestConfig {
+
+    @Bean
+    @Primary
+    FreeMusicTrackSender freeMusicTrackSender() {
+      return new TestFakeFreeMusicTrackSender()
     }
-
-    protected static HttpHeaders buildHeaders(String contentType, String accept, Map<String, String> headers) {
-        def httpHeaders = new HttpHeaders()
-        !contentType ?: httpHeaders.add(CONTENT_TYPE, contentType)
-        !accept ?: httpHeaders.add(ACCEPT, accept)
-        (headers ?: [:]).forEach { key, value ->
-            httpHeaders.add(key, value)
-        }
-        return httpHeaders
-    }
-
-    @TestConfiguration
-    static class TestConfig {
-
-        @Bean
-        @Primary
-        FreeMusicTrackSender freeMusicTrackSender() {
-            return new TestFakeFreeMusicTrackSender()
-        }
-    }
+  }
 }

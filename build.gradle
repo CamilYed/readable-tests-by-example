@@ -44,6 +44,7 @@ configurations.all {
 dependencies {
   compileOnly group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: versions.feign
 
@@ -52,6 +53,7 @@ dependencies {
   testImplementation group: 'org.spockframework', name: 'spock-core', version: versions.spock
   testImplementation group: 'org.codehaus.groovy', name: 'groovy-json', version: versions.groovy
 
+  integrationTest group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
   integrationTest group: 'org.spockframework', name: 'spock-spring', version: versions.spock
   integrationTest group: 'org.springframework.boot', name: 'spring-boot-starter-test'
   integrationTest group: 'com.github.tomakehurst', name: 'wiremock-jre8-standalone', version: versions.wiremock

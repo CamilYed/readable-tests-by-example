@@ -1,17 +1,18 @@
 package tech.allegro.blog.vinyl.shop.order.adapters.db;
 
-import tech.allegro.blog.vinyl.shop.client.domain.ClientId;
+import tech.allegro.blog.vinyl.shop.catalogue.domain.Vinyl;
+import tech.allegro.blog.vinyl.shop.common.money.Money;
+import tech.allegro.blog.vinyl.shop.common.money.MoneyJson;
+import tech.allegro.blog.vinyl.shop.common.volume.Quantity;
+import tech.allegro.blog.vinyl.shop.order.application.search.ClientOrdersView;
+import tech.allegro.blog.vinyl.shop.order.application.search.ClientOrdersView.OrderDataJson;
 import tech.allegro.blog.vinyl.shop.order.application.search.FindClientOrders;
-import tech.allegro.blog.vinyl.shop.order.application.search.PaidClientOrdersView;
 import tech.allegro.blog.vinyl.shop.order.domain.OrderRepository;
 import tech.allegro.blog.vinyl.shop.order.domain.Values.OrderDataSnapshot;
 import tech.allegro.blog.vinyl.shop.order.domain.Values.OrderId;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Predicate;
 
 import static java.util.stream.Collectors.toList;
 
@@ -35,14 +36,37 @@ class InMemoryDatabase implements OrderRepository, FindClientOrders {
   }
 
   @Override
-  public PaidClientOrdersView findPaidOrders(ClientId clientId) {
-    final var paidOrdersView = orders.values().stream()
-      .filter(onlyPaidOrders())
-      .collect(toList());
-    return new PaidClientOrdersView(paidOrdersView);
+  public ClientOrdersView findOne(OrderId orderId) {
+    List<OrderDataSnapshot> orders = new ArrayList<>(1);
+    findBy(orderId).ifPresent(orders::add);
+    return new ClientOrdersView(toJson(orders));
   }
 
-  private static Predicate<OrderDataSnapshot> onlyPaidOrders() {
-    return it -> !it.unpaid();
+  private static List<OrderDataJson> toJson(List<OrderDataSnapshot> orders) {
+    return orders.stream()
+      .map(it -> new OrderDataJson(
+          it.clientId().value(),
+          it.orderId().value(),
+          new OrderDataJson.OrderCost(it.cost().toString(), it.cost().currency().toString()),
+          it.deliveryCost() != null ? new OrderDataJson.DeliveryCost(it.deliveryCost().toString(), it.deliveryCost().currency().toString()) : null,
+          toJson(it.items()),
+          it.unpaid()
+        )
+      ).collect(toList());
+  }
+
+  private static List<OrderDataJson.Item> toJson(Map<Vinyl, Quantity> items) {
+    return items.entrySet().stream()
+      .map(it ->
+        new OrderDataJson.Item(
+          it.getKey().vinylId().value(),
+          toMoneyJson(it.getKey().price()),
+          it.getValue().value())
+      )
+      .collect(toList());
+  }
+
+  private static MoneyJson toMoneyJson(Money money) {
+    return new MoneyJson(money.value().toString(), money.currency().toString());
   }
 }

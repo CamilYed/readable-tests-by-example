@@ -7,14 +7,14 @@ import tech.allegro.blog.vinyl.shop.sales.domain.SpecialPriceProvider
 
 class InMemorySpecialPriceProvider implements SpecialPriceProvider {
 
-    private Money mov = new Money(80.00, TestData.EURO_CURRENCY)
+  private Money mov = new Money(80.00, TestData.EURO_CURRENCY)
 
-    @Override
-    Money getMinimumOrderValueForFreeDelivery() {
-        return mov
-    }
+  @Override
+  Money getMinimumOrderValueForFreeDelivery() {
+    return mov
+  }
 
-    void set(Money value) {
-        this.mov = value
-    }
+  void set(Money value) {
+    this.mov = value
+  }
 }

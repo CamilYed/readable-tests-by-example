@@ -34,12 +34,14 @@ public class OrderCreatorHandler {
     });
   }
 
-  public record CreateOrderCommand(ClientId clientId,
-                                   Map<Vinyl, Quantity> items) {
+  public record CreateOrderCommand(
+    ClientId clientId,
+    Map<Vinyl, Quantity> items) {
   }
 
-  public record CreateOrderWithIdCommand(OrderId orderId,
-                                         ClientId clientId,
-                                         Map<Vinyl, Quantity> items) {
+  public record CreateOrderWithIdCommand(
+    OrderId orderId,
+    ClientId clientId,
+    Map<Vinyl, Quantity> items) {
   }
 }

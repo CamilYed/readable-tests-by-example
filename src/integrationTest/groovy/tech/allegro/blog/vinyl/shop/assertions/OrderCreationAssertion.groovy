@@ -5,65 +5,65 @@ import org.springframework.http.ResponseEntity
 import tech.allegro.blog.vinyl.shop.builders.money.MoneyJsonBuilder
 
 class OrderCreationAssertion {
-    private ResponseEntity<Map> creationResult
+  private ResponseEntity<Map> creationResult
 
-    private OrderCreationAssertion(ResponseEntity<Map> response) {
-        this.creationResult = response
+  private OrderCreationAssertion(ResponseEntity<Map> response) {
+    this.creationResult = response
+  }
+
+  static assertThatOrder(ResponseEntity<Map> response) {
+    return new OrderCreationAssertion(response)
+  }
+
+  OrderCreationAssertion succeeded() {
+    assert creationResult.statusCode == HttpStatus.CREATED
+    return this
+  }
+
+  OrderCreationAssertion hasOrderId(String orderId) {
+    assert creationResult.body.orderId == orderId
+    return this
+  }
+
+  OrderCreationAssertion hasClientId(String clientId) {
+    assert creationResult.body.clientId == clientId
+    return this
+  }
+
+  ItemAssertion hasItemThat() {
+    return new ItemAssertion(creationResult.body.items as List<Map>, this)
+  }
+
+  static class ItemAssertion {
+    private List<Map> items
+    private String currentItem
+    private OrderCreationAssertion parentAssertion
+
+    ItemAssertion(List<Map> items, OrderCreationAssertion parentAssertion) {
+      this.items = items
+      this.parentAssertion = parentAssertion
     }
 
-    static assertThatOrder(ResponseEntity<Map> response) {
-        return new OrderCreationAssertion(response)
+    ItemAssertion hasProductId(String productId) {
+      assert items.any { it.itemUnitCost.productId == productId }
+      currentItem = productId
+      return this
     }
 
-    OrderCreationAssertion succeeded() {
-        assert creationResult.statusCode == HttpStatus.CREATED
-        return this
+    ItemAssertion withCost(MoneyJsonBuilder aCost) {
+      Map item = items.find { it.itemUnitCost.productId == currentItem }.itemUnitCost
+      assert item.cost == aCost.toMap()
+      return this
     }
 
-    OrderCreationAssertion hasOrderId(String orderId) {
-        assert creationResult.body.orderId == orderId
-        return this
+    ItemAssertion withQuantity(int quantity) {
+      def item = items.find { it.itemUnitCost.productId == currentItem }
+      assert item.quantity.value == quantity
+      return this
     }
 
-    OrderCreationAssertion hasClientId(String clientId) {
-        assert creationResult.body.clientId == clientId
-        return this
+    OrderCreationAssertion and() {
+      return parentAssertion
     }
-
-    ItemAssertion hasItemThat() {
-        return new ItemAssertion(creationResult.body.items as List<Map>, this)
-    }
-
-    static class ItemAssertion {
-        private List<Map> items
-        private String currentItem
-        private OrderCreationAssertion parentAssertion
-
-        ItemAssertion(List<Map> items, OrderCreationAssertion parentAssertion) {
-            this.items = items
-            this.parentAssertion = parentAssertion
-        }
-
-        ItemAssertion hasProductId(String productId) {
-            assert items.any { it.item.productId == productId }
-            currentItem = productId
-            return this
-        }
-
-        ItemAssertion withCost(MoneyJsonBuilder aCost) {
-            Map item = items.find { it.item.productId == currentItem }.item
-            assert item.cost == aCost.toMap()
-            return this
-        }
-
-        ItemAssertion withQuantity(int quantity) {
-            def item = items.find { it.item.productId == currentItem }
-            assert item.quantity.value == quantity
-            return this
-        }
-
-        OrderCreationAssertion and() {
-            return parentAssertion
-        }
-    }
+  }
 }

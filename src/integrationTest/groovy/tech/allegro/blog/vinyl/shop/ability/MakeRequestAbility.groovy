@@ -7,12 +7,12 @@ import org.springframework.http.ResponseEntity
 
 interface MakeRequestAbility {
 
-    @NamedVariant
-    ResponseEntity<Map> makeRequest(
-            @NamedParam(required = true) String url,
-            @NamedParam(required = true) HttpMethod method,
-            @NamedParam(required = false) String contentType,
-            @NamedParam(required = false) Object body,
-            @NamedParam(required = false) String accept,
-            @NamedParam(required = false) Map<String, String> headers)
+  @NamedVariant
+  ResponseEntity<Map> makeRequest(
+    @NamedParam(required = true) String url,
+    @NamedParam(required = true) HttpMethod method,
+    @NamedParam(required = false) String contentType,
+    @NamedParam(required = false) Object body,
+    @NamedParam(required = false) String accept,
+    @NamedParam(required = false) Map<String, String> headers)
 }

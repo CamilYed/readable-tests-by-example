@@ -11,45 +11,45 @@ import tech.allegro.blog.vinyl.shop.builders.order.PayOrderJsonBuilder
 import tech.allegro.blog.vinyl.shop.common.events.DomainEventPublisher
 import tech.allegro.blog.vinyl.shop.common.money.Money
 import tech.allegro.blog.vinyl.shop.delivery.domain.Delivery
-import tech.allegro.blog.vinyl.shop.order.domain.OrderPaidEventBuilder
+import tech.allegro.blog.vinyl.shop.builders.OrderPaidEventBuilder
 
 import static groovy.json.JsonOutput.toJson
 import static org.mockito.Mockito.times
-import static tech.allegro.blog.vinyl.shop.order.domain.OrderPaidEventBuilder.anOrderPaidEvent
+import static tech.allegro.blog.vinyl.shop.builders.OrderPaidEventBuilder.anOrderPaidEvent
 
 trait OrderPaymentAbility implements MakeRequestAbility {
 
-    @SpyBean
-    private DomainEventPublisher domainEventPublisher
+  @SpyBean
+  private DomainEventPublisher domainEventPublisher
 
-    private PollingConditions pollingConditions = new PollingConditions(timeout: 5)
+  private PollingConditions pollingConditions = new PollingConditions(timeout: 5)
 
-    ResponseEntity<Map> clientMakeThe(PayOrderJsonBuilder aPayment = aPayment()) {
-        def jsonBody = toJson(aPayment.toMap())
-        return makeRequest(
-                url: "/orders/${aPayment.orderId}/payment",
-                method: HttpMethod.PUT,
-                body: jsonBody,
-                contentType: "application/json",
-                accept: "application/json",
+  ResponseEntity<Map> clientMakeThe(PayOrderJsonBuilder aPayment = aPayment()) {
+    def jsonBody = toJson(aPayment.toMap())
+    return makeRequest(
+      url: "/orders/${aPayment.orderId}/payment",
+      method: HttpMethod.PUT,
+      body: jsonBody,
+      contentType: "application/json",
+      accept: "application/json",
+    )
+  }
+
+  void assertThatClientHasNotPaidForDelivery(OrderPaidEventBuilder anEventBuilder
+                                               = anOrderPaidEvent().anOrderPaidEventWithFreeDelivery()) {
+    pollingConditions.eventually {
+      Mockito.verify(domainEventPublisher, times(1))
+        .publish(anEventBuilder.build())
+    }
+  }
+
+  void assertThatClientPaidForDeliveryWithAmount(MoneyJsonBuilder anAmount) {
+    pollingConditions.eventually {
+      Mockito.verify(domainEventPublisher, times(1))
+        .publish(anOrderPaidEvent()
+          .withDelivery(Delivery.standardDelivery(Money.of(anAmount.amount, anAmount.currency)))
+          .build()
         )
     }
-
-    void assertThatClientHasNotPaidForDelivery(OrderPaidEventBuilder anEventBuilder
-                                                       = anOrderPaidEvent().anOrderPaidEventWithFreeDelivery()) {
-        pollingConditions.eventually {
-            Mockito.verify(domainEventPublisher, times(1))
-                    .publish(anEventBuilder.build())
-        }
-    }
-
-    void assertThatClientPaidForDeliveryWithAmount(MoneyJsonBuilder anAmount) {
-        pollingConditions.eventually {
-            Mockito.verify(domainEventPublisher, times(1))
-                    .publish(anOrderPaidEvent()
-                            .withDelivery(Delivery.standardDelivery(Money.of(anAmount.amount, anAmount.currency)))
-                            .build()
-                    )
-        }
-    }
+  }
 }

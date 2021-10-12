@@ -2,16 +2,14 @@ package tech.allegro.blog.vinyl.shop.order.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import tech.allegro.blog.vinyl.shop.catalogue.domain.Vinyl;
+import tech.allegro.blog.vinyl.shop.catalogue.domain.VinylId;
 import tech.allegro.blog.vinyl.shop.client.domain.ClientId;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
 import tech.allegro.blog.vinyl.shop.common.time.ClockProvider;
 import tech.allegro.blog.vinyl.shop.common.volume.Quantity;
+import tech.allegro.blog.vinyl.shop.common.volume.QuantityChange;
 import tech.allegro.blog.vinyl.shop.delivery.domain.Delivery;
-import tech.allegro.blog.vinyl.shop.order.domain.Events.OrderDomainEvent;
-import tech.allegro.blog.vinyl.shop.order.domain.Events.OrderPaid;
-import tech.allegro.blog.vinyl.shop.order.domain.Events.OrderPayFailedBecauseAlreadyPaid;
-import tech.allegro.blog.vinyl.shop.order.domain.Events.OrderPayFailedBecauseDifferentAmounts;
+import tech.allegro.blog.vinyl.shop.order.domain.Events.*;
 import tech.allegro.blog.vinyl.shop.order.domain.Values.OrderDataSnapshot;
 import tech.allegro.blog.vinyl.shop.order.domain.Values.OrderId;
 import tech.allegro.blog.vinyl.shop.order.domain.Values.OrderLine;
@@ -19,7 +17,6 @@ import tech.allegro.blog.vinyl.shop.order.domain.Values.OrderLines;
 
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toList;
 import static lombok.AccessLevel.PACKAGE;
 
 @AllArgsConstructor(access = PACKAGE)
@@ -41,19 +38,20 @@ public class Order {
       } else {
         return amountToBePaidIsDifferent(amount.subtract(toPay));
       }
-    } else return orderAlreadyPaid();
+    } else return orderPayFailedBecauseAlreadyPaid();
   }
 
-  public void addItem(Vinyl product, Quantity quantity) {
-    if (orderLines == null)
-      orderLines = OrderLines.empty();
+  public OrderDomainEvent changeQuantity(VinylId product, QuantityChange change) {
     if (unpaid) {
-      orderLines.add(product, quantity);
-    } else throw new CanNotModifyPaidOrder();
+      final var orderLine = orderLines.changeQuantity(product, change);
+      return orderLine.map(it -> {
+        orderLines.removeLineOf(product);
+        orderLines.add(it);
+        return itemQuantityChanged(product, it.quantity());
+      }).orElse(itemDoesNotExists(product));
+    }
+    return itemQuantityChangeFailedBecauseAlreadyPaid(product);
   }
-
-  public static final class CanNotModifyPaidOrder extends RuntimeException {
-  } // TODO replace with event
 
   public Money orderValue() {
     return orderLines.totalCost();
@@ -74,11 +72,23 @@ public class Order {
     return new OrderPaid(clientId, orderId, ClockProvider.systemClock().instant(), orderValue(), delivery);
   }
 
-  private OrderPayFailedBecauseDifferentAmounts amountToBePaidIsDifferent(Money difference) {
+  private OrderDomainEvent amountToBePaidIsDifferent(Money difference) {
     return new OrderPayFailedBecauseDifferentAmounts(orderId, ClockProvider.systemClock().instant(), difference);
   }
 
-  private OrderPayFailedBecauseAlreadyPaid orderAlreadyPaid() {
+  private OrderDomainEvent orderPayFailedBecauseAlreadyPaid() {
     return new OrderPayFailedBecauseAlreadyPaid(orderId, ClockProvider.systemClock().instant());
+  }
+
+  private OrderDomainEvent itemQuantityChangeFailedBecauseAlreadyPaid(VinylId product) {
+    return new ItemQuantityChangeFailedBecauseAlreadyPaid(orderId, product);
+  }
+
+  private OrderDomainEvent itemDoesNotExists(VinylId vinylId) {
+    return new ItemQuantityChangeFailedBecauseNotExists(orderId, vinylId);
+  }
+
+  private OrderDomainEvent itemQuantityChanged(VinylId vinylId, Quantity quantity) {
+    return new ItemQuantityChanged(orderId, vinylId, quantity);
   }
 }

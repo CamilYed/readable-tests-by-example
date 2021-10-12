@@ -6,14 +6,14 @@ import groovy.transform.builder.SimpleStrategy
 
 @Builder(builderStrategy = SimpleStrategy, prefix = "with")
 class MoneyBuilder {
-    BigDecimal amount
-    String currency
+  BigDecimal amount
+  String currency
 
-    static MoneyBuilder euro(BigDecimal amount) {
-        return new MoneyBuilder(amount: amount, currency: "EUR")
-    }
+  static MoneyBuilder euro(BigDecimal amount) {
+    return new MoneyBuilder(amount: amount, currency: "EUR")
+  }
 
-    Money build() {
-        return new Money(amount, Currency.getInstance(currency))
-    }
+  Money build() {
+    return new Money(amount, Currency.getInstance(currency))
+  }
 }

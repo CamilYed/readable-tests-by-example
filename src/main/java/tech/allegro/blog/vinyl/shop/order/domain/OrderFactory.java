@@ -28,7 +28,7 @@ public class OrderFactory {
       snapshot.orderId(),
       snapshot.clientId(),
       new OrderLines(lines),
-      new Delivery(snapshot.cost()),
+      new Delivery(snapshot.deliveryCost()),
       snapshot.unpaid()
     );
   }

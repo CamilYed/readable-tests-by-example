@@ -9,17 +9,15 @@ import tech.allegro.blog.vinyl.shop.builders.money.MoneyJsonBuilder
 @Builder(builderStrategy = SimpleStrategy, prefix = "with")
 class PayOrderJsonBuilder {
     String orderId = TestData.ORDER_ID
-    String clientId = TestData.CLIENT_ID
     MoneyJsonBuilder amount = ["amount": 40.00, "currency": "EUR"]
 
-    static PayOrderJsonBuilder aPayment() {
-        return new PayOrderJsonBuilder()
-    }
+  static PayOrderJsonBuilder aPayment() {
+    return new PayOrderJsonBuilder()
+  }
 
-    Map toMap() {
-        return [
-                "clientId": clientId,
-                "cost"    : amount.toMap()
-        ]
-    }
+  Map toMap() {
+    return [
+      "cost"    : amount.toMap()
+    ]
+  }
 }

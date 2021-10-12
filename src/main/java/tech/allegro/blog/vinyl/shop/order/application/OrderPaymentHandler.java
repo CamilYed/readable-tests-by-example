@@ -4,7 +4,6 @@ import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
-import tech.allegro.blog.vinyl.shop.client.domain.ClientId;
 import tech.allegro.blog.vinyl.shop.client.domain.ClientReputation;
 import tech.allegro.blog.vinyl.shop.client.domain.ClientReputationProvider;
 import tech.allegro.blog.vinyl.shop.common.events.DomainEventPublisher;
@@ -19,6 +18,7 @@ import tech.allegro.blog.vinyl.shop.order.domain.Events.OrderPayFailedBecauseDif
 import tech.allegro.blog.vinyl.shop.order.domain.Order;
 import tech.allegro.blog.vinyl.shop.order.domain.OrderFactory;
 import tech.allegro.blog.vinyl.shop.order.domain.OrderRepository;
+import tech.allegro.blog.vinyl.shop.order.domain.Values.OrderDataSnapshot;
 import tech.allegro.blog.vinyl.shop.order.domain.Values.OrderId;
 
 @Slf4j
@@ -30,33 +30,33 @@ public class OrderPaymentHandler {
   private final DeliveryCostPolicy deliveryCostPolicy;
   private final DomainEventPublisher eventPublisher;
 
+  // Now we only have the InMemory repository, so we don't need the @Transactional annotation here
   public Result<Void> handle(PayOrderCommand command) {
     log.info("Start handling the command: {}", command);
     return Result.of(() -> {
-      final var order = findOrderOrThrowNotFound(command.orderId);
-      final var clientReputation = clientReputationProvider.get(command.clientId());
+      final var orderSnapshot = findOrderOrThrowNotFound(command.orderId);
+      final var clientReputation = clientReputationProvider.get(orderSnapshot.clientId());
+      final var order = orderFactory.fromSnapshot(orderSnapshot);
       final var delivery = calculateDeliveryCost(order.orderValue(), clientReputation);
       final var event = order.pay(command.amount, delivery);
       saveAndPublishWhenSucceeded(order, event);
     });
   }
 
-  private Order findOrderOrThrowNotFound(OrderId orderId) {
-    final var snapshot = orderRepository.findBy(orderId).orElseThrow(() -> OrderNotFound.of(orderId));
-    return orderFactory.fromSnapshot(snapshot);
+  private OrderDataSnapshot findOrderOrThrowNotFound(OrderId orderId) {
+    return orderRepository.findBy(orderId).orElseThrow(() -> new OrderNotFound(orderId));
   }
 
   private Delivery calculateDeliveryCost(Money orderValue, ClientReputation clientReputation) {
     return deliveryCostPolicy.calculate(orderValue, clientReputation);
   }
 
-  public record PayOrderCommand(ClientId clientId,
-                                OrderId orderId,
-                                Money amount) {
-
+  public record PayOrderCommand(
+    OrderId orderId,
+    Money amount) {
   }
 
-  @Value(staticConstructor = "of")
+  @Value
   @EqualsAndHashCode(callSuper = true)
   public static class OrderNotFound extends RuntimeException {
     OrderId orderId;
@@ -91,6 +91,7 @@ public class OrderPaymentHandler {
         orderRepository.save(order.toSnapshot());
         eventPublisher.publish(paymentSucceeded);
       }
+      default -> log.warn("Unhandled use case event = {}", event);
     }
   }
 }

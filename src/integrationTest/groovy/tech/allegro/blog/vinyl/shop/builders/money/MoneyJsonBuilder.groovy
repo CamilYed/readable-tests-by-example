@@ -6,17 +6,17 @@ import groovy.transform.builder.SimpleStrategy
 
 @Builder(builderStrategy = SimpleStrategy, prefix = "with")
 class MoneyJsonBuilder {
-    BigDecimal amount
-    String currency
+  BigDecimal amount
+  String currency
 
-    static MoneyJsonBuilder euro(BigDecimal amount) {
-        return new MoneyJsonBuilder(amount: amount, currency: "EUR")
-    }
+  static MoneyJsonBuilder euro(BigDecimal amount) {
+    return new MoneyJsonBuilder(amount: amount, currency: "EUR")
+  }
 
-    Map toMap() {
-        return [
-                "amount"  : amount.toString(),
-                "currency": currency
-        ]
-    }
+  Map toMap() {
+    return [
+      "amount"  : amount.toString(),
+      "currency": currency
+    ]
+  }
 }

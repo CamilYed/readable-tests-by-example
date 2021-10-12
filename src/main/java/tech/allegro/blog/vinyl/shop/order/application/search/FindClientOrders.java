@@ -1,8 +1,8 @@
 package tech.allegro.blog.vinyl.shop.order.application.search;
 
-import tech.allegro.blog.vinyl.shop.client.domain.ClientId;
+import tech.allegro.blog.vinyl.shop.order.domain.Values.OrderId;
 
 public interface FindClientOrders {
 
-  PaidClientOrdersView findPaidOrders(ClientId clientId);
+  ClientOrdersView findOne(OrderId orderId);
 }

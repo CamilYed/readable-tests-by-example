@@ -6,39 +6,50 @@ import tech.allegro.blog.vinyl.shop.ability.order.CreateOrderAbility
 import tech.allegro.blog.vinyl.shop.ability.order.OrderPaymentAbility
 
 import static tech.allegro.blog.vinyl.shop.assertions.PaymentResultAssertion.assertThat
-import static tech.allegro.blog.vinyl.shop.builders.order.CreateOrderWithIdJsonBuilder.anOrder
+import static tech.allegro.blog.vinyl.shop.builders.order.CreateOrderJsonBuilder.anOrder
 import static tech.allegro.blog.vinyl.shop.builders.order.PayOrderJsonBuilder.aPayment
 
 class AcceptanceSpec extends BaseIntegrationTest implements
-        CreateOrderAbility,
-        ClientReputationAbility,
-        OrderPaymentAbility,
-        FreeTrackMusicSenderAbility {
+  CreateOrderAbility,
+  ClientReputationAbility,
+  OrderPaymentAbility,
+  FreeTrackMusicSenderAbility {
 
-    // @formatter:off
-    def "positive payment process with the participation of VIP client"() {
-        given:
-            thereIsUnpaid(anOrder())
+  // @formatter:off
+  def "positive payment process with the participation of VIP client"() {
+    given:
+        thereIsUnpaid(anOrder())
 
-        and:
-            clientIsVip()
+    and:
+        clientIsVip()
 
-        when:
-            def payment = clientMakeThe(aPayment())
+        // when: I change the quantity of the item
 
-        then:
-            assertThat(payment).succeeded()
+        // then: Item quantity is changed successfully
 
-        and:
-            assertThatClientHasNotPaidForDelivery()
+        // when: I go to order listing view
 
-        and:
-            assertThatFreeMusicTrackWasSentToClient()
+        // then: I should see my unpaid order with new item quantity
 
-        // when i go to /order list endpoint i see my order
+    when:
+        def payment = clientMakeThe(aPayment())
 
-        // then I should see my paid order
-    }
+    then:
+        assertThat(payment).succeeded()
 
-    // @formatter:on
+    and:
+        assertThatClientHasNotPaidForDelivery()
+
+    and:
+        assertThatFreeMusicTrackWasSentToClient()
+
+        // when: I go to order listing view
+
+        // then: I should see my paid order
+
+        // when: I try pay the order
+
+        // then: payment should not be accepted
+  }
+  // @formatter:on
 }

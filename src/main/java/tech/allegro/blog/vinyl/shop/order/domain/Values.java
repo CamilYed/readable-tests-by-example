@@ -5,43 +5,41 @@ import tech.allegro.blog.vinyl.shop.catalogue.domain.VinylId;
 import tech.allegro.blog.vinyl.shop.client.domain.ClientId;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
 import tech.allegro.blog.vinyl.shop.common.volume.Quantity;
+import tech.allegro.blog.vinyl.shop.common.volume.QuantityChange;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.IntStream;
+import java.util.*;
 
 public class Values {
 
-  public record OrderId(String value) {
+  public static record OrderId(String value) {
+  }
+
+  public static record OrderDataSnapshot(
+    ClientId clientId,
+    OrderId orderId,
+    Money cost,
+    Money deliveryCost,
+    Map<Vinyl, Quantity> items,
+    boolean unpaid) {
   }
 
   record OrderLines(List<OrderLine> lines) {
-    static OrderLines empty() {
-      return new OrderLines(new ArrayList<>());
+
+    OrderLines(List<OrderLine> lines) {
+      this.lines = Objects.requireNonNullElseGet(lines, ArrayList::new);
     }
 
-    void add(Vinyl product, Quantity quantity) {
-      final var line = findLineToUpdate(product.vinylId());
-      lines.removeIf(orderLine -> orderLine.vinyl.vinylId().equals(product.vinylId()));
-      line.ifPresentOrElse(it -> lines.add(it.orderLine.increment(quantity)),
-        () -> lines.add(OrderLine.create(product, quantity)));
+    Optional<OrderLine> changeQuantity(VinylId vinylId, QuantityChange change) {
+      final var orderLine = findLineToUpdate(vinylId);
+      return orderLine.map(line -> line.changeQuantity(change));
     }
 
-    private Optional<OrderLineAndIndex> findLineToUpdate(VinylId vinylId) {
-      final var index = IntStream.range(0, lines.size())
-        .filter(i -> lines.get(i).vinyl().vinylId().equals(vinylId))
-        .findFirst()
-        .orElse(0);
-      return lines.stream()
-        .filter(it -> it.vinyl.vinylId().equals(vinylId))
-        .findFirst()
-        .map(it -> new OrderLineAndIndex(it, index));
+    void add(OrderLine orderLine) {
+      lines.add(orderLine);
     }
 
-    private record OrderLineAndIndex(OrderLine orderLine,
-                                     int index) {
+    void removeLineOf(VinylId productId) {
+      lines.removeIf(line -> line.isOfProduct(productId));
     }
 
     Money totalCost() {
@@ -50,29 +48,32 @@ public class Values {
         .map(OrderLine::lineCost)
         .reduce(Money.ZERO, Money::add);
     }
+
+    private Optional<OrderLine> findLineToUpdate(VinylId vinylId) {
+      return lines.stream()
+        .filter(it -> it.vinyl.vinylId().equals(vinylId))
+        .findFirst();
+    }
   }
 
-  record OrderLine(Vinyl vinyl,
-                   Quantity quantity
-  ) {
-    public Money lineCost() {
+  record OrderLine(
+    Vinyl vinyl,
+    Quantity quantity) {
+
+    Money lineCost() {
       return vinyl.price().multiply(quantity);
     }
 
-    OrderLine increment(Quantity toAdd) {
-      return new OrderLine(this.vinyl, quantity.add(toAdd));
+    OrderLine changeQuantity(QuantityChange change) {
+      return new OrderLine(this.vinyl, quantity.change(change));
+    }
+
+    boolean isOfProduct(VinylId vinylId) {
+      return vinyl.vinylId().equals(vinylId);
     }
 
     static OrderLine create(Vinyl product, Quantity quantity) {
       return new OrderLine(product, quantity);
     }
-  }
-
-  public static record OrderDataSnapshot(ClientId clientId,
-                                         OrderId orderId,
-                                         Money cost,
-                                         Money deliveryCost,
-                                         Map<Vinyl, Quantity> items,
-                                         boolean unpaid) {
   }
 }

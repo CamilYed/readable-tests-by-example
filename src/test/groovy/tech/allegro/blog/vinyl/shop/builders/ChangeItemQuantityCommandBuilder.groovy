@@ -9,6 +9,7 @@ import tech.allegro.blog.vinyl.shop.common.volume.QuantityChange
 import tech.allegro.blog.vinyl.shop.order.domain.Values
 
 import static tech.allegro.blog.vinyl.shop.order.application.OrderModificationHandler.ChangeItemQuantityCommand
+import static tech.allegro.blog.vinyl.shop.order.domain.Values.*
 
 @CompileStatic
 @Builder(builderStrategy = SimpleStrategy, prefix = "with")
@@ -23,7 +24,7 @@ class ChangeItemQuantityCommandBuilder {
 
   ChangeItemQuantityCommand build() {
     return new ChangeItemQuantityCommand(
-      new Values.OrderId(orderId),
+      new OrderId(orderId),
       new VinylId(productId),
       new QuantityChange(quantityChange)
     )

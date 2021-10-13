@@ -8,10 +8,8 @@ import tech.allegro.blog.vinyl.shop.catalogue.domain.VinylId
 import tech.allegro.blog.vinyl.shop.client.domain.ClientId
 import tech.allegro.blog.vinyl.shop.common.money.Money
 import tech.allegro.blog.vinyl.shop.common.money.MoneyBuilder
-import tech.allegro.blog.vinyl.shop.common.money.QuantityBuilder
 import tech.allegro.blog.vinyl.shop.common.volume.Quantity
 
-import static tech.allegro.blog.vinyl.shop.common.money.MoneyBuilder.euro
 import static tech.allegro.blog.vinyl.shop.order.domain.Values.OrderDataSnapshot
 import static tech.allegro.blog.vinyl.shop.order.domain.Values.OrderId
 
@@ -37,9 +35,30 @@ class OrderDataSnapshotBuilder {
     return this
   }
 
-  OrderDataSnapshotBuilder withItem(String productId, QuantityBuilder quantity, MoneyBuilder unitPrice = euro(10.00)) {
-    items << [(new Vinyl(new VinylId(productId), unitPrice.build())): quantity.build()]
+  OrderDataSnapshotBuilder withItem(ItemBuilder anItem) {
+    items.removeAll { it -> it.key.vinylId().value() == anItem.productId }
+    items << anItem.build()
     return this
+  }
+
+  @Builder(builderStrategy = SimpleStrategy, prefix = "with")
+  static class ItemBuilder {
+    String productId = TestData.VINYL_CZESLAW_NIEMEN_ID
+    Money unitPrice = TestData.EUR_40
+    int quantity = 1
+
+    static ItemBuilder anItem() {
+      return new ItemBuilder()
+    }
+
+    ItemBuilder withUnitPrice(MoneyBuilder anUnitPrice) {
+      unitPrice = anUnitPrice.build()
+      return this
+    }
+
+    Map<Vinyl, Quantity> build() {
+      return [(new Vinyl(new VinylId(productId), unitPrice)): new Quantity(quantity)]
+    }
   }
 
   OrderDataSnapshot build() {

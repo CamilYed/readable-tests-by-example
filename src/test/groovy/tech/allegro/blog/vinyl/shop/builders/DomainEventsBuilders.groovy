@@ -48,40 +48,4 @@ class OrderPaidEventBuilder {
   }
 }
 
-@CompileStatic
-@Builder(builderStrategy = SimpleStrategy, prefix = "with")
-class OrderPayFailedBecauseDifferentAmountEventBuilder {
-  String orderId = TestData.ORDER_ID
-  Instant when = TestData.DEFAULT_CURRENT_DATE
-  Money different
 
-  static OrderPayFailedBecauseDifferentAmountEventBuilder anOrderAlreadyPaid() {
-    return new OrderPayFailedBecauseDifferentAmountEventBuilder()
-  }
-
-  OrderPayFailedBecauseDifferentAmounts build() {
-    return new OrderPayFailedBecauseDifferentAmounts(
-      new OrderId(orderId),
-      when,
-      different
-    )
-  }
-}
-
-@CompileStatic
-@Builder(builderStrategy = SimpleStrategy, prefix = "with")
-class OrderPayFailedBecauseAlreadyPaidEventBuilder {
-  String orderId = TestData.ORDER_ID
-  Instant when = TestData.DEFAULT_CURRENT_DATE
-
-  static OrderPayFailedBecauseAlreadyPaidEventBuilder anOrderAlreadyPaid() {
-    return new OrderPayFailedBecauseAlreadyPaidEventBuilder()
-  }
-
-  OrderPayFailedBecauseAlreadyPaid build() {
-    return new OrderPayFailedBecauseAlreadyPaid(
-      new OrderId(orderId),
-      when
-    )
-  }
-}

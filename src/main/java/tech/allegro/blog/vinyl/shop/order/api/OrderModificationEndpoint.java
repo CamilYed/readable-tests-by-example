@@ -14,7 +14,7 @@ import tech.allegro.blog.vinyl.shop.common.json.FailureJson;
 import tech.allegro.blog.vinyl.shop.common.result.Result;
 import tech.allegro.blog.vinyl.shop.order.api.Jsons.ChangeOrderItemQuantityJson;
 import tech.allegro.blog.vinyl.shop.order.application.OrderModificationHandler;
-import tech.allegro.blog.vinyl.shop.order.application.OrderModificationHandler.CanNotIncrementNotExistingItemInOrder;
+import tech.allegro.blog.vinyl.shop.order.application.OrderModificationHandler.CanNotChangeQuantityOfNotExistingItem;
 import tech.allegro.blog.vinyl.shop.order.application.OrderModificationHandler.CanNotModifyPaidOrder;
 import tech.allegro.blog.vinyl.shop.order.application.OrderModificationHandler.OrderNotFound;
 
@@ -38,7 +38,7 @@ class OrderModificationEndpoint {
       return switch (result.error().cause()) {
         case OrderNotFound e -> toResponseEntity(e);
         case CanNotModifyPaidOrder e -> toResponseEntity(e);
-        case CanNotIncrementNotExistingItemInOrder e -> toResponseEntity(e);
+        case CanNotChangeQuantityOfNotExistingItem e -> toResponseEntity(e);
         case ConstraintViolationException e -> toResponseEntity(e);
         default -> ResponseEntity.internalServerError().build();
       };
@@ -64,7 +64,7 @@ class OrderModificationEndpoint {
     return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(message);
   }
 
-  private ResponseEntity<?> toResponseEntity(CanNotIncrementNotExistingItemInOrder e) {
+  private ResponseEntity<?> toResponseEntity(CanNotChangeQuantityOfNotExistingItem e) {
     log.error("Order with id: {} can not be modified because does not contains item: {}!", e.getOrderId(), e.getVinylId(), e);
     final var message = new FailureJson("""
       Order with id: $id can not be modified because does not contains item: $itemId"""

@@ -35,8 +35,7 @@ trait OrderPaymentAbility implements MakeRequestAbility {
     )
   }
 
-  void assertThatClientHasNotPaidForDelivery(OrderPaidEventBuilder anEventBuilder
-                                               = anOrderPaidEvent().anOrderPaidEventWithFreeDelivery()) {
+  void assertThatClientHasNotPaidForDelivery(OrderPaidEventBuilder anEventBuilder = anOrderPaidEvent().anOrderPaidEventWithFreeDelivery()) {
     pollingConditions.eventually {
       Mockito.verify(domainEventPublisher, times(1))
         .publish(anEventBuilder.build())

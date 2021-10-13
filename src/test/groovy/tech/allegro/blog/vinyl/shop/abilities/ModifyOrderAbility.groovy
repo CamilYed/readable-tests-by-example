@@ -5,6 +5,7 @@ import tech.allegro.blog.vinyl.shop.builders.ChangeItemQuantityCommandBuilder
 import tech.allegro.blog.vinyl.shop.common.result.Result
 import tech.allegro.blog.vinyl.shop.order.application.OrderModificationHandler
 import tech.allegro.blog.vinyl.shop.order.domain.OrderFactory
+import tech.allegro.blog.vinyl.shop.order.domain.Values
 
 trait ModifyOrderAbility implements AddOrderAbility {
 
@@ -15,7 +16,10 @@ trait ModifyOrderAbility implements AddOrderAbility {
     orderModificationHandler = new OrderModificationHandler(orderRepository, new OrderFactory())
   }
 
-  Result<Void> changeItemQuantity(ChangeItemQuantityCommandBuilder anItemQuantityChange) {
-    return orderModificationHandler.handle(anItemQuantityChange.build())
+  Values.OrderDataSnapshot changeItemQuantity(ChangeItemQuantityCommandBuilder anItemQuantityChange) {
+    OrderModificationHandler.ChangeItemQuantityCommand command = anItemQuantityChange.build()
+    Result<Void> result = orderModificationHandler.handle(command)
+    assert result.isSuccess()
+    return orderRepository.findBy(command.orderId()).get()
   }
 }

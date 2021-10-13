@@ -57,7 +57,6 @@ trait PayOrderAbility implements
   void assertThatPaymentNotAcceptedBecauseDifferentAmounts(Result<Void> paymentResult) {
     assertThatAnyEventWasNotPublished()
     assert paymentResult.error().cause() instanceof IncorrectAmount
-
   }
 
   void assertThatClientHasNotPaidForDelivery() {

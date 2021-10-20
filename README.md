@@ -61,7 +61,7 @@ def "should charge for delivery based on price provided by courier system"() {
 
     then: "Payment succeeded"
 
-    and: "The client paid for delivery in the amount of 30 EUR"
+    and: "The client paid for delivery in the amount 30 EUR"
 
     and: "Free track music was not sent to the client"
 }
@@ -75,7 +75,7 @@ def "should charge always 20 euro for delivery when the courier system is unavai
 
     when: "The client make the payment in the amount 60 EUR"
 
-    then: "The client paid for delivery in the amount of 20 EUR"
+    then: "The client paid for delivery in the amount 20 EUR"
 
     and: "Free track music was not sent to the client"
 }
@@ -95,7 +95,7 @@ def "shouldn't modify paid order"() {
 
     when: "When change item quantity"
 
-    then: "Change failed due to "
+    then: "Change failed due order already paid"
 }
 ```
 

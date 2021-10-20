@@ -18,6 +18,7 @@ import tech.allegro.blog.vinyl.shop.order.domain.Values.OrderLines;
 import java.util.stream.Collectors;
 
 import static lombok.AccessLevel.PACKAGE;
+import static tech.allegro.blog.vinyl.shop.common.time.ClockProvider.systemClock;
 
 @AllArgsConstructor(access = PACKAGE)
 public class Order {
@@ -69,15 +70,15 @@ public class Order {
   }
 
   private OrderPaid orderPaidSuccessfully() {
-    return new OrderPaid(clientId, orderId, ClockProvider.systemClock().instant(), orderValue(), delivery);
+    return new OrderPaid(clientId, orderId, systemClock().instant(), orderValue(), delivery);
   }
 
   private OrderDomainEvent amountToBePaidIsDifferent(Money difference) {
-    return new OrderPayFailedBecauseDifferentAmounts(orderId, ClockProvider.systemClock().instant(), difference);
+    return new OrderPayFailedBecauseDifferentAmounts(orderId, systemClock().instant(), difference);
   }
 
   private OrderDomainEvent orderPayFailedBecauseAlreadyPaid() {
-    return new OrderPayFailedBecauseAlreadyPaid(orderId, ClockProvider.systemClock().instant());
+    return new OrderPayFailedBecauseAlreadyPaid(orderId, systemClock().instant());
   }
 
   private OrderDomainEvent itemQuantityChangeFailedBecauseAlreadyPaid(VinylId product) {

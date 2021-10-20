@@ -14,7 +14,6 @@ public interface DeliveryCostPolicy {
   class DefaultDeliveryCostPolicy implements DeliveryCostPolicy {
     private final DeliveryCostProvider deliveryCostProvider;
     private final SpecialPriceProvider specialPriceProvider;
-    private final Delivery defaultDelivery = Delivery.standardDeliveryWithDefaultPrice();
 
     @Override
     public Delivery calculate(Money orderValue, ClientReputation clientReputation) {
@@ -24,7 +23,7 @@ public interface DeliveryCostPolicy {
       if (orderValue.greaterOrEqualTo(MOV))
         return Delivery.freeDelivery();
       final var resultOfGettingCurrentDeliveryCost = Result.of(() -> Delivery.standardDelivery(deliveryCostProvider.currentCost()));
-      return resultOfGettingCurrentDeliveryCost.getSuccessOrDefault(defaultDelivery);
+      return resultOfGettingCurrentDeliveryCost.getSuccessOrDefault(Delivery.standardDeliveryWithDefaultPrice());
     }
   }
 }

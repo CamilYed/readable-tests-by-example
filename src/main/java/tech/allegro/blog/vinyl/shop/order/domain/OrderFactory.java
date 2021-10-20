@@ -1,9 +1,7 @@
 package tech.allegro.blog.vinyl.shop.order.domain;
 
 import tech.allegro.blog.vinyl.shop.catalogue.domain.Vinyl;
-import tech.allegro.blog.vinyl.shop.catalogue.domain.VinylId;
 import tech.allegro.blog.vinyl.shop.client.domain.ClientId;
-import tech.allegro.blog.vinyl.shop.common.money.Money;
 import tech.allegro.blog.vinyl.shop.common.volume.Quantity;
 import tech.allegro.blog.vinyl.shop.delivery.domain.Delivery;
 import tech.allegro.blog.vinyl.shop.order.domain.Values.OrderDataSnapshot;
@@ -13,8 +11,6 @@ import tech.allegro.blog.vinyl.shop.order.domain.Values.OrderLines;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 

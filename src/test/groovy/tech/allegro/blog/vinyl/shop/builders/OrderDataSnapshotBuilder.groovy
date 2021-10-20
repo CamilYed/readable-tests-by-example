@@ -63,7 +63,7 @@ class OrderDataSnapshotBuilder {
 
   OrderDataSnapshot build() {
     Money cost = items.entrySet().stream()
-      .map(it -> it.key.price() * it.getValue())
+      .map(it -> it.key.unitPrice() * it.getValue())
       .reduce(Money.ZERO, Money::add)
     return new OrderDataSnapshot(
       new ClientId(clientId),

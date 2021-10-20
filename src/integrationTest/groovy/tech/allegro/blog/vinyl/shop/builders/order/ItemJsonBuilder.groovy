@@ -8,22 +8,27 @@ import tech.allegro.blog.vinyl.shop.builders.money.MoneyJsonBuilder
 @Builder(builderStrategy = SimpleStrategy, prefix = "with")
 class ItemJsonBuilder {
   String productId = TestData.CZESLAW_NIEMEN_ALBUM_ID
-  MoneyJsonBuilder cost
-  int quantity = 1
+  MoneyJsonBuilder unitPrice
+  int quantity
 
   static ItemJsonBuilder anItem() {
     return new ItemJsonBuilder(
       [
         productId: TestData.CZESLAW_NIEMEN_ALBUM_ID,
-        cost     : [amount: 40.00, currency: "EUR"],
+        unitPrice: [amount: 40.00, currency: "EUR"],
         quantity : 1
       ]
     )
   }
 
+  ItemJsonBuilder inQuantity(int quantity) {
+    this.quantity = quantity
+    return this
+  }
+
   Map toMap() {
     return [
-      itemUnitCost: [productId: productId, cost: [amount: cost.amount, currency: cost.currency]],
+      itemUnitPrice: [productId: productId, price: [amount: unitPrice.amount, currency: unitPrice.currency]],
       quantity    : quantity
     ]
   }

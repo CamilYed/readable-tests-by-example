@@ -1,11 +1,10 @@
 package tech.allegro.blog.vinyl.shop.order.adapters.db;
 
 import tech.allegro.blog.vinyl.shop.catalogue.domain.Vinyl;
-import tech.allegro.blog.vinyl.shop.common.money.Money;
-import tech.allegro.blog.vinyl.shop.common.money.MoneyJson;
 import tech.allegro.blog.vinyl.shop.common.volume.Quantity;
 import tech.allegro.blog.vinyl.shop.order.application.search.ClientOrdersView;
 import tech.allegro.blog.vinyl.shop.order.application.search.ClientOrdersView.OrderDataJson;
+import tech.allegro.blog.vinyl.shop.order.application.search.ClientOrdersView.OrderDataJson.UnitPrice;
 import tech.allegro.blog.vinyl.shop.order.application.search.FindClientOrders;
 import tech.allegro.blog.vinyl.shop.order.domain.OrderRepository;
 import tech.allegro.blog.vinyl.shop.order.domain.Values.OrderDataSnapshot;
@@ -60,13 +59,9 @@ class InMemoryDatabase implements OrderRepository, FindClientOrders {
       .map(it ->
         new OrderDataJson.Item(
           it.getKey().vinylId().value(),
-          toMoneyJson(it.getKey().price()),
+          new UnitPrice(it.getKey().unitPrice().value().toString(), it.getKey().unitPrice().currency().toString()),
           it.getValue().value())
       )
       .collect(toList());
-  }
-
-  private static MoneyJson toMoneyJson(Money money) {
-    return new MoneyJson(money.value().toString(), money.currency().toString());
   }
 }

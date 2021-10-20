@@ -17,7 +17,7 @@ public interface Jsons {
 
   record ChangeOrderItemQuantityJson(
     @NotBlank String productId,
-    int quantity
+    @Min(1) int quantity
   ) {
   }
 
@@ -31,12 +31,13 @@ public interface Jsons {
   }
 
   record ItemCostAndQuantityJson(
-    @NotNull ItemUnitCost itemUnitCost,
+    @NotNull ItemUnitPrice itemUnitPrice,
     @Min(1) int quantity) {
 
-    public static record ItemUnitCost(
+    public static record ItemUnitPrice(
       @NotBlank String productId,
-      @NotNull MoneyJson cost) {
+      @NotNull MoneyJson price
+    ) {
     }
   }
 }

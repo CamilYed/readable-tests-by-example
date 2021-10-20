@@ -4,15 +4,12 @@ Example project
 
 ## Example Domain
 
-A store sells vinyl records.
-Each order is delivered by a courier company.
-When the client pays for the order, the delivery cost is charged.
-The delivery cost is always getting from the supplier's system (system of courier company).
-In the event of its unavailability, the delivery cost is equal to `20 EUR`.
+A store sells vinyl records. Each order is delivered by a courier company. When the client pays for the order, the
+delivery cost is charged. The delivery cost is always getting from the supplier's system (system of courier company). In
+the event of its unavailability, the delivery cost is equal to `20 EUR`.
 
-There are two clients in the system: `STANDARD` and `VIP`.
-If the order is fulfilled for the `VIP` or the `order value exceeds` the fixed amount according to the promotion price list
-this order has free delivery.
+There are two clients in the system: `STANDARD` and `VIP`. If the order is fulfilled for the `VIP` or
+the `order value exceeds` the fixed amount according to the promotion price list this order has free delivery.
 
 For `VIP` a free track music should be sent to his mailbox.
 
@@ -22,77 +19,83 @@ For `VIP` a free track music should be sent to his mailbox.
 
 ```groovy
 def "shouldn't charge for delivery when the client has a VIP status"() {
-  given: "There is a client order with amount 40 EUR"
+    given: "There is an unpaid order"
 
-  and: "The client has a VIP reputation"
+    and: "The Client is a VIP"
 
-  when: "When the client pays the order of 40 EUR"
+    when: "The client make the payment"
 
-  then: "The order has been paid correctly"
+    then: "Payment succeeded"
 
-  and: "The payment system was notified"
+    and: "The client not paid for delivery"
 
-  and: "The free track music was sent to the client's mailbox"
+    and: "Free track music was sent to the client"
 }
 
 def "shouldn't charge for delivery for order value above fixed amount based on promotion price list"() {
-  given: "There is a client order with amount 40 EUR"
+    given: "There is an unpaid order with amount 40 EUR"
 
-  and: "The client is not a VIP"
+    and: "The client is not a VIP"
 
-  and: "Free delivery is valid from an amount equal to 40 EUR"
+    and: "Minimum order value for free delivery is 40 EUR"
 
-  when: "When the client pays the order of 40 EUR"
+    when: "The client make the payment"
 
-  then: "The order has been paid correctly"
+    then: "Payment succeeded"
 
-  and: "The payment system was notified"
+    and: "The client not paid for delivery"
 
-  and: "The free music track was not sent to the client's mailbox"
+    and: "Free track music was not sent to the client"
 }
 
 def "should charge for delivery based on price provided by courier system"() {
-  given: "There is a client order with amount 40 EUR"
+    given: "There is an unpaid order with amount 40 EUR"
 
-  and: "The client is not a VIP"
+    and: "The client is not a VIP"
 
-  and: "Free delivery is valid from an amount equal to 50 EUR"
+    and: "Current delivery cost is 30 EUR"
 
-  and: "The delivery costs according to the courier's price list equal to 25 EUR"
+    and: "Minimum order value for free delivery is 50 EUR"
 
-  when: "When the client pays the order of 40 EUR"
+    when: "The client make the payment in the amount 70 EUR"
 
-  then: "The order has been paid correctly with delivery cost equal to 25 EUR"
+    then: "Payment succeeded"
 
-  and: "The payment system was notified"
+    and: "The client paid for delivery in the amount of 30 EUR"
 
-  and: "The free music track was not sent to the client's mailbox"
+    and: "Free track music was not sent to the client"
 }
 
 def "should charge always 20 euro for delivery when the courier system is unavailable"() {
-  given: "There is a client order with amount 40 EUR"
+    given: "There is an unpaid order with amount 40 EUR"
 
-  and: "The client is not a VIP"
+    and: "The client is not a VIP"
 
-  and: "Free delivery is valid from an amount equal to 50 EUR"
+    and: "The external courier system is unavailable"
 
-  and: "The courier system is unavailable and default price of delivery is 20 EUR"
+    when: "The client make the payment in the amount 60 EUR"
 
-  when: "When the client pays the order of 40 EUR"
+    then: "The client paid for delivery in the amount of 20 EUR"
 
-  then: "The order has been paid correctly with delivery cost equal to 20 EUR"
+    and: "Free track music was not sent to the client"
+}
 
-  and: "The payment system was notified"
+def "shouldn't accept payment if the amounts differ"() {
+    given: "There is an unpaid order with amount 10 EUR"
 
-  and: "The free music track was not sent to the client's mailbox"
+    and: "Current delivery cost is 30 EUR"
+
+    when: "The client make the payment in the amount 39.00 EUR"
+
+    then: "Payment failed due to different amounts"
 }
 
 def "shouldn't modify paid order"() {
-  given: "There is a paid client order"
+    given: "There is a paid order"
 
-  when: "When the client want to add ite to order"
+    when: "When change item quantity"
 
-  then: "The payment should reject modification"
+    then: "Change failed due to "
 }
 ```
 

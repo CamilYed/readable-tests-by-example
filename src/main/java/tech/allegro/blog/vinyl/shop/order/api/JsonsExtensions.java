@@ -56,6 +56,6 @@ class JsonsExtensions {
   }
 
   private static Vinyl toDomain(ItemCostAndQuantityJson json) {
-    return new Vinyl(new VinylId(json.itemUnitCost().productId()), json.itemUnitCost().cost().toDomain());
+    return new Vinyl(new VinylId(json.itemUnitPrice().productId()), json.itemUnitPrice().price().toDomain());
   }
 }

@@ -61,7 +61,7 @@ public class Values {
     Quantity quantity) {
 
     Money lineCost() {
-      return vinyl.price().multiply(quantity);
+      return vinyl.unitPrice().multiply(quantity);
     }
 
     OrderLine changeQuantity(QuantityChange change) {

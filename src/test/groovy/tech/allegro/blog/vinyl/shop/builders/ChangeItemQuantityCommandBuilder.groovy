@@ -6,7 +6,6 @@ import groovy.transform.builder.SimpleStrategy
 import tech.allegro.blog.vinyl.shop.TestData
 import tech.allegro.blog.vinyl.shop.catalogue.domain.VinylId
 import tech.allegro.blog.vinyl.shop.common.volume.QuantityChange
-import tech.allegro.blog.vinyl.shop.order.domain.Values
 
 import static tech.allegro.blog.vinyl.shop.order.application.OrderModificationHandler.ChangeItemQuantityCommand
 import static tech.allegro.blog.vinyl.shop.order.domain.Values.*

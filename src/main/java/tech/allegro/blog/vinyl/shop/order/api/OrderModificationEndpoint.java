@@ -30,9 +30,9 @@ class OrderModificationEndpoint {
   private final OrderModificationHandler orderModificationHandler;
 
   @PatchMapping(value = "/orders/{orderId}/items/{productId}", produces = MediaType.APPLICATION_JSON_VALUE)
-  ResponseEntity<?> changeQuantity(@NotBlank @PathVariable String orderId,
-                              @NotBlank @PathVariable String productId,
-                              @Valid @RequestBody ChangeOrderItemQuantityJson changeQuantity) {
+  ResponseEntity<?> changeItemQuantity(@NotBlank @PathVariable String orderId,
+                                   @NotBlank @PathVariable String productId,
+                                   @Valid @RequestBody ChangeOrderItemQuantityJson changeQuantity) {
     final var result = Result.of(() -> orderModificationHandler.handle(changeQuantity.toCommand(productId, orderId)));
     if (result.isError()) {
       return switch (result.error().cause()) {

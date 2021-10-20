@@ -25,7 +25,7 @@ public class OrderModificationHandler {
   public Result<Void> handle(ChangeItemQuantityCommand command) {
     return Result.of(() -> {
       final var order = findOrderOrThrowNotFound(command.orderId);
-      final var event = order.changeQuantity(command.item, command.quantityChange);
+      final var event = order.changeItemQuantity(command.item, command.quantityChange);
       raiseErrorWhenNeeded(event);
       orderRepository.save(order.toSnapshot());
     });

@@ -5,7 +5,7 @@ import tech.allegro.blog.vinyl.shop.ability.order.CreateOrderAbility
 import tech.allegro.blog.vinyl.shop.ability.order.OrderListingAbility
 import tech.allegro.blog.vinyl.shop.ability.order.OrderModificationAbility
 
-import static tech.allegro.blog.vinyl.shop.assertions.OrderListingAssertion.assertThatListing
+import static tech.allegro.blog.vinyl.shop.assertions.OrdersViewAssertion.assertThatView
 import static tech.allegro.blog.vinyl.shop.builders.money.MoneyJsonBuilder.euro
 import static tech.allegro.blog.vinyl.shop.builders.order.CreateOrderJsonBuilder.anOrder
 import static tech.allegro.blog.vinyl.shop.builders.order.ItemJsonBuilder.anItem
@@ -28,7 +28,7 @@ class OrderModificationAcceptanceSpec extends BaseIntegrationTest implements
             .withOrderId(ID)
             .withItem(anItem()
               .withProductId(PRODUCT_ID)
-              .withCost(euro(40.00))
+              .withUnitPrice(euro(40.00))
               .withQuantity(1)
             )
         )
@@ -43,7 +43,7 @@ class OrderModificationAcceptanceSpec extends BaseIntegrationTest implements
         def ordersViewResponse = listOrder(ID)
 
     then:
-        assertThatListing(ordersViewResponse)
+        assertThatView(ordersViewResponse)
           .succeeded()
           .hasOrderIdThat(ID)
             .hasClientId(CLIENT_ID)

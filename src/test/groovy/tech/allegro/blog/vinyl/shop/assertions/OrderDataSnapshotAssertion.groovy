@@ -50,7 +50,7 @@ class OrderDataSnapshotAssertion {
     }
 
     ItemAssertion hasPrice(MoneyBuilder aPrice) {
-      assert vinyl.price() == aPrice.build()
+      assert vinyl.unitPrice() == aPrice.build()
       return this
     }
 

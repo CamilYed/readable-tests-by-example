@@ -45,19 +45,19 @@ class OrderCreationAssertion {
     }
 
     ItemAssertion hasProductId(String productId) {
-      assert items.any { it.itemUnitCost.productId == productId }
+      assert items.any { it.itemUnitPrice.productId == productId }
       currentItem = productId
       return this
     }
 
     ItemAssertion withCost(MoneyJsonBuilder aCost) {
-      Map item = items.find { it.itemUnitCost.productId == currentItem }.itemUnitCost
-      assert item.cost == aCost.toMap()
+      Map item = items.find { it.itemUnitPrice.productId == currentItem }.itemUnitPrice
+      assert item.price == aCost.toMap()
       return this
     }
 
     ItemAssertion withQuantity(int quantity) {
-      def item = items.find { it.itemUnitCost.productId == currentItem }
+      def item = items.find { it.itemUnitPrice.productId == currentItem }
       assert item.quantity.value == quantity
       return this
     }

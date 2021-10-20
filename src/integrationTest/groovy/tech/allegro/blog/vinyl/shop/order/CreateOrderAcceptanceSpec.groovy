@@ -22,7 +22,7 @@ class CreateOrderAcceptanceSpec extends BaseIntegrationTest implements CreateOrd
           .withClientId(CLIENT_ID)
           .withItem(anItem()
             .withProductId(PRODUCT_ID)
-            .withCost(euro(40.00))
+            .withUnitPrice(euro(40.00))
             .withQuantity(1)
           )
         )

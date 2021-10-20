@@ -4,18 +4,18 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import tech.allegro.blog.vinyl.shop.builders.money.MoneyJsonBuilder
 
-class OrderListingAssertion {
+class OrdersViewAssertion {
   private ResponseEntity<Map> response
 
-  private OrderListingAssertion(ResponseEntity<Map> response) {
+  private OrdersViewAssertion(ResponseEntity<Map> response) {
     this.response = response
   }
 
-  static assertThatListing(ResponseEntity<Map> response) {
-    return new OrderListingAssertion(response)
+  static assertThatView(ResponseEntity<Map> response) {
+    return new OrdersViewAssertion(response)
   }
 
-  OrderListingAssertion succeeded() {
+  OrdersViewAssertion succeeded() {
     assert response.statusCode == HttpStatus.OK
     return this
   }
@@ -64,7 +64,9 @@ class OrderListingAssertion {
     }
 
     ItemAssertion withUnitPrice(MoneyJsonBuilder aCost) {
-      assert item.unitPrice == aCost.toMap()
+      def cost = aCost.toMap()
+      assert item.unitPrice.price == cost.amount
+      assert item.unitPrice.currency == cost.currency
       return this
     }
 
@@ -72,6 +74,8 @@ class OrderListingAssertion {
       assert item.quantity == quantity
       return this
     }
+
+    //TODO is unpoid
 
     OrderAssertion and() {
       return parentAssertion

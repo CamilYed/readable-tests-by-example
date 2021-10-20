@@ -1,7 +1,5 @@
 package tech.allegro.blog.vinyl.shop.order.application.search;
 
-import tech.allegro.blog.vinyl.shop.common.money.MoneyJson;
-
 import java.util.List;
 
 public record ClientOrdersView(List<OrderDataJson> orders) {
@@ -29,8 +27,14 @@ public record ClientOrdersView(List<OrderDataJson> orders) {
 
     public record Item(
       String productId,
-      MoneyJson unitPrice,
+      UnitPrice unitPrice,
       int quantity
+    ) {
+    }
+
+    public record UnitPrice(
+      String price,
+      String currency
     ) {
     }
   }

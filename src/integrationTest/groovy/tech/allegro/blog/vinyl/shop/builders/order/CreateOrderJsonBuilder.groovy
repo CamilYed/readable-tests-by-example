@@ -13,19 +13,25 @@ import static tech.allegro.blog.vinyl.shop.builders.order.ItemJsonBuilder.anItem
 class CreateOrderJsonBuilder {
   String orderId = TestData.ORDER_ID
   String clientId = TestData.CLIENT_ID
-  List<ItemJsonBuilder> items = [anItem().withProductId(TestData.CZESLAW_NIEMEN_ALBUM_ID).withCost(euro(40.00))]
+  List<ItemJsonBuilder> items = [anItem().withProductId(TestData.CZESLAW_NIEMEN_ALBUM_ID).withUnitPrice(euro(40.00))]
 
   static CreateOrderJsonBuilder anOrder() {
     return new CreateOrderJsonBuilder()
   }
 
-  CreateOrderJsonBuilder withItem(ItemJsonBuilder anItem, int quantity = 1) {
-    items = [anItem.withQuantity(quantity)]
+  CreateOrderJsonBuilder withItem(ItemJsonBuilder anItem) {
+    def item = items.find {it.productId == anItem.productId}
+    if (item != null) {
+      items.remove(item)
+      items << anItem
+    } else {
+      items << anItem
+    }
     return this
   }
 
   CreateOrderJsonBuilder withAmount(MoneyJsonBuilder anAmount) {
-    items = [anItem().withProductId(TestData.CZESLAW_NIEMEN_ALBUM_ID).withCost(anAmount)]
+    items = [anItem().withProductId(TestData.CZESLAW_NIEMEN_ALBUM_ID).withUnitPrice(anAmount)]
     return this
   }
 

@@ -6,7 +6,7 @@ import groovy.transform.builder.SimpleStrategy
 import tech.allegro.blog.vinyl.shop.TestData
 import tech.allegro.blog.vinyl.shop.builders.money.MoneyJsonBuilder
 
-@Builder(builderStrategy = SimpleStrategy, prefix = "with")
+@Builder(builderStrategy = SimpleStrategy, prefix = "inThe")
 class PayOrderJsonBuilder {
     String orderId = TestData.ORDER_ID
     MoneyJsonBuilder amount = ["amount": 40.00, "currency": "EUR"]

@@ -40,7 +40,7 @@ class OrderPaymentAcceptanceSpec extends BaseIntegrationTest implements
         assertThat(payment).succeeded()
 
     and:
-        assertThatClientHasNotPaidForDelivery()
+        assertThatClientNotPaidForDelivery()
 
     and:
         assertThatFreeMusicTrackWasSentToClient()
@@ -54,13 +54,13 @@ class OrderPaymentAcceptanceSpec extends BaseIntegrationTest implements
         minimumOrderValueForFreeDeliveryIs(euro(39.99))
 
     when:
-        def payment = clientMakeThe(aPayment().withAmount(euro(40.00)))
+        def payment = clientMakeThe(aPayment().inTheAmount(euro(40.00)))
 
     then:
         assertThat(payment).succeeded()
 
     and:
-        assertThatClientHasNotPaidForDelivery()
+        assertThatClientNotPaidForDelivery()
 
     and:
         assertThatFreeMusicTrackWasNotSentToClient()
@@ -77,13 +77,13 @@ class OrderPaymentAcceptanceSpec extends BaseIntegrationTest implements
         minimumOrderValueForFreeDeliveryIs(euro(50.00))
 
     when:
-        def payment = clientMakeThe(aPayment().withAmount(euro(70.00)))
+        def payment = clientMakeThe(aPayment().inTheAmount(euro(70.00)))
 
     then:
         assertThat(payment).succeeded()
 
     and:
-        assertThatClientPaidForDeliveryWithAmount(euro(30.00))
+        assertThatClientPaidForDeliveryInTheAmount(euro(30.00))
 
     and:
         assertThatFreeMusicTrackWasNotSentToClient()
@@ -97,13 +97,13 @@ class OrderPaymentAcceptanceSpec extends BaseIntegrationTest implements
         externalCourierSystemIsUnavailable()
 
     when:
-        def payment = clientMakeThe(aPayment().withAmount(euro(60.00)))
+        def payment = clientMakeThe(aPayment().inTheAmount(euro(60.00)))
 
     then:
         assertThat(payment).succeeded()
 
     and:
-        assertThatClientPaidForDeliveryWithAmount(euro(20.00))
+        assertThatClientPaidForDeliveryInTheAmount(euro(20.00))
 
     and:
         assertThatFreeMusicTrackWasNotSentToClient()
@@ -116,9 +116,8 @@ class OrderPaymentAcceptanceSpec extends BaseIntegrationTest implements
     and:
         currentDeliveryCostIs(euro(30.00))
 
-
     when:
-        def payment = clientMakeThe(aPayment().withAmount(euro(39.00)))
+        def payment = clientMakeThe(aPayment().inTheAmount(euro(39.00)))
 
     then:
         assertThat(payment)

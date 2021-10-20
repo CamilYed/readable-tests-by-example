@@ -10,6 +10,10 @@ public record Money(BigDecimal value, Currency currency) {
   public static final Currency EURO = Currency.getInstance("EUR");
   public static final Money ZERO = new Money(BigDecimal.valueOf(0), EURO);
 
+  public static Money euro(Double value) {
+    return of(value, "EUR");
+  }
+
   public static Money of(String value, String currency) {
     return new Money(new BigDecimal(value).setScale(2, RoundingMode.HALF_EVEN), Currency.getInstance(currency));
   }

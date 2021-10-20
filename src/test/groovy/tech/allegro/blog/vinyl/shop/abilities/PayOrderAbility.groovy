@@ -17,7 +17,7 @@ import static tech.allegro.blog.vinyl.shop.builders.OrderPaidEventBuilder.anOrde
 
 trait PayOrderAbility implements
   SetCurrentTimeAbility,
-  AddOrderAbility,
+  OrderAbility,
   GetClientReputationAbility,
   DeliveryCostCalculateAbility,
   DomainEventPublisherAbility {
@@ -41,7 +41,7 @@ trait PayOrderAbility implements
     return orderPaymentHandler.handle(payOrderCommand.build())
   }
 
-  void assertThatClientPaidForDeliveryWithAmount(MoneyBuilder anAmount) {
+  void assertThatClientPaidForDeliveryInTheAmount(MoneyBuilder anAmount) {
     assertThatEventWasPublishedOnce(
       anOrderPaidEvent()
         .withDelivery(new Delivery(anAmount.build()))
@@ -59,7 +59,7 @@ trait PayOrderAbility implements
     assert paymentResult.error().cause() instanceof IncorrectAmount
   }
 
-  void assertThatClientHasNotPaidForDelivery() {
+  void assertThatClientNotPaidForDelivery() {
     assertThatOrderWasPaid(anOrderPaidEventWithFreeDelivery())
   }
 

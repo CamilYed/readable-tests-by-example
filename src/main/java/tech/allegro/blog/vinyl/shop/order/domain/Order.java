@@ -26,7 +26,7 @@ public class Order {
   private ClientId clientId;
   private OrderLines orderLines;
   private Delivery delivery;
-  private boolean unpaid; // TODO replace with enum with values DRAFT, PAID etc.
+  private boolean unpaid;
 
   public OrderDomainEvent pay(Money amount, Delivery delivery) {
     if (unpaid) {
@@ -41,7 +41,7 @@ public class Order {
     } else return orderPayFailedBecauseAlreadyPaid();
   }
 
-  public OrderDomainEvent changeQuantity(VinylId product, QuantityChange change) {
+  public OrderDomainEvent changeItemQuantity(VinylId product, QuantityChange change) {
     if (unpaid) {
       final var orderLine = orderLines.changeQuantity(product, change);
       return orderLine.map(it -> {

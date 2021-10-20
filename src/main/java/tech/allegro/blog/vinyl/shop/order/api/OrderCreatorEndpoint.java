@@ -9,8 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tech.allegro.blog.vinyl.shop.common.json.FailureJson;
 import tech.allegro.blog.vinyl.shop.common.money.MoneyJson;
-import tech.allegro.blog.vinyl.shop.order.api.Jsons.*;
-import tech.allegro.blog.vinyl.shop.order.api.Jsons.ItemCostAndQuantityJson.ItemUnitCost;
+import tech.allegro.blog.vinyl.shop.order.api.Jsons.CreateOrderJson;
+import tech.allegro.blog.vinyl.shop.order.api.Jsons.ItemCostAndQuantityJson;
+import tech.allegro.blog.vinyl.shop.order.api.Jsons.ItemCostAndQuantityJson.ItemUnitPrice;
+import tech.allegro.blog.vinyl.shop.order.api.Jsons.OrderCreatedResponseJson;
 import tech.allegro.blog.vinyl.shop.order.application.OrderCreatorHandler;
 import tech.allegro.blog.vinyl.shop.order.domain.Values.OrderDataSnapshot;
 
@@ -49,9 +51,9 @@ class OrderCreatorEndpoint {
         data.items().entrySet().stream()
           .map(it ->
             new ItemCostAndQuantityJson(
-              new ItemUnitCost(
+              new ItemUnitPrice(
                 it.getKey().vinylId().value(),
-                new MoneyJson(it.getKey().price().value().toString(), it.getKey().price().currency().getCurrencyCode())
+                new MoneyJson(it.getKey().unitPrice().value().toString(), it.getKey().unitPrice().currency().getCurrencyCode())
               ),
               it.getValue().value()
             )

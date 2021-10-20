@@ -5,9 +5,11 @@ import tech.allegro.blog.vinyl.shop.builders.ChangeItemQuantityCommandBuilder
 import tech.allegro.blog.vinyl.shop.common.result.Result
 import tech.allegro.blog.vinyl.shop.order.application.OrderModificationHandler
 import tech.allegro.blog.vinyl.shop.order.domain.OrderFactory
-import tech.allegro.blog.vinyl.shop.order.domain.Values
 
-trait ModifyOrderAbility implements AddOrderAbility {
+import static tech.allegro.blog.vinyl.shop.order.application.OrderModificationHandler.CanNotModifyPaidOrder
+import static tech.allegro.blog.vinyl.shop.order.application.OrderModificationHandler.ChangeItemQuantityCommand
+
+trait ModifyOrderAbility implements OrderAbility {
 
   @Subject
   OrderModificationHandler orderModificationHandler
@@ -16,10 +18,12 @@ trait ModifyOrderAbility implements AddOrderAbility {
     orderModificationHandler = new OrderModificationHandler(orderRepository, new OrderFactory())
   }
 
-  Values.OrderDataSnapshot changeItemQuantity(ChangeItemQuantityCommandBuilder anItemQuantityChange) {
-    OrderModificationHandler.ChangeItemQuantityCommand command = anItemQuantityChange.build()
-    Result<Void> result = orderModificationHandler.handle(command)
-    assert result.isSuccess()
-    return orderRepository.findBy(command.orderId()).get()
+  Result<Void> changeItemQuantity(ChangeItemQuantityCommandBuilder anItemQuantityChange) {
+    ChangeItemQuantityCommand command = anItemQuantityChange.build()
+    return orderModificationHandler.handle(command)
+  }
+
+  void assertThatChangeFailedDueToOrderAlreadyIsPaid(Result<Void> changeResult) {
+    assert changeResult.isError() && changeResult.error().cause() instanceof CanNotModifyPaidOrder
   }
 }

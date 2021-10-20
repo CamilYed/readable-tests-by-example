@@ -5,16 +5,32 @@ import tech.allegro.blog.vinyl.shop.abilities.ModifyOrderAbility
 
 import static tech.allegro.blog.vinyl.shop.TestData.CZESLAW_NIEMEN_ALBUM_ID
 import static tech.allegro.blog.vinyl.shop.TestData.ORDER_ID
-import static tech.allegro.blog.vinyl.shop.assertions.OrderDataSnapshotAssertion.assertThat
 import static tech.allegro.blog.vinyl.shop.builders.ChangeItemQuantityCommandBuilder.anItemQuantityChange
 import static tech.allegro.blog.vinyl.shop.builders.OrderDataSnapshotBuilder.ItemBuilder.anItem
+import static tech.allegro.blog.vinyl.shop.builders.OrderDataSnapshotBuilder.aPaidOrder
 import static tech.allegro.blog.vinyl.shop.builders.OrderDataSnapshotBuilder.anUnpaidOrder
+import static tech.allegro.blog.vinyl.shop.builders.PayOrderCommandBuilder.aPayment
 import static tech.allegro.blog.vinyl.shop.common.money.MoneyBuilder.euro
-import static tech.allegro.blog.vinyl.shop.order.domain.Values.OrderDataSnapshot
 
 class OrderModificationHandlerSpec extends Specification implements ModifyOrderAbility {
 
   // @formatter:off
+  def "should not modify paid order"() {
+    given:
+        thereIs(aPaidOrder())
+
+    when:
+        def changeResult = changeItemQuantity(anItemQuantityChange()
+                                                .withOrderId(ORDER_ID)
+                                                .withProductId(CZESLAW_NIEMEN_ALBUM_ID)
+                                                .withQuantityChange(20)
+        )
+
+    then:
+        assertThatChangeFailedDueToOrderAlreadyIsPaid(changeResult)
+  }
+
+
   def "should change the item quantity for unpaid order"() {
     given:
         thereIs(anUnpaidOrder()
@@ -26,15 +42,14 @@ class OrderModificationHandlerSpec extends Specification implements ModifyOrderA
         )
 
     when:
-       OrderDataSnapshot afterChange = changeItemQuantity(anItemQuantityChange()
-                                                            .withOrderId(ORDER_ID)
-                                                            .withProductId(CZESLAW_NIEMEN_ALBUM_ID)
-                                                            .withQuantityChange(20)
+       changeItemQuantity(anItemQuantityChange()
+                            .withOrderId(ORDER_ID)
+                            .withProductId(CZESLAW_NIEMEN_ALBUM_ID)
+                            .withQuantityChange(20)
        )
 
     then:
-        assertThat(afterChange)
-          .hasOrderId(ORDER_ID)
+        assertThatThereIsOrderWithId(ORDER_ID)
           .hasItemThat(CZESLAW_NIEMEN_ALBUM_ID)
             .hasQuantity(20)
             .hasPrice(euro(35.00))

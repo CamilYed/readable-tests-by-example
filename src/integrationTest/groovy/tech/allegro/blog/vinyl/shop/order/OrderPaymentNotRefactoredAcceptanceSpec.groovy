@@ -46,9 +46,9 @@ class OrderPaymentNotRefactoredAcceptanceSpec extends BaseIntegrationNotRefactor
                         "clientId": "${CLIENT_ID_1}",
                         "items": [
                                    {
-                                     "itemUnitCost": {
+                                     "itemUnitPrice": {
                                         "productId": "${PRODUCT_ID_1}",
-                                        "cost": { "amount": "40.00", "currency": "EUR" }
+                                        "price": { "amount": "40.00", "currency": "EUR" }
                                       },
                                       "quantity": 1
                                     }

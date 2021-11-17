@@ -46,7 +46,7 @@ class AcceptanceSpec extends BaseIntegrationTest implements
         assertThat(payment).succeeded()
 
     and:
-        assertThatClientNotPaidForDelivery(anOrderPaidEvent()
+        assertThatClientDidNotPaidForDelivery(anOrderPaidEvent()
                                                 .withFreeDelivery()
                                                 .withAmount(Money.euro(140.00))
         )

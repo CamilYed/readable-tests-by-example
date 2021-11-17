@@ -41,6 +41,14 @@ class OrderDataSnapshotBuilder {
     return this
   }
 
+  OrderDataSnapshotBuilder withItems(ItemBuilder... anItems) {
+    items.clear()
+    anItems.each {
+      items << it.build()
+    }
+    return this
+  }
+
   @Builder(builderStrategy = SimpleStrategy, prefix = "with")
   static class ItemBuilder {
     String productId = TestData.VINYL_CZESLAW_NIEMEN_ID

@@ -4,12 +4,12 @@ import spock.lang.Specification
 import tech.allegro.blog.vinyl.shop.abilities.ModifyOrderAbility
 
 import static tech.allegro.blog.vinyl.shop.TestData.CZESLAW_NIEMEN_ALBUM_ID
+import static tech.allegro.blog.vinyl.shop.TestData.BOHEMIAN_RHAPSODY_ALBUM_ID
 import static tech.allegro.blog.vinyl.shop.TestData.ORDER_ID
 import static tech.allegro.blog.vinyl.shop.builders.ChangeItemQuantityCommandBuilder.anItemQuantityChange
 import static tech.allegro.blog.vinyl.shop.builders.OrderDataSnapshotBuilder.ItemBuilder.anItem
 import static tech.allegro.blog.vinyl.shop.builders.OrderDataSnapshotBuilder.aPaidOrder
 import static tech.allegro.blog.vinyl.shop.builders.OrderDataSnapshotBuilder.anUnpaidOrder
-import static tech.allegro.blog.vinyl.shop.builders.PayOrderCommandBuilder.aPayment
 import static tech.allegro.blog.vinyl.shop.common.money.MoneyBuilder.euro
 
 class OrderModificationHandlerSpec extends Specification implements ModifyOrderAbility {
@@ -35,10 +35,16 @@ class OrderModificationHandlerSpec extends Specification implements ModifyOrderA
     given:
         thereIs(anUnpaidOrder()
                 .withId(ORDER_ID)
-                  .withItem(anItem()
-                    .withProductId(CZESLAW_NIEMEN_ALBUM_ID)
-                    .withUnitPrice(euro(35.00))
-                    .withQuantity(10))
+                  .withItems(
+                    anItem()
+                      .withProductId(CZESLAW_NIEMEN_ALBUM_ID)
+                      .withUnitPrice(euro(35.00))
+                      .withQuantity(10),
+                    anItem()
+                      .withProductId(BOHEMIAN_RHAPSODY_ALBUM_ID)
+                      .withUnitPrice(euro(55.00))
+                      .withQuantity(1)
+                  )
         )
 
     when:
@@ -51,8 +57,12 @@ class OrderModificationHandlerSpec extends Specification implements ModifyOrderA
     then:
         assertThatThereIsOrderWithId(ORDER_ID)
           .hasItemThat(CZESLAW_NIEMEN_ALBUM_ID)
-            .hasQuantity(20)
-            .hasPrice(euro(35.00))
+              .hasPrice(euro(35.00))
+              .hasQuantity(20)
+          .and()
+          .hasItemThat(BOHEMIAN_RHAPSODY_ALBUM_ID)
+              .hasPrice(euro(55.00))
+              .hasQuantity(1)
   }
   // @formatter:on
 }

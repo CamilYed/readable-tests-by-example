@@ -10,7 +10,7 @@ import tech.allegro.blog.vinyl.shop.ability.sales.SpecialPriceProviderAbility
 
 import static tech.allegro.blog.vinyl.shop.assertions.PaymentResultAssertion.assertThat
 import static tech.allegro.blog.vinyl.shop.builders.money.MoneyJsonBuilder.euro
-import static tech.allegro.blog.vinyl.shop.builders.order.CreateOrderJsonBuilder.anOrder
+import static tech.allegro.blog.vinyl.shop.builders.order.CreateOrderJsonBuilder.anUnpaidOrder
 import static tech.allegro.blog.vinyl.shop.builders.order.PayOrderJsonBuilder.aPayment
 
 class OrderPaymentAcceptanceSpec extends BaseIntegrationTest implements
@@ -28,7 +28,7 @@ class OrderPaymentAcceptanceSpec extends BaseIntegrationTest implements
 
   def "shouldn't charge for delivery when the client has a VIP reputation"() {
     given:
-        thereIsUnpaid(anOrder())
+        thereIs(anUnpaidOrder())
 
     and:
         clientIsVip()
@@ -48,7 +48,7 @@ class OrderPaymentAcceptanceSpec extends BaseIntegrationTest implements
 
   def "shouldn't charge for delivery for order value above or fixed amount based on promotion price list"() {
     given:
-        thereIsUnpaid(anOrder().withAmount(euro(40.00)))
+        thereIs(anUnpaidOrder().withAmount(euro(40.00)))
 
     and:
         minimumOrderValueForFreeDeliveryIs(euro(39.99))
@@ -68,7 +68,7 @@ class OrderPaymentAcceptanceSpec extends BaseIntegrationTest implements
 
   def "should charge for delivery based on price provided by courier system"() {
     given:
-        thereIsUnpaid(anOrder().withAmount(euro(40.00)))
+        thereIs(anUnpaidOrder().withAmount(euro(40.00)))
 
     and:
         currentDeliveryCostIs(euro(30.00))
@@ -91,7 +91,7 @@ class OrderPaymentAcceptanceSpec extends BaseIntegrationTest implements
 
   def "should charge always 20 euro for delivery when the courier system is unavailable"() {
     given:
-        thereIsUnpaid(anOrder().withAmount(euro(40.00)))
+        thereIs(anUnpaidOrder().withAmount(euro(40.00)))
 
     and:
         externalCourierSystemIsUnavailable()
@@ -111,7 +111,7 @@ class OrderPaymentAcceptanceSpec extends BaseIntegrationTest implements
 
   def "shouldn't accept payment if the amounts differ"() {
     given:
-        thereIsUnpaid(anOrder().withAmount(euro(10.00)))
+        thereIs(anUnpaidOrder().withAmount(euro(10.00)))
 
     and:
         currentDeliveryCostIs(euro(30.00))

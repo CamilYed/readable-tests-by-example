@@ -15,7 +15,7 @@ class CreateOrderJsonBuilder {
   String clientId = TestData.CLIENT_ID
   List<ItemJsonBuilder> items = [anItem().withProductId(TestData.CZESLAW_NIEMEN_ALBUM_ID).withUnitPrice(euro(40.00))]
 
-  static CreateOrderJsonBuilder anOrder() {
+  static CreateOrderJsonBuilder anUnpaidOrder() {
     return new CreateOrderJsonBuilder()
   }
 

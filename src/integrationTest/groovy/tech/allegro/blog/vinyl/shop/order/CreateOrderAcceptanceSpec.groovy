@@ -5,7 +5,7 @@ import tech.allegro.blog.vinyl.shop.ability.order.CreateOrderAbility
 
 import static tech.allegro.blog.vinyl.shop.assertions.OrderCreationAssertion.assertThatOrder
 import static tech.allegro.blog.vinyl.shop.builders.money.MoneyJsonBuilder.euro
-import static tech.allegro.blog.vinyl.shop.builders.order.CreateOrderJsonBuilder.anOrder
+import static tech.allegro.blog.vinyl.shop.builders.order.CreateOrderJsonBuilder.anUnpaidOrder
 import static tech.allegro.blog.vinyl.shop.builders.order.ItemJsonBuilder.anItem
 
 class CreateOrderAcceptanceSpec extends BaseIntegrationTest implements CreateOrderAbility {
@@ -17,13 +17,13 @@ class CreateOrderAcceptanceSpec extends BaseIntegrationTest implements CreateOrd
   // @formatter:off
   def "should create unpaid order when not exists"() {
     when:
-        def creationResult = create(anOrder()
-          .withOrderId(ID)
-          .withClientId(CLIENT_ID)
-          .withItem(anItem()
-            .withProductId(PRODUCT_ID)
-            .withUnitPrice(euro(40.00))
-            .withQuantity(1)
+        def creationResult = create(anUnpaidOrder()
+                                        .withOrderId(ID)
+                                        .withClientId(CLIENT_ID)
+                                        .withItem(anItem()
+                                                      .withProductId(PRODUCT_ID)
+                                                      .withUnitPrice(euro(40.00))
+                                                      .withQuantity(1)
           )
         )
 

@@ -58,13 +58,13 @@ class OrderPaymentHandlerNotRefactoredSpec extends Specification {
   final Vinyl VINYL_1 = new Vinyl(new VinylId("1"), EUR_40)
   final Quantity ONE = new Quantity(1)
   final OrderId ORDER_ID = new OrderId("1")
-  final OrderDataSnapshot UNPAID_ORDEREUR_40 = orderFactory.create(ORDER_ID, CLIENT_ID, Maps.of(VINYL_1, ONE), true).toSnapshot()
+  final OrderDataSnapshot UNPAID_ORDER_EUR_40 = orderFactory.create(ORDER_ID, CLIENT_ID, Maps.of(VINYL_1, ONE), true).toSnapshot()
   final OrderDataSnapshot PAID_ORDER = orderFactory.create(ORDER_ID, CLIENT_ID, Maps.of(VINYL_1, ONE), false).toSnapshot()
   final ClientReputation VIP = ClientReputation.vip(CLIENT_ID)
   final ClientReputation NOT_VIP = ClientReputation.notVip(CLIENT_ID)
-  final PayOrderCommand PAY_FOR_ORDEREUR_40 = new PayOrderCommand(ORDER_ID, EUR_40)
-  final PayOrderCommand PAY_FOR_ORDEREUR_40_PLUS_20_EUR_DELIVERY = new PayOrderCommand(ORDER_ID, EUR_40.add(EUR_20))
-  final PayOrderCommand PAY_FOR_ORDEREUR_40_PLUSEUR_25_DELIVERY = new PayOrderCommand(ORDER_ID, EUR_40.add(EUR_25))
+  final PayOrderCommand PAY_FOR_ORDER_EUR_40 = new PayOrderCommand(ORDER_ID, EUR_40)
+  final PayOrderCommand PAY_FOR_ORDER_EUR_40_PLUS_20_EUR_DELIVERY = new PayOrderCommand(ORDER_ID, EUR_40.add(EUR_20))
+  final PayOrderCommand PAY_FOR_ORDER_EUR_40_PLUSEUR_25_DELIVERY = new PayOrderCommand(ORDER_ID, EUR_40.add(EUR_25))
 
   def setup() {
     ClockProvider.setSystemClock(TEST_CLOCK)
@@ -72,13 +72,13 @@ class OrderPaymentHandlerNotRefactoredSpec extends Specification {
 
   def "shouldn't charge for delivery when the client has a VIP status"() {
     given:
-        orderRepository.findBy(ORDER_ID) >> Optional.of(UNPAID_ORDEREUR_40)
+        orderRepository.findBy(ORDER_ID) >> Optional.of(UNPAID_ORDER_EUR_40)
 
     and:
         clientReputationProvider.get(CLIENT_ID) >> VIP
 
     when:
-        def result = paymentHandler.handle(PAY_FOR_ORDEREUR_40)
+        def result = paymentHandler.handle(PAY_FOR_ORDER_EUR_40)
 
     then:
         result.isSuccess()
@@ -94,7 +94,7 @@ class OrderPaymentHandlerNotRefactoredSpec extends Specification {
 
   def "shouldn't charge for delivery for order value above amount based on promotion price list"() {
     given:
-        orderRepository.findBy(ORDER_ID) >> Optional.of(UNPAID_ORDEREUR_40)
+        orderRepository.findBy(ORDER_ID) >> Optional.of(UNPAID_ORDER_EUR_40)
 
     and:
         clientReputationProvider.get(CLIENT_ID) >> NOT_VIP
@@ -103,7 +103,7 @@ class OrderPaymentHandlerNotRefactoredSpec extends Specification {
         specialPriceProvider.getMinimumOrderValueForFreeDelivery() >> EUR_40
 
     when:
-        def result = paymentHandler.handle(PAY_FOR_ORDEREUR_40)
+        def result = paymentHandler.handle(PAY_FOR_ORDER_EUR_40)
 
     then:
         result.isSuccess()
@@ -119,7 +119,7 @@ class OrderPaymentHandlerNotRefactoredSpec extends Specification {
 
   def "should charge for delivery based on price provided by courier system"() {
     given:
-        orderRepository.findBy(ORDER_ID) >> Optional.of(UNPAID_ORDEREUR_40)
+        orderRepository.findBy(ORDER_ID) >> Optional.of(UNPAID_ORDER_EUR_40)
 
     and:
         clientReputationProvider.get(CLIENT_ID) >> NOT_VIP
@@ -131,7 +131,7 @@ class OrderPaymentHandlerNotRefactoredSpec extends Specification {
         currentDeliveryCostProvider.currentCost() >> EUR_25
 
     when:
-        def result = paymentHandler.handle(PAY_FOR_ORDEREUR_40_PLUSEUR_25_DELIVERY)
+        def result = paymentHandler.handle(PAY_FOR_ORDER_EUR_40_PLUSEUR_25_DELIVERY)
 
     then:
         result.isSuccess()
@@ -148,7 +148,7 @@ class OrderPaymentHandlerNotRefactoredSpec extends Specification {
 
   def "should charge always 20 euro for delivery when the courier system is unavailable"() {
     given:
-        orderRepository.findBy(ORDER_ID) >> Optional.of(UNPAID_ORDEREUR_40)
+        orderRepository.findBy(ORDER_ID) >> Optional.of(UNPAID_ORDER_EUR_40)
 
     and:
         clientReputationProvider.get(CLIENT_ID) >> NOT_VIP
@@ -160,7 +160,7 @@ class OrderPaymentHandlerNotRefactoredSpec extends Specification {
         currentDeliveryCostProvider.currentCost() >> { throw new RuntimeException() }
 
     when:
-        def result = paymentHandler.handle(PAY_FOR_ORDEREUR_40_PLUS_20_EUR_DELIVERY)
+        def result = paymentHandler.handle(PAY_FOR_ORDER_EUR_40_PLUS_20_EUR_DELIVERY)
 
     then:
         result.isSuccess()
@@ -185,7 +185,7 @@ class OrderPaymentHandlerNotRefactoredSpec extends Specification {
         specialPriceProvider.getMinimumOrderValueForFreeDelivery() >> EUR_40
 
     when:
-        def result = paymentHandler.handle(PAY_FOR_ORDEREUR_40)
+        def result = paymentHandler.handle(PAY_FOR_ORDER_EUR_40)
 
     then:
         result.isError()
@@ -196,7 +196,7 @@ class OrderPaymentHandlerNotRefactoredSpec extends Specification {
 
   def "shouldn't accept payment if the amounts differ"() {
     given:
-        orderRepository.findBy(ORDER_ID) >> Optional.of(UNPAID_ORDEREUR_40)
+        orderRepository.findBy(ORDER_ID) >> Optional.of(UNPAID_ORDER_EUR_40)
 
     and:
         clientReputationProvider.get(CLIENT_ID) >> NOT_VIP

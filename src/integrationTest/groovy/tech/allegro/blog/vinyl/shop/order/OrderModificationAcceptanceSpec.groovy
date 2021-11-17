@@ -7,7 +7,7 @@ import tech.allegro.blog.vinyl.shop.ability.order.OrderModificationAbility
 
 import static tech.allegro.blog.vinyl.shop.assertions.OrdersViewAssertion.assertThatView
 import static tech.allegro.blog.vinyl.shop.builders.money.MoneyJsonBuilder.euro
-import static tech.allegro.blog.vinyl.shop.builders.order.CreateOrderJsonBuilder.anOrder
+import static tech.allegro.blog.vinyl.shop.builders.order.CreateOrderJsonBuilder.anUnpaidOrder
 import static tech.allegro.blog.vinyl.shop.builders.order.ItemJsonBuilder.anItem
 import static tech.allegro.blog.vinyl.shop.builders.order.OrderItemChangeQuantityJsonBuilder.anItemToChange
 
@@ -23,8 +23,8 @@ class OrderModificationAcceptanceSpec extends BaseIntegrationTest implements
   // @formatter:off
   def "should change the item quantity"() {
     given:
-        thereIsUnpaid(
-          anOrder()
+        thereIs(
+          anUnpaidOrder()
             .withOrderId(ID)
             .withItem(anItem()
               .withProductId(PRODUCT_ID)
@@ -35,8 +35,8 @@ class OrderModificationAcceptanceSpec extends BaseIntegrationTest implements
 
     when:
         modifyOrderWith(ID, anItemToChange()
-          .withProductId(PRODUCT_ID)
-          .withQuantityChange(10)
+                                      .withProductId(PRODUCT_ID)
+                                      .withQuantityChange(10)
         )
 
     and:

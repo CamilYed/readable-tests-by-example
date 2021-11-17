@@ -11,8 +11,8 @@ import static groovy.json.JsonOutput.toJson
 
 trait CreateOrderAbility implements MakeRequestAbility {
 
-  void thereIsUnpaid(CreateOrderJsonBuilder anOrder, String orderId = TestData.ORDER_ID) {
-    def response = upsert(anOrder, orderId)
+  void thereIs(CreateOrderJsonBuilder anUnpaidOrder, String orderId = TestData.ORDER_ID) {
+    def response = upsert(anUnpaidOrder, orderId)
     assert response.statusCode == HttpStatus.CREATED
   }
 

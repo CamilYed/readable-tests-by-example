@@ -18,13 +18,13 @@ class OrderPaymentHandlerSpec extends Specification implements PayOrderAbility {
         clientIsVip()
 
     when:
-        clientMakeThe(aPayment())
+        clientMakesThe(aPayment())
 
     then:
         assertThatClientDitNotPaidForDelivery()
   }
 
-  def "shouldn't charge for delivery when order value is above amount based on promotion price list"() {
+  def "shouldn't charge for delivery when order value is above fixed amount based on promotion price list"() {
     given:
         thereIs(anUnpaidOrder().withAmount(euro(40.00)))
 
@@ -35,7 +35,7 @@ class OrderPaymentHandlerSpec extends Specification implements PayOrderAbility {
         clientIsNotVip()
 
     when:
-        clientMakeThe(aPayment().withAmount(euro(40.00)))
+        clientMakesThe(aPayment().withAmount(euro(40.00)))
 
     then:
         assertThatClientDitNotPaidForDelivery()
@@ -52,10 +52,10 @@ class OrderPaymentHandlerSpec extends Specification implements PayOrderAbility {
         currentDeliveryCostIs(euro(12.00))
 
     when:
-        clientMakeThe(aPayment().withAmount(euro(52.00)))
+        clientMakesThe(aPayment().withAmount(euro(52.00)))
 
     then:
-        assertThatClientPaidForDeliveryInTheAmount(euro(12.00))
+        assertThatClientPaidForDeliveryInTheAmountOf(euro(12.00))
   }
 
   def "should charge always 20 euro for delivery when the courier system is unavailable"() {
@@ -66,10 +66,10 @@ class OrderPaymentHandlerSpec extends Specification implements PayOrderAbility {
         externalCourierSystemIsUnavailable()
 
     when:
-        clientMakeThe(aPayment().withAmount(euro(60.00)))
+        clientMakesThe(aPayment().withAmount(euro(60.00)))
 
     then:
-        assertThatClientPaidForDeliveryInTheAmount(euro(20.00))
+        assertThatClientPaidForDeliveryInTheAmountOf(euro(20.00))
   }
 
   def "shouldn't accept payment if the order already paid"() {
@@ -77,7 +77,7 @@ class OrderPaymentHandlerSpec extends Specification implements PayOrderAbility {
         thereIs(aPaidOrder())
 
     when:
-        def paymentResult = clientMakeThe(aPayment())
+        def paymentResult = clientMakesThe(aPayment())
 
     then:
         assertThatPaymentNotAcceptedBecauseOrderAlreadyPaid(paymentResult)
@@ -88,7 +88,7 @@ class OrderPaymentHandlerSpec extends Specification implements PayOrderAbility {
         thereIs(anUnpaidOrder().withAmount(euro(10.00)))
 
     when:
-        def paymentResult = clientMakeThe(aPayment().withAmount(euro(9.00)))
+        def paymentResult = clientMakesThe(aPayment().withAmount(euro(9.00)))
 
     then:
         assertThatPaymentNotAcceptedBecauseDifferentAmounts(paymentResult)

@@ -23,7 +23,7 @@ trait FreeTrackMusicSenderAbility {
     }
   }
 
-  void assertThatFreeMusicTrackWasNotSentToClient(String clientId = TestData.CLIENT_ID) {
+  void assertThatFreeMusicTrackWasNotSentToTheClient(String clientId = TestData.CLIENT_ID) {
     pollingConditions.eventually {
       Mockito.verify(freeMusicTrackSender, times(0))
         .send(new ClientId(clientId))

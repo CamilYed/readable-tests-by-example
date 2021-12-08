@@ -24,7 +24,7 @@ trait OrderPaymentAbility implements MakeRequestAbility {
 
   private PollingConditions pollingConditions = new PollingConditions(timeout: 5)
 
-  ResponseEntity<Map> clientMakeThe(PayOrderJsonBuilder aPayment = aPayment()) {
+  ResponseEntity<Map> clientMakesThe(PayOrderJsonBuilder aPayment = aPayment()) {
     def jsonBody = toJson(aPayment.toMap())
     return makeRequest(
       url: "/orders/${aPayment.orderId}/payment",
@@ -42,7 +42,7 @@ trait OrderPaymentAbility implements MakeRequestAbility {
     }
   }
 
-  void assertThatClientPaidForDeliveryInTheAmount(MoneyJsonBuilder anAmount) {
+  void assertThatClientPaidForDeliveryInTheAmountOf(MoneyJsonBuilder anAmount) {
     pollingConditions.eventually {
       Mockito.verify(domainEventPublisher, times(1))
         .publish(anOrderPaidEvent()

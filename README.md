@@ -23,27 +23,27 @@ def "shouldn't charge for delivery when the client has a VIP status"() {
 
     and: "The Client is a VIP"
 
-    when: "The client make the payment"
+    when: "The client makes the payment"
 
     then: "Payment succeeded"
 
-    and: "The client not paid for delivery"
+    and: "The client did not paid for delivery"
 
-    and: "Free track music was sent to the client"
+    and: "Free music track was sent to the client"
 }
 
-def "shouldn't charge for delivery for order value above fixed amount based on promotion price list"() {
+def "shouldn't charge for delivery when order value is above fixed amount based on promotion price list"() {
     given: "There is an unpaid order with amount 40 EUR"
 
     and: "The client is not a VIP"
 
     and: "Minimum order value for free delivery is 40 EUR"
 
-    when: "The client make the payment"
+    when: "The client makes the payment"
 
     then: "Payment succeeded"
 
-    and: "The client not paid for delivery"
+    and: "The client did not paid for delivery"
 
     and: "Free track music was not sent to the client"
 }
@@ -57,11 +57,11 @@ def "should charge for delivery based on price provided by courier system"() {
 
     and: "Minimum order value for free delivery is 50 EUR"
 
-    when: "The client make the payment in the amount 70 EUR"
+    when: "The client makes the payment in the amount of 70 EUR"
 
     then: "Payment succeeded"
 
-    and: "The client paid for delivery in the amount 30 EUR"
+    and: "The client paid for delivery in the amount of 30 EUR"
 
     and: "Free track music was not sent to the client"
 }
@@ -73,9 +73,9 @@ def "should charge always 20 euro for delivery when the courier system is unavai
 
     and: "The external courier system is unavailable"
 
-    when: "The client make the payment in the amount 60 EUR"
+    when: "The client makes the payment in the amount of 60 EUR"
 
-    then: "The client paid for delivery in the amount 20 EUR"
+    then: "The client paid for delivery in the amount of 20 EUR"
 
     and: "Free track music was not sent to the client"
 }
@@ -85,7 +85,7 @@ def "shouldn't accept payment if the amounts differ"() {
 
     and: "Current delivery cost is 30 EUR"
 
-    when: "The client make the payment in the amount 39.00 EUR"
+    when: "The client makes the payment in the amount of 39.00 EUR"
 
     then: "Payment failed due to different amounts"
 }
@@ -93,7 +93,7 @@ def "shouldn't accept payment if the amounts differ"() {
 def "shouldn't modify paid order"() {
     given: "There is a paid order"
 
-    when: "When change item quantity"
+    when: "Client changes item quantity"
 
     then: "Change failed due order already paid"
 }

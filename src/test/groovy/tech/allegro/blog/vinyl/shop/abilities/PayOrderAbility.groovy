@@ -37,11 +37,11 @@ trait PayOrderAbility implements
     )
   }
 
-  Result<Void> clientMakeThe(PayOrderCommandBuilder payOrderCommand) {
+  Result<Void> clientMakesThe(PayOrderCommandBuilder payOrderCommand) {
     return orderPaymentHandler.handle(payOrderCommand.build())
   }
 
-  void assertThatClientPaidForDeliveryInTheAmount(MoneyBuilder anAmount) {
+  void assertThatClientPaidForDeliveryInTheAmountOf(MoneyBuilder anAmount) {
     assertThatEventWasPublishedOnce(
       anOrderPaidEvent()
         .withDelivery(new Delivery(anAmount.build()))

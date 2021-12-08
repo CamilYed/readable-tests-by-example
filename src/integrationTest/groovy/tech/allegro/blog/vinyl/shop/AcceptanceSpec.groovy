@@ -40,7 +40,7 @@ class AcceptanceSpec extends BaseIntegrationTest implements
         clientIsVip()
 
     when:
-        def payment = clientMakeThe(aPayment().inTheAmount(euro(140.00)))
+        def payment = clientMakesThe(aPayment().inTheAmountOf(euro(140.00)))
 
     then:
         assertThat(payment).succeeded()
@@ -55,7 +55,7 @@ class AcceptanceSpec extends BaseIntegrationTest implements
         assertThatFreeMusicTrackWasSentToClient()
 
     when:
-      def orderView = listOrder()
+        def orderView = listOrder()
 
     then:
         assertThatView(orderView)

@@ -34,7 +34,7 @@ class OrderPaymentAcceptanceSpec extends BaseIntegrationTest implements
         clientIsVip()
 
     when:
-        def payment = clientMakeThe(aPayment())
+        def payment = clientMakesThe(aPayment())
 
     then:
         assertThat(payment).succeeded()
@@ -54,7 +54,7 @@ class OrderPaymentAcceptanceSpec extends BaseIntegrationTest implements
         minimumOrderValueForFreeDeliveryIs(euro(39.99))
 
     when:
-        def payment = clientMakeThe(aPayment().inTheAmount(euro(40.00)))
+        def payment = clientMakesThe(aPayment().inTheAmountOf(euro(40.00)))
 
     then:
         assertThat(payment).succeeded()
@@ -63,7 +63,7 @@ class OrderPaymentAcceptanceSpec extends BaseIntegrationTest implements
         assertThatClientDidNotPaidForDelivery()
 
     and:
-        assertThatFreeMusicTrackWasNotSentToClient()
+        assertThatFreeMusicTrackWasNotSentToTheClient()
   }
 
   def "should charge for delivery based on price provided by courier system"() {
@@ -77,16 +77,16 @@ class OrderPaymentAcceptanceSpec extends BaseIntegrationTest implements
         minimumOrderValueForFreeDeliveryIs(euro(50.00))
 
     when:
-        def payment = clientMakeThe(aPayment().inTheAmount(euro(70.00)))
+        def payment = clientMakesThe(aPayment().inTheAmountOf(euro(70.00)))
 
     then:
         assertThat(payment).succeeded()
 
     and:
-        assertThatClientPaidForDeliveryInTheAmount(euro(30.00))
+        assertThatClientPaidForDeliveryInTheAmountOf(euro(30.00))
 
     and:
-        assertThatFreeMusicTrackWasNotSentToClient()
+        assertThatFreeMusicTrackWasNotSentToTheClient()
   }
 
   def "should charge always 20 euro for delivery when the courier system is unavailable"() {
@@ -97,16 +97,16 @@ class OrderPaymentAcceptanceSpec extends BaseIntegrationTest implements
         externalCourierSystemIsUnavailable()
 
     when:
-        def payment = clientMakeThe(aPayment().inTheAmount(euro(60.00)))
+        def payment = clientMakesThe(aPayment().inTheAmountOf(euro(60.00)))
 
     then:
         assertThat(payment).succeeded()
 
     and:
-        assertThatClientPaidForDeliveryInTheAmount(euro(20.00))
+        assertThatClientPaidForDeliveryInTheAmountOf(euro(20.00))
 
     and:
-        assertThatFreeMusicTrackWasNotSentToClient()
+        assertThatFreeMusicTrackWasNotSentToTheClient()
   }
 
   def "shouldn't accept payment if the amounts differ"() {
@@ -117,7 +117,7 @@ class OrderPaymentAcceptanceSpec extends BaseIntegrationTest implements
         currentDeliveryCostIs(euro(30.00))
 
     when:
-        def payment = clientMakeThe(aPayment().inTheAmount(euro(39.00)))
+        def payment = clientMakesThe(aPayment().inTheAmountOf(euro(39.00)))
 
     then:
         assertThat(payment)

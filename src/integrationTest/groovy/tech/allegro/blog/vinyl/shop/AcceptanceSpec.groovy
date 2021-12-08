@@ -52,7 +52,7 @@ class AcceptanceSpec extends BaseIntegrationTest implements
         )
 
     and:
-        assertThatFreeMusicTrackWasSentToClient()
+        assertThatFreeMusicTrackWasSentToTheClient()
 
     when:
         def orderView = listOrder()

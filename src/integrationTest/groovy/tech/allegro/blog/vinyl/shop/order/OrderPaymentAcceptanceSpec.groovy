@@ -43,7 +43,7 @@ class OrderPaymentAcceptanceSpec extends BaseIntegrationTest implements
         assertThatClientDidNotPaidForDelivery()
 
     and:
-        assertThatFreeMusicTrackWasSentToClient()
+        assertThatFreeMusicTrackWasSentToTheClient()
   }
 
   def "shouldn't charge for delivery for order value above or fixed amount based on promotion price list"() {

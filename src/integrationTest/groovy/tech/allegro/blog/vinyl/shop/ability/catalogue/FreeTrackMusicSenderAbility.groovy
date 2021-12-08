@@ -16,7 +16,7 @@ trait FreeTrackMusicSenderAbility {
 
   private PollingConditions pollingConditions = new PollingConditions(timeout: 1)
 
-  void assertThatFreeMusicTrackWasSentToClient(String clientId = TestData.CLIENT_ID) {
+  void assertThatFreeMusicTrackWasSentToTheClient(String clientId = TestData.CLIENT_ID) {
     pollingConditions.eventually {
       Mockito.verify(freeMusicTrackSender, times(1))
         .send(new ClientId(clientId))

@@ -1,0 +1,111 @@
+plugins {
+  id "org.springframework.boot" version "2.5.5"
+  id "io.spring.dependency-management" version "1.0.11.RELEASE"
+  id "java"
+  id "groovy"
+  id "application"
+}
+
+group = 'tech.allegro.blog'
+version = '0.0.1-SNAPSHOT'
+
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(17)
+  }
+}
+
+repositories {
+  mavenCentral()
+}
+
+project.ext.versions = [
+  lombok  : '1.18.20',
+  feign   : '3.0.3',
+  spock   : '2.0-groovy-3.0',
+  wiremock: '2.27.2',
+  groovy  : '3.0.9'
+]
+
+configurations {
+  integrationTest {
+    extendsFrom testRuntimeClasspath
+  }
+}
+
+configurations.all {
+  resolutionStrategy {
+    dependencySubstitution {
+      substitute module('org.codehaus.groovy:groovy:3.0.8') with module("org.codehaus.groovy:groovy:${versions.groovy}")
+    }
+  }
+}
+
+dependencies {
+  compileOnly group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation'
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: versions.feign
+
+  testCompileOnly group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  testImplementation group: 'org.spockframework', name: 'spock-core', version: versions.spock
+  testImplementation group: 'org.codehaus.groovy', name: 'groovy-json', version: versions.groovy
+
+  integrationTest group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
+  integrationTest group: 'org.spockframework', name: 'spock-spring', version: versions.spock
+  integrationTest group: 'org.springframework.boot', name: 'spring-boot-starter-test'
+  integrationTest group: 'com.github.tomakehurst', name: 'wiremock-jre8-standalone', version: versions.wiremock
+}
+
+sourceSets {
+  integrationTest {
+    groovy {
+      compileClasspath += main.output + test.output + project.configurations.testRuntimeClasspath + project.configurations.integrationTest
+      runtimeClasspath += output + compileClasspath + project.configurations.testRuntimeClasspath
+      srcDir {
+        file('src/integrationTest/groovy')
+      }
+    }
+    resources.srcDir file('src/integrationTest/resources')
+  }
+}
+
+test {
+  useJUnitPlatform()
+  include '**/*Spec.*'
+  include '**/*Test.*'
+  testLogging {
+    exceptionFormat = 'full'
+    events = ["STARTED", "PASSED", "SKIPPED", "FAILED"]
+  }
+}
+
+task integrationTest(type: Test) {
+  useJUnitPlatform()
+  include '**/*Spec.*'
+  include '**/*Test.*'
+  include '**/*IT.*'
+  testClassesDirs = sourceSets.integrationTest.output.classesDirs
+  classpath = sourceSets.integrationTest.runtimeClasspath
+  systemProperty 'spring.profiles.active', 'integration'
+  outputs.upToDateWhen { false }
+  testLogging {
+    exceptionFormat = 'full'
+    events = ["STARTED", "PASSED", "SKIPPED", "FAILED"]
+  }
+}
+
+compileJava {
+  options.encoding = 'UTF-8'
+  options.compilerArgs += ['--enable-preview']
+}
+
+tasks.withType(Test).all {
+  jvmArgs += '--enable-preview'
+}
+
+wrapper {
+  gradleVersion = '7.2'
+}

@@ -9,7 +9,7 @@ import tech.allegro.blog.vinyl.shop.client.domain.ClientId
 
 import static org.mockito.Mockito.times
 
-trait FreeTrackMusicSenderAbility {
+trait FreeMusicTrackSenderAbility {
 
   @SpyBean
   private FreeMusicTrackSender freeMusicTrackSender

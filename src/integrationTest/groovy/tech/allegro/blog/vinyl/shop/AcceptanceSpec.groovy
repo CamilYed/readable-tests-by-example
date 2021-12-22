@@ -1,6 +1,6 @@
 package tech.allegro.blog.vinyl.shop
 
-import tech.allegro.blog.vinyl.shop.ability.catalogue.FreeTrackMusicSenderAbility
+import tech.allegro.blog.vinyl.shop.ability.catalogue.FreeMusicTrackSenderAbility
 import tech.allegro.blog.vinyl.shop.ability.client.ClientReputationAbility
 import tech.allegro.blog.vinyl.shop.ability.order.CreateOrderAbility
 import tech.allegro.blog.vinyl.shop.ability.order.OrderListingAbility
@@ -21,7 +21,7 @@ class AcceptanceSpec extends BaseIntegrationTest implements
   CreateOrderAbility,
   ClientReputationAbility,
   OrderPaymentAbility,
-  FreeTrackMusicSenderAbility,
+  FreeMusicTrackSenderAbility,
   OrderListingAbility {
 
   // @formatter:off

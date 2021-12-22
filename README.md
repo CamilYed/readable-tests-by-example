@@ -1,19 +1,26 @@
-Example project
-----------------------
-----------------------
+# Readable tests by example
 
 ## Example Domain
 
-A store sells vinyl records. Each order is delivered by a courier company. When the client pays for the order, the
-delivery cost is charged. The delivery cost is always getting from the supplier's system (system of courier company). In
-the event of its unavailability, the delivery cost is equal to `20 EUR`.
+An online store sells vinyl records. Each order is delivered by a courier company cooperating with the store. 
 
-There are two clients in the system: `STANDARD` and `VIP`. If the order is fulfilled for the `VIP` or
-the `order value exceeds` the fixed amount according to the promotion price list this order has free delivery.
+The cost of delivery is charged when the customer pays for the order. 
 
-For `VIP` a free track music should be sent to his mailbox.
+The cost of delivery is always collected from the supplier's system (the courier's system). 
 
-`No modifications` can be made after the order has been paid.
+In the event of its unavailability (e.g. when the external courier system cannot provide the cost amount),  
+
+we can assume that the cost of delivery is always a fixed amount of `EUR 20`.
+
+We distinguish between two types of clients: `STANDARD` and `VIP`. 
+
+If the order is processed for a customer with a `VIP` status or the value of the order exceeds a certain amount.
+
+according to the running promotional campaign (current price list configuration), the order will be delivered free of charge.
+
+Additionally, for the VIP customer, a free music track should be sent to their mailbox after the payment of the order.
+
+After paying for the order, no modifications can be made.
 
 ### Specification
 
@@ -45,7 +52,7 @@ def "shouldn't charge for delivery when order value is above fixed amount based 
 
     and: "The client did not paid for delivery"
 
-    and: "Free track music was not sent to the client"
+    and: "Free music track was not sent to the client"
 }
 
 def "should charge for delivery based on price provided by courier system"() {
@@ -63,7 +70,7 @@ def "should charge for delivery based on price provided by courier system"() {
 
     and: "The client paid for delivery in the amount of 30 EUR"
 
-    and: "Free track music was not sent to the client"
+    and: "Free music track was not sent to the client"
 }
 
 def "should charge always 20 euro for delivery when the courier system is unavailable"() {
@@ -77,7 +84,7 @@ def "should charge always 20 euro for delivery when the courier system is unavai
 
     then: "The client paid for delivery in the amount of 20 EUR"
 
-    and: "Free track music was not sent to the client"
+    and: "Free music track was not sent to the client"
 }
 
 def "shouldn't accept payment if the amounts differ"() {

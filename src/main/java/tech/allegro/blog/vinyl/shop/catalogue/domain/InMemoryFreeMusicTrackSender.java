@@ -8,6 +8,6 @@ class InMemoryFreeMusicTrackSender implements FreeMusicTrackSender {
 
   @Override
   public void send(ClientId id) {
-    log.info("Free track music was sent to the client with id: {}", id);
+    log.info("Free music track was sent to the client with id: {}", id);
   }
 }

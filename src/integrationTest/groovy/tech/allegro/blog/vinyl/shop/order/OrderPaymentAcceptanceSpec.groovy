@@ -1,7 +1,7 @@
 package tech.allegro.blog.vinyl.shop.order
 
 import tech.allegro.blog.vinyl.shop.BaseIntegrationTest
-import tech.allegro.blog.vinyl.shop.ability.catalogue.FreeTrackMusicSenderAbility
+import tech.allegro.blog.vinyl.shop.ability.catalogue.FreeMusicTrackSenderAbility
 import tech.allegro.blog.vinyl.shop.ability.client.ClientReputationAbility
 import tech.allegro.blog.vinyl.shop.ability.delivery.CourierSystemAbility
 import tech.allegro.blog.vinyl.shop.ability.order.CreateOrderAbility
@@ -19,7 +19,7 @@ class OrderPaymentAcceptanceSpec extends BaseIntegrationTest implements
   SpecialPriceProviderAbility,
   CourierSystemAbility,
   OrderPaymentAbility,
-  FreeTrackMusicSenderAbility {
+  FreeMusicTrackSenderAbility {
 
   def setup() {
     clientIsNotVip()

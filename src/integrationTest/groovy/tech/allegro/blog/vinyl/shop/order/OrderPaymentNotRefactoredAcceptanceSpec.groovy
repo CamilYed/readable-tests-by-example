@@ -19,6 +19,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalTo
 import static com.github.tomakehurst.wiremock.client.WireMock.get
 import static org.springframework.http.HttpHeaders.ACCEPT
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE
+import static org.springframework.http.HttpMethod.PUT
+import static org.springframework.http.MediaType.APPLICATION_JSON
 
 class OrderPaymentNotRefactoredAcceptanceSpec extends BaseIntegrationNotRefactoredTest {
 
@@ -41,56 +43,59 @@ class OrderPaymentNotRefactoredAcceptanceSpec extends BaseIntegrationNotRefactor
   static final String PRODUCT_ID_1 = "PRODUCT_ID_001"
 
   def "shouldn't charge for delivery when the client has a VIP status"() {
-    given: "There is a client order with amount 40 EUR"
+    given:
         def body = """
           {
-            "clientId": "${CLIENT_ID_1}",
-            "items": [
-              {
-                "itemUnitPrice": {
-                   "productId": "${PRODUCT_ID_1}",
-                   "price": { "amount": "40.00", "currency": "EUR" }
-                 },
-                 "quantity": 1
-              }
-            ]
+             "clientId":"${CLIENT_ID_1}",
+             "items":[
+                {
+                   "itemUnitPrice":{
+                      "productId":"${PRODUCT_ID_1}",
+                      "price":{
+                         "amount":"40.00",
+                         "currency":"EUR"
+                      }
+                   },
+                   "quantity":1
+                }
+             ]
           }
         """.toString()
-        def requestEntity = buildHttpEntity(body, "application/json", "application/json")
-        def response = restTemplate.exchange(localUrl("/orders/$ORDER_ID_1"), HttpMethod.PUT, requestEntity, Map)
+        def requestEntity = buildHttpEntity(body, APPLICATION_JSON.toString(), APPLICATION_JSON.toString())
+        def response = restTemplate.exchange(localUrl("/orders/$ORDER_ID_1"), PUT, requestEntity, Map)
     and:
         assert response.statusCode == HttpStatus.CREATED
 
-    and: "The client has a VIP reputation"
+    and:
         wireMockServer.stubFor(
           get("/reputation/${CLIENT_ID_1}")
-            .withHeader(ACCEPT, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .withHeader(ACCEPT, equalTo(APPLICATION_JSON.toString()))
             .willReturn(aResponse()
-              .withBody("""{
-                                   "reputation": "VIP",
-                                   "clientId": "${CLIENT_ID_1}"
-                                 }
-                              """)
-              .withHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+              .withBody(
+                """{
+                            "reputation": "VIP",
+                            "clientId": "${CLIENT_ID_1}"
+                         }""")
+              .withHeader(CONTENT_TYPE, APPLICATION_JSON.toString())
             )
         )
-    when: "When the client pays the order of 40 EUR"
+    when:
         body = """
           {
-            "clientId": "${CLIENT_ID_1}",
-            "cost": { "amount": "40.00", "currency": "EUR" }
+             "clientId": "${CLIENT_ID_1}",
+             "cost": { "amount": "40.00", "currency": "EUR" }
            }
           """.toString()
-        requestEntity = buildHttpEntity(body, "application/json", "application/json")
-        response = restTemplate.exchange(localUrl("/orders/$ORDER_ID_1/payment"), HttpMethod.PUT, requestEntity, Map)
+        requestEntity = buildHttpEntity(body, APPLICATION_JSON.toString(), APPLICATION_JSON.toString())
+        response = restTemplate.exchange(localUrl("/orders/$ORDER_ID_1/payment"), PUT, requestEntity, Map)
 
-    then: "The order has been paid correctly"
+    then:
         response.statusCode == HttpStatus.ACCEPTED
 
-    and: "The payment system was notified"
+    and:
         1 * domainEventPublisher.publish(_ as Events.OrderPaid)
 
-    and: "The free track music was sent to the client's mailbox"
+    and:
         pollingConditions.eventually {
           1 * freeMusicTrackSender.send(new ClientId(CLIENT_ID_1))
         }

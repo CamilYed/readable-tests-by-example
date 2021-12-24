@@ -67,19 +67,20 @@ class OrderPaymentNotRefactoredAcceptanceSpec extends BaseIntegrationNotRefactor
             .withHeader(ACCEPT, equalTo(MediaType.APPLICATION_JSON.toString()))
             .willReturn(aResponse()
               .withBody("""{
-                                  "reputation": "VIP",
-                                  "clientId": "${CLIENT_ID_1}"
+                                   "reputation": "VIP",
+                                   "clientId": "${CLIENT_ID_1}"
                                  }
                               """)
               .withHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
             )
         )
     when: "When the client pays the order of 40 EUR"
-        body = """{
-                                "clientId": "${CLIENT_ID_1}",
-                                "cost": { "amount": "40.00", "currency": "EUR" }
-                              }
-                          """.toString()
+        body = """
+          {
+            "clientId": "${CLIENT_ID_1}",
+            "cost": { "amount": "40.00", "currency": "EUR" }
+           }
+          """.toString()
         requestEntity = buildHttpEntity(body, "application/json", "application/json")
         response = restTemplate.exchange(localUrl("/orders/$ORDER_ID_1/payment"), HttpMethod.PUT, requestEntity, Map)
 

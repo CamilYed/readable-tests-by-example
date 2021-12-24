@@ -28,7 +28,7 @@ class OrderDataSnapshotAssertion {
     return this
   }
 
-  ItemAssertion hasItemThat(String productId) {
+  ItemAssertion hasItemWithIdThat(String productId) {
     Entry<Vinyl, Quantity> item = findItem(productId)
     assert item != null
     return new ItemAssertion(this, item.key, item.value)
@@ -49,7 +49,7 @@ class OrderDataSnapshotAssertion {
       this.parent = parent
     }
 
-    ItemAssertion hasPrice(MoneyBuilder aPrice) {
+    ItemAssertion hasUnitPrice(MoneyBuilder aPrice) {
       assert vinyl.unitPrice() == aPrice.build()
       return this
     }

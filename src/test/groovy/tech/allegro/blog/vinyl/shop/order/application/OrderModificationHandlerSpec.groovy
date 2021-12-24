@@ -56,12 +56,12 @@ class OrderModificationHandlerSpec extends Specification implements ModifyOrderA
 
     then:
         assertThatThereIsOrderWithId(ORDER_ID)
-          .hasItemThat(CZESLAW_NIEMEN_ALBUM_ID)
-              .hasPrice(euro(35.00))
+          .hasItemWithIdThat(CZESLAW_NIEMEN_ALBUM_ID)
+              .hasUnitPrice(euro(35.00))
               .hasQuantity(20)
           .and()
-          .hasItemThat(BOHEMIAN_RHAPSODY_ALBUM_ID)
-              .hasPrice(euro(55.00))
+          .hasItemWithIdThat(BOHEMIAN_RHAPSODY_ALBUM_ID)
+              .hasUnitPrice(euro(55.00))
               .hasQuantity(1)
   }
   // @formatter:on

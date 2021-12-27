@@ -1,8 +1,9 @@
-package tech.allegro.blog.vinyl.shop.common.api;
+package tech.allegro.blog.vinyl.shop.infrastructure.api;
 
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -33,12 +34,16 @@ class MethodArgumentNotValidExceptionHandler {
     for (org.springframework.validation.FieldError fieldError : fieldErrors) {
       final var errorJson = ErrorsJson.Error.builder()
         .withCode(BAD_REQUEST.toString())
-        .withPath(fieldError.getField())
+        .withPath(toJsonPath(fieldError))
         .withMessage(fieldError.getDefaultMessage())
         .withUserMessage("Validation error.")
         .build();
       errors.add(errorJson);
     }
     return new ErrorsJson(errors);
+  }
+
+  private String toJsonPath(FieldError fieldError) {
+    return "$." + fieldError.getField();
   }
 }

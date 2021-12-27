@@ -13,3 +13,7 @@ spring:
       field: any
   web:
     locale: en
+
+logging:
+  level:
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG

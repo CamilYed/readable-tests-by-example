@@ -38,7 +38,7 @@ class CreateOrderJsonBuilder {
   Map toMap() {
     return [
       clientId: clientId,
-      items   : items.collect { it.toMap() }
+      items   : items != null ? items.collect { it.toMap() } : null
     ]
   }
 }

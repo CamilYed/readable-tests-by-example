@@ -1,5 +1,5 @@
 plugins {
-  id "org.springframework.boot" version "2.5.5"
+  id "org.springframework.boot" version "2.6.2"
   id "io.spring.dependency-management" version "1.0.11.RELEASE"
   id "java"
   id "groovy"
@@ -21,7 +21,7 @@ repositories {
 
 project.ext.versions = [
   lombok  : '1.18.20',
-  feign   : '3.0.3',
+  feign   : '3.1.0',
   spock   : '2.0-groovy-3.0',
   wiremock: '2.27.2',
   groovy  : '3.0.9'

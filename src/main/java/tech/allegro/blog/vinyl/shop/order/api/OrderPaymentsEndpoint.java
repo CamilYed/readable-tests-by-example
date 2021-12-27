@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import tech.allegro.blog.vinyl.shop.common.json.FailureJson;
+import tech.allegro.blog.vinyl.shop.common.json.ErrorsJson;
 import tech.allegro.blog.vinyl.shop.order.api.Jsons.PayOrderJson;
 import tech.allegro.blog.vinyl.shop.order.application.OrderPaymentHandler;
 import tech.allegro.blog.vinyl.shop.order.application.OrderPaymentHandler.IncorrectAmount;
@@ -44,11 +44,14 @@ class OrderPaymentsEndpoint {
   }
 
   public static ResponseEntity<?> toResponseEntity(OrderNotFound e) {
-    final var message = new FailureJson("""
-      Order with id: ${e.getOrderId()} not found!"""
-      .replace("${e.getOrderId()}", e.getOrderId().value())
-    );
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+    final var error = ErrorsJson.Error.builder()
+      .withCode(HttpStatus.NOT_FOUND.toString())
+      .withMessage("""
+        Order with id: ${e.getOrderId()} not found!"""
+        .replace("${e.getOrderId()}", e.getOrderId().value()))
+      .withPath("$.order.orderId")
+      .build();
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
   }
 
   public static ResponseEntity<?> toResponseEntity(OrderAlreadyPaid e) {
@@ -56,10 +59,13 @@ class OrderPaymentsEndpoint {
   }
 
   public static ResponseEntity<?> toResponseEntity(IncorrectAmount e) {
-    final var message = new FailureJson("""
-      Incorrect amount, difference is: ${e.getDifference()} !"""
-      .replace("${e.getDifference()}", e.getDifference().value().toString())
-    );
-    return ResponseEntity.unprocessableEntity().body(message);
+    final var error = ErrorsJson.Error.builder()
+      .withCode(HttpStatus.UNPROCESSABLE_ENTITY.toString())
+      .withMessage("""
+                     Incorrect amount, difference is: ${e.getDifference()} !"""
+                    .replace("${e.getDifference()}", e.getDifference().value().toString()))
+      .withPath("$.order.cost")
+      .build();
+    return ResponseEntity.unprocessableEntity().body(error);
   }
 }

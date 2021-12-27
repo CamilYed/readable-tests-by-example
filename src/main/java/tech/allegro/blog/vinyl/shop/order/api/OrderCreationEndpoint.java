@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import tech.allegro.blog.vinyl.shop.common.json.FailureJson;
 import tech.allegro.blog.vinyl.shop.common.money.MoneyJson;
 import tech.allegro.blog.vinyl.shop.order.api.Jsons.CreateOrderJson;
 import tech.allegro.blog.vinyl.shop.order.api.Jsons.ItemCostAndQuantityJson;
@@ -25,7 +24,7 @@ import static java.util.stream.Collectors.toList;
 @RestController
 @RequiredArgsConstructor
 @ExtensionMethod({JsonsExtensions.class})
-class OrderCreatorEndpoint {
+class OrderCreationEndpoint {
   private final OrderCreatorHandler orderCreatorHandler;
 
   @PostMapping(value = "/orders", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -62,10 +61,10 @@ class OrderCreatorEndpoint {
     );
   }
 
-  @ExceptionHandler(Throwable.class)
-  ResponseEntity<FailureJson> handleUnexpectedError(Throwable e) {
-    log.error("An unexpected error occurred during order modification", e);
-    FailureJson errorMessage = new FailureJson(e.getMessage());
-    return new ResponseEntity<>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
-  }
+//  @ExceptionHandler(Throwable.class)
+//  ResponseEntity<FailureJson> handleUnexpectedError(Throwable e) {
+//    log.error("An unexpected error occurred during order modification", e);
+//    FailureJson errorMessage = new FailureJson(e.getMessage());
+//    return new ResponseEntity<>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+//  }
 }

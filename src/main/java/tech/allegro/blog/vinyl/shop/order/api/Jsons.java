@@ -2,6 +2,7 @@ package tech.allegro.blog.vinyl.shop.order.api;
 
 import tech.allegro.blog.vinyl.shop.common.money.MoneyJson;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -11,7 +12,7 @@ public interface Jsons {
 
   record CreateOrderJson(
     @NotBlank String clientId,
-    List<@NotNull ItemCostAndQuantityJson> items
+    List<@NotNull @Valid ItemCostAndQuantityJson> items
   ) {
   }
 
@@ -21,7 +22,7 @@ public interface Jsons {
   ) {
   }
 
-  record PayOrderJson(@NotNull MoneyJson cost) {
+  record PayOrderJson(@NotNull @Valid MoneyJson cost) {
   }
 
   record OrderCreatedResponseJson(
@@ -31,12 +32,12 @@ public interface Jsons {
   }
 
   record ItemCostAndQuantityJson(
-    @NotNull ItemUnitPrice itemUnitPrice,
+    @NotNull @Valid ItemUnitPrice itemUnitPrice,
     @Min(1) int quantity) {
 
     public static record ItemUnitPrice(
       @NotBlank String productId,
-      @NotNull MoneyJson price
+      @NotNull @Valid MoneyJson price
     ) {
     }
   }

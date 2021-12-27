@@ -28,8 +28,14 @@ class ItemJsonBuilder {
 
   Map toMap() {
     return [
-      itemUnitPrice: [productId: productId, price: [amount: unitPrice.amount, currency: unitPrice.currency]],
-      quantity    : quantity
+      itemUnitPrice: [
+        productId: productId,
+        price    : unitPrice != null ? [
+          amount  : unitPrice.amount != null ? unitPrice.amount : null,
+          currency: unitPrice.currency != null ? unitPrice.currency : null
+        ] : null
+      ],
+      quantity     : quantity
     ]
   }
 }

@@ -11,3 +11,5 @@ spring:
   jackson:
     visibility:
       field: any
+  web:
+    locale: en

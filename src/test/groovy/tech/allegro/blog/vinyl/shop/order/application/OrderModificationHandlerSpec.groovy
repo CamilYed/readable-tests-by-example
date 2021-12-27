@@ -30,7 +30,6 @@ class OrderModificationHandlerSpec extends Specification implements ModifyOrderA
         assertThatChangeFailedDueToOrderAlreadyIsPaid(changeResult)
   }
 
-
   def "should change the item quantity for unpaid order"() {
     given:
         thereIs(anUnpaidOrder()

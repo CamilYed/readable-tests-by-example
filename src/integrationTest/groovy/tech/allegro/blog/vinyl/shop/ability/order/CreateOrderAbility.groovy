@@ -17,10 +17,17 @@ trait CreateOrderAbility implements MakeRequestAbility {
   }
 
   ResponseEntity<Map> create(CreateOrderJsonBuilder anOrder) {
-    return upsert(anOrder, anOrder.orderId)
+    def jsonBody = toJson(anOrder.toMap())
+    return makeRequest(
+      url: "/orders",
+      method: HttpMethod.POST,
+      contentType: "application/json",
+      body: jsonBody,
+      accept: "application/json",
+    )
   }
 
-  private ResponseEntity<Map> upsert(CreateOrderJsonBuilder anOrder, String orderId) {
+  ResponseEntity<Map> upsert(CreateOrderJsonBuilder anOrder, String orderId = TestData.ORDER_ID) {
     def jsonBody = toJson(anOrder.toMap())
     return makeRequest(
       url: "/orders/$orderId",

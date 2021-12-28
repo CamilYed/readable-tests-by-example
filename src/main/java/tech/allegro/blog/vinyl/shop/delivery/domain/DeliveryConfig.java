@@ -10,6 +10,6 @@ class DeliveryConfig {
   @Bean
   DeliveryCostPolicy deliveryCostPolicy(DeliveryCostProvider currentDeliveryCostProvider,
                                         SpecialPriceProvider promotionPriceCatalogue) {
-    return new DeliveryCostPolicy.DefaultDeliveryCostPolicy(currentDeliveryCostProvider, promotionPriceCatalogue);
+    return DeliveryCostPolicy.defaultPolicy(currentDeliveryCostProvider, promotionPriceCatalogue);
   }
 }

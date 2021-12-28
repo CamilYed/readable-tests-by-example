@@ -61,7 +61,7 @@ class OrderPaymentHandlerNotRefactoredSpec extends Specification {
   final OrderDataSnapshot UNPAID_ORDER_EUR_40 = orderFactory.create(ORDER_ID, CLIENT_ID, Maps.of(VINYL_1, ONE), true).toSnapshot()
   final OrderDataSnapshot PAID_ORDER = orderFactory.create(ORDER_ID, CLIENT_ID, Maps.of(VINYL_1, ONE), false).toSnapshot()
   final ClientReputation VIP = ClientReputation.vip(CLIENT_ID)
-  final ClientReputation NOT_VIP = ClientReputation.notVip(CLIENT_ID)
+  final ClientReputation NOT_VIP = ClientReputation.standard(CLIENT_ID)
   final PayOrderCommand PAY_FOR_ORDER_EUR_40 = new PayOrderCommand(ORDER_ID, EUR_40)
   final PayOrderCommand PAY_FOR_ORDER_EUR_40_PLUS_20_EUR_DELIVERY = new PayOrderCommand(ORDER_ID, EUR_40.add(EUR_20))
   final PayOrderCommand PAY_FOR_ORDER_EUR_40_PLUSEUR_25_DELIVERY = new PayOrderCommand(ORDER_ID, EUR_40.add(EUR_25))

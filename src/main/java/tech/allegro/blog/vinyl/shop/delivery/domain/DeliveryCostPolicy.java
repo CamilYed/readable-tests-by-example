@@ -1,5 +1,6 @@
 package tech.allegro.blog.vinyl.shop.delivery.domain;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import tech.allegro.blog.vinyl.shop.client.domain.ClientReputation;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
@@ -10,7 +11,11 @@ public interface DeliveryCostPolicy {
 
   Delivery calculate(Money orderValue, ClientReputation clientReputation);
 
-  @RequiredArgsConstructor
+  static DeliveryCostPolicy defaultPolicy(DeliveryCostProvider deliveryCostProvider, SpecialPriceProvider specialPriceProvider) {
+    return new DefaultDeliveryCostPolicy(deliveryCostProvider, specialPriceProvider);
+  }
+
+  @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
   class DefaultDeliveryCostPolicy implements DeliveryCostPolicy {
     private final DeliveryCostProvider deliveryCostProvider;
     private final SpecialPriceProvider specialPriceProvider;

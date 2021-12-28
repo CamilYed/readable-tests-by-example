@@ -52,6 +52,8 @@ dependencies {
   testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   testImplementation group: 'org.spockframework', name: 'spock-core', version: versions.spock
   testImplementation group: 'org.codehaus.groovy', name: 'groovy-json', version: versions.groovy
+  testImplementation group: 'io.github.joke', name: 'spock-mockable', version: '1.4.0'
+
 
   integrationTest group: 'com.jayway.jsonpath', name: 'json-path', version: '2.6.0'
   integrationTest group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'

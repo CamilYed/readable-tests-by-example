@@ -8,7 +8,7 @@ import java.util.Currency;
 
 public record Money(BigDecimal value, Currency currency) {
   public static final Currency EURO = Currency.getInstance("EUR");
-  public static final Money ZERO = new Money(BigDecimal.valueOf(0), EURO);
+  public static final Money ZERO = new Money(BigDecimal.valueOf(00.00), EURO);
 
   public static Money euro(Double value) {
     return of(value, "EUR");

@@ -15,7 +15,7 @@ public class ClientReputation {
     return new ClientReputation(clientId, Type.VIP);
   }
 
-  public static ClientReputation notVip(ClientId clientId) {
+  public static ClientReputation standard(ClientId clientId) {
     return new ClientReputation(clientId, Type.STANDARD);
   }
 

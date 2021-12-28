@@ -48,14 +48,13 @@ class AcceptanceSpec extends BaseIntegrationTest implements
     and:
         assertThatClientDidNotPaidForDelivery(anOrderPaidEvent()
                                                 .withFreeDelivery()
-                                                .withAmount(Money.euro(140.00))
-        )
+                                                .withAmount(Money.euro(140.00)))
 
     and:
         assertThatFreeMusicTrackWasSentToTheClient()
 
     when:
-        def orderView = listOrder()
+        def orderView = listOrderBy(ORDER_ID)
 
     then:
         assertThatView(orderView)

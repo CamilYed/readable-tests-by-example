@@ -35,7 +35,7 @@ class OrderPaymentsEndpoint {
     if (result.isError()) {
       return switch (result.error().cause()) {
         case OrderNotFound e -> toResponseEntity(e);
-        case OrderAlreadyPaid e -> toResponseEntity(e);
+        case OrderAlreadyPaid __ -> toResponseEntity();
         case IncorrectAmount e -> toResponseEntity(e);
         default -> ResponseEntity.internalServerError().build();
       };
@@ -54,7 +54,7 @@ class OrderPaymentsEndpoint {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
   }
 
-  public static ResponseEntity<?> toResponseEntity(OrderAlreadyPaid e) {
+  public static ResponseEntity<?> toResponseEntity() {
     return ResponseEntity.accepted().build();
   }
 
@@ -62,8 +62,8 @@ class OrderPaymentsEndpoint {
     final var error = ErrorsJson.Error.builder()
       .withCode(HttpStatus.UNPROCESSABLE_ENTITY.toString())
       .withMessage("""
-                     Incorrect amount, difference is: ${e.getDifference()} !"""
-                    .replace("${e.getDifference()}", e.getDifference().value().toString()))
+        Incorrect amount, difference is: ${e.getDifference()} !"""
+        .replace("${e.getDifference()}", e.getDifference().value().toString()))
       .withPath("$.order.cost")
       .build();
     return ResponseEntity.unprocessableEntity().body(error);

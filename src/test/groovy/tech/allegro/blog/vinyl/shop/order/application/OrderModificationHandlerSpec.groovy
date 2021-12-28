@@ -3,6 +3,7 @@ package tech.allegro.blog.vinyl.shop.order.application
 import spock.lang.Specification
 import tech.allegro.blog.vinyl.shop.abilities.ModifyOrderAbility
 
+import static tech.allegro.blog.vinyl.shop.TestData.CLIENT_ID
 import static tech.allegro.blog.vinyl.shop.TestData.CZESLAW_NIEMEN_ALBUM_ID
 import static tech.allegro.blog.vinyl.shop.TestData.BOHEMIAN_RHAPSODY_ALBUM_ID
 import static tech.allegro.blog.vinyl.shop.TestData.ORDER_ID
@@ -34,6 +35,7 @@ class OrderModificationHandlerSpec extends Specification implements ModifyOrderA
     given:
         thereIs(anUnpaidOrder()
                 .withId(ORDER_ID)
+                .withClientId(CLIENT_ID)
                   .withItems(
                     anItem()
                       .withProductId(CZESLAW_NIEMEN_ALBUM_ID)
@@ -55,6 +57,7 @@ class OrderModificationHandlerSpec extends Specification implements ModifyOrderA
 
     then:
         assertThatThereIsOrderWithId(ORDER_ID)
+          .hasClientId(CLIENT_ID)
           .hasItemWithIdThat(CZESLAW_NIEMEN_ALBUM_ID)
               .hasUnitPrice(euro(35.00))
               .hasQuantity(20)

@@ -4,7 +4,10 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import tech.allegro.blog.vinyl.shop.builders.money.MoneyJsonBuilder
 
+import java.util.regex.Pattern
+
 class OrderCreationAssertion {
+  private static final Pattern UUID_PATTERN = ~/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
   private ResponseEntity<Map> creationResult
 
   private OrderCreationAssertion(ResponseEntity<Map> response) {
@@ -22,6 +25,12 @@ class OrderCreationAssertion {
 
   OrderCreationAssertion hasOrderId(String orderId) {
     assert creationResult.body.orderId == orderId
+    return this
+  }
+
+  OrderCreationAssertion hasAssignedOrderId() {
+    assert creationResult.body.orderId != null
+    assert creationResult.body.orderId ==~ UUID_PATTERN
     return this
   }
 

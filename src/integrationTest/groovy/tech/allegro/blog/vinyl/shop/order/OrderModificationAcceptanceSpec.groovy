@@ -40,7 +40,7 @@ class OrderModificationAcceptanceSpec extends BaseIntegrationTest implements
         )
 
     and:
-        def ordersViewResponse = listOrder(ID)
+        def ordersViewResponse = listOrderBy(ID)
 
     then:
         assertThatView(ordersViewResponse)

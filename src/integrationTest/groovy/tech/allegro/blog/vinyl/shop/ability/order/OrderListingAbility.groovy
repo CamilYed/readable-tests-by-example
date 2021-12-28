@@ -7,7 +7,7 @@ import tech.allegro.blog.vinyl.shop.ability.MakeRequestAbility
 
 trait OrderListingAbility implements MakeRequestAbility {
 
-  ResponseEntity<Map> listOrder(String orderId = TestData.ORDER_ID) {
+  ResponseEntity<Map> listOrderBy(String orderId = TestData.ORDER_ID) {
     return makeRequest(
       url: "/orders-view/$orderId",
       method: HttpMethod.GET,

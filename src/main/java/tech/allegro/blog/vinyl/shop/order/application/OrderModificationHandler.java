@@ -56,6 +56,7 @@ public class OrderModificationHandler {
   public static class OrderNotFound extends RuntimeException {
     OrderId orderId;
   }
+
   @Value
   @EqualsAndHashCode(callSuper = true)
   public static class CanNotModifyPaidOrder extends RuntimeException {

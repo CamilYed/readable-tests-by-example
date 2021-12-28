@@ -1,5 +1,7 @@
 package tech.allegro.blog.vinyl.shop.ability.order
 
+import groovy.transform.NamedParam
+import groovy.transform.NamedParams
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -12,7 +14,7 @@ import static groovy.json.JsonOutput.toJson
 trait CreateOrderAbility implements MakeRequestAbility {
 
   void thereIs(CreateOrderJsonBuilder anUnpaidOrder, String orderId = TestData.ORDER_ID) {
-    def response = upsert(anUnpaidOrder, orderId)
+    def response = createWithGivenId(anOrder: anUnpaidOrder, orderId: orderId)
     assert response.statusCode == HttpStatus.CREATED
   }
 
@@ -27,10 +29,14 @@ trait CreateOrderAbility implements MakeRequestAbility {
     )
   }
 
-  ResponseEntity<Map> upsert(CreateOrderJsonBuilder anOrder, String orderId = TestData.ORDER_ID) {
-    def jsonBody = toJson(anOrder.toMap())
+  ResponseEntity<Map> createWithGivenId(
+    @NamedParams([
+      @NamedParam(required = true, type = CreateOrderJsonBuilder),
+      @NamedParam(required = true, type = String)
+    ]) Map<String, Object> params) {
+    def jsonBody = toJson(params.anOrder.toMap())
     return makeRequest(
-      url: "/orders/$orderId",
+      url: "/orders/${params.orderId}",
       method: HttpMethod.PUT,
       contentType: "application/json",
       body: jsonBody,

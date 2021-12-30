@@ -16,11 +16,11 @@ class DeliveryCostPolicySpec extends Specification {
   DeliveryCostProvider deliveryCostProvider = GroovyStub()
   SpecialPriceProvider specialPriceProvider = GroovyStub()
 
-  static final Boolean yes = true
-  static final Boolean no = false
-
   @Subject
   DeliveryCostPolicy deliveryCostPolicy = DeliveryCostPolicy.defaultPolicy(deliveryCostProvider, specialPriceProvider)
+
+  static final Boolean yes = true
+  static final Boolean no = false
 
   def "should calculate delivery cost"() {
     given:

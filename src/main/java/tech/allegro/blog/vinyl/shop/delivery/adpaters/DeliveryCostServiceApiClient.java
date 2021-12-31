@@ -1,4 +1,4 @@
-package tech.allegro.blog.vinyl.shop.delivery.adpater;
+package tech.allegro.blog.vinyl.shop.delivery.adpaters;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;

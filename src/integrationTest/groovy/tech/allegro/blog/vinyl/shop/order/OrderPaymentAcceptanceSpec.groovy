@@ -26,7 +26,7 @@ class OrderPaymentAcceptanceSpec extends BaseIntegrationTest implements
     minimumOrderValueForFreeDeliveryIs(euro(80.00))
   }
 
-  def "shouldn't charge for delivery when the client has a VIP reputation"() {
+  def "shouldn't charge for delivery when the client has a VIP status"() {
     given:
         thereIs(anUnpaidOrder())
 

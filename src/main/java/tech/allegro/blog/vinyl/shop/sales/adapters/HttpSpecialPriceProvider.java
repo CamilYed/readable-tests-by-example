@@ -1,4 +1,4 @@
-package tech.allegro.blog.vinyl.shop.sales.adapter;
+package tech.allegro.blog.vinyl.shop.sales.adapters;
 
 import lombok.RequiredArgsConstructor;
 import tech.allegro.blog.vinyl.shop.common.money.Money;

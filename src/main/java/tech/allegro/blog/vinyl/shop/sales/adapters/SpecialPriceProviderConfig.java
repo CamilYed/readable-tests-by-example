@@ -1,4 +1,4 @@
-package tech.allegro.blog.vinyl.shop.sales.adapter;
+package tech.allegro.blog.vinyl.shop.sales.adapters;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,7 +1,7 @@
-package tech.allegro.blog.vinyl.shop.client.adapter;
+package tech.allegro.blog.vinyl.shop.client.adapters;
 
 import lombok.RequiredArgsConstructor;
-import tech.allegro.blog.vinyl.shop.client.adapter.ClientReputationServiceApiClient.ClientReputationJson;
+import tech.allegro.blog.vinyl.shop.client.adapters.ClientReputationServiceApiClient.ClientReputationJson;
 import tech.allegro.blog.vinyl.shop.client.domain.ClientId;
 import tech.allegro.blog.vinyl.shop.client.domain.ClientReputation;
 import tech.allegro.blog.vinyl.shop.client.domain.ClientReputation.Type;

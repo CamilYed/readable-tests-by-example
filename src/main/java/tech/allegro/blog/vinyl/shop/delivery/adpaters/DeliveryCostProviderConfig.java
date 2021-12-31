@@ -1,4 +1,4 @@
-package tech.allegro.blog.vinyl.shop.delivery.adpater;
+package tech.allegro.blog.vinyl.shop.delivery.adpaters;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

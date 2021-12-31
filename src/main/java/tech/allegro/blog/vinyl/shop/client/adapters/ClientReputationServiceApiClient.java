@@ -1,4 +1,4 @@
-package tech.allegro.blog.vinyl.shop.client.adapter;
+package tech.allegro.blog.vinyl.shop.client.adapters;
 
 import lombok.Data;
 import org.springframework.cloud.openfeign.FeignClient;

@@ -1,6 +1,8 @@
-# Readable tests by example
+# About
+This is a project that was used to demonstrate how to write tests that can serve as living code documentation.
+More information you can find on [Allegro Tech Blog](https://blog.allegro.tech/_)
 
-## Example Domain
+## Domain description
 
 An online store sells vinyl records. Each order is delivered by a courier company cooperating with the store. 
 
@@ -22,7 +24,9 @@ Additionally, for the VIP customer, a free music track should be sent to their m
 
 After paying for the order, no modifications can be made.
 
-### Specification
+Such assumptions can be translated into the BDD-style scenarios:
+
+### Scenarios
 
 ```groovy
 def "shouldn't charge for delivery when the client has a VIP status"() {
@@ -105,4 +109,26 @@ def "shouldn't modify paid order"() {
     then: "Change failed due order already paid"
 }
 ```
+
+### Architecture
+The structure of the code reflects the architecture that was adopted during the implementation works. The application is
+a modular monolith written based on the architectural style
+of [Ports & Adapter](https://blog.allegro.tech/2020/05/hexagonal-architecture-by-example.html), as well as
+the [Domain Driven Design](https://www.dddcommunity.org/learning-ddd/what_is_ddd/) approach.
+
+
+
+### Main stack technology
+* Java 17
+* Groovy 3.0.x (For testing purpose)
+* Spring Boot 2
+* Spock 2
+
+### Testing
+* All tests (unit and integration)
+  ```./gradlew check```
+* Unit
+  ```./gradlew test```
+* Integration
+  ```./gradlew integrationTest``` (This command runs all tests under integrationTest source set and also acceptance tests)
 

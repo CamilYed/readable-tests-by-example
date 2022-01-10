@@ -26,7 +26,7 @@ After paying for the order, no modifications can be made.
 
 Such assumptions can be translated into the BDD-style scenarios:
 
-### Scenarios
+### Example scenarios
 
 ```groovy
 def "shouldn't charge for delivery when the client has a VIP status"() {

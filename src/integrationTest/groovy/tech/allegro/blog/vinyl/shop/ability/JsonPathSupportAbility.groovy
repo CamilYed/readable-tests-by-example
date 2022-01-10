@@ -12,6 +12,12 @@ trait JsonPathSupportAbility {
     .mappingProvider(new JacksonMappingProvider())
     .build()
 
+  String apply(String validInputJson, Map<String, Object> jsonPathNewValue) {
+    String jsonPath = jsonPathNewValue.entrySet().first().getKey()
+    Object newValue = jsonPathNewValue.entrySet().first().getValue()
+    return apply(validInputJson, jsonPath, newValue)
+  }
+
   String apply(String originalJson, String jsonPath, Object newValue) {
     JsonPath.using(configuration).parse(originalJson).set(JsonPath.compile(jsonPath), newValue).jsonString()
   }

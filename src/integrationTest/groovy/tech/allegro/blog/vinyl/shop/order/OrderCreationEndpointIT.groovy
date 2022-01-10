@@ -11,36 +11,32 @@ import tech.allegro.blog.vinyl.shop.ability.MakeRequestAbility
 class OrderCreationEndpointIT extends BaseIntegrationTest implements MakeRequestAbility, JsonPathSupportAbility {
 
   final static String validInputJson = """{
-                                              "clientId":"CLIENT_ID_001",
-                                              "items":[
-                                                 {
-                                                    "itemUnitPrice":{
-                                                       "productId":"PRODUCT_ID_001",
-                                                       "price":{
-                                                          "amount":40.00,
-                                                          "currency":"EUR"
-                                                       }
-                                                    },
-                                                    "quantity":1
-                                                 }
-                                              ]
+                                            "clientId":"CLIENT_ID_001",
+                                            "items":[
+                                               {
+                                                  "itemUnitPrice":{
+                                                     "productId":"PRODUCT_ID_001",
+                                                     "price":{
+                                                        "amount":40.00,
+                                                        "currency":"EUR"
+                                                     }
+                                                  },
+                                                  "quantity":1
+                                               }
+                                            ]
                                           }
                                        """
 
 
   def "should validate the input JSON object representing the client's order: #testCaseDescription"() {
+    given:
+        String invalidJsonRepresentingOrder = apply(validInputJson, pathToChange)
+
     when:
-        ResponseEntity<Map> response = makeRequest(
-          url: "/orders",
-          method: HttpMethod.POST,
-          contentType: "application/json",
-          body: modifyInputJsonWith(validInputJson, pathToChange),
-          accept: "application/json",
-        )
+        ResponseEntity<Map> response = createOrder(invalidJsonRepresentingOrder)
 
     then:
         response.statusCode == HttpStatus.BAD_REQUEST
-        response.body.errors.size() == 1
 
     and:
         with(response.body.errors[0]) {
@@ -70,9 +66,13 @@ class OrderCreationEndpointIT extends BaseIntegrationTest implements MakeRequest
         ['$.items[0].itemUnitPrice.price.currency': "  "] || "must not be blank"                  || '$.items[0].itemUnitPrice.price.currency' || "The item price currency is blank"
   }
 
-  private String modifyInputJsonWith(String validInputJson, Map<String, Object> jsonPathNeValue) {
-    String jsonPath = jsonPathNeValue.entrySet().first().getKey()
-    Object newValue = jsonPathNeValue.entrySet().first().getValue()
-    return apply(validInputJson, jsonPath, newValue)
+  private ResponseEntity<Map> createOrder(String orderJson) {
+    return makeRequest(
+      url: "/orders",
+      method: HttpMethod.POST,
+      contentType: "application/json",
+      body: orderJson,
+      accept: "application/json",
+    )
   }
 }

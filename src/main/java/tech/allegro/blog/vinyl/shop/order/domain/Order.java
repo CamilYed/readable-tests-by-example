@@ -5,7 +5,6 @@ import lombok.Getter;
 import tech.allegro.blog.vinyl.shop.catalogue.domain.VinylId;
 import tech.allegro.blog.vinyl.shop.client.domain.ClientId;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
-import tech.allegro.blog.vinyl.shop.common.time.ClockProvider;
 import tech.allegro.blog.vinyl.shop.common.volume.Quantity;
 import tech.allegro.blog.vinyl.shop.common.volume.QuantityChange;
 import tech.allegro.blog.vinyl.shop.delivery.domain.Delivery;
@@ -54,23 +53,26 @@ public class Order {
     return itemQuantityChangeFailedBecauseAlreadyPaid(product);
   }
 
-  public Money orderValue() {
-    return orderLines.totalCost();
-  }
-
   public OrderDataSnapshot toSnapshot() {
+    final var toMapOfOfVinylAndQuantity = Collectors.toMap(OrderLine::vinyl, OrderLine::quantity);
     return new OrderDataSnapshot(
       clientId,
       orderId,
       orderLines.totalCost(),
       delivery != null ? delivery.cost() : null,
-      orderLines.lines().stream().collect(Collectors.toMap(OrderLine::vinyl, OrderLine::quantity)),
+      orderLines.lines()
+        .stream()
+        .collect(toMapOfOfVinylAndQuantity),
       unpaid
     );
   }
 
   private OrderPaid orderPaidSuccessfully() {
     return new OrderPaid(clientId, orderId, systemClock().instant(), orderValue(), delivery);
+  }
+
+  private Money orderValue() {
+    return orderLines.totalCost();
   }
 
   private OrderDomainEvent amountToBePaidIsDifferent(Money difference) {

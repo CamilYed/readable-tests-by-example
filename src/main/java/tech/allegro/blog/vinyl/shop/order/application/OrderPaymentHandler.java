@@ -4,7 +4,6 @@ import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
-import tech.allegro.blog.vinyl.shop.client.domain.ClientReputation;
 import tech.allegro.blog.vinyl.shop.client.domain.ClientReputationProvider;
 import tech.allegro.blog.vinyl.shop.common.events.DomainEventPublisher;
 import tech.allegro.blog.vinyl.shop.common.money.Money;
@@ -35,9 +34,8 @@ public class OrderPaymentHandler {
     log.info("Start handling the command: {}", command);
     return Result.of(() -> {
       final var orderSnapshot = findOrderOrThrowNotFound(command.orderId);
-      final var clientReputation = clientReputationProvider.get(orderSnapshot.clientId());
+      final var delivery = calculateDeliveryCost(orderSnapshot);
       final var order = orderFactory.fromSnapshot(orderSnapshot);
-      final var delivery = calculateDeliveryCost(order.orderValue(), clientReputation);
       final var event = order.pay(command.amount, delivery);
       saveAndPublishWhenSucceeded(order, event);
     });
@@ -47,8 +45,9 @@ public class OrderPaymentHandler {
     return orderRepository.findBy(orderId).orElseThrow(() -> new OrderNotFound(orderId));
   }
 
-  private Delivery calculateDeliveryCost(Money orderValue, ClientReputation clientReputation) {
-    return deliveryCostPolicy.calculate(orderValue, clientReputation);
+  private Delivery calculateDeliveryCost(OrderDataSnapshot order) {
+    final var clientReputation = clientReputationProvider.get(order.clientId());
+    return deliveryCostPolicy.calculate(order.cost(), clientReputation);
   }
 
   public record PayOrderCommand(

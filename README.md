@@ -1,6 +1,6 @@
 # About
 This is a project that was used to demonstrate how to write tests that can serve as living code documentation.
-More information you can find on [Allegro Tech Blog](https://blog.allegro.tech/_)
+More information you can find on [Allegro Tech Blog](https://blog.allegro.tech/)
 
 ## Domain description
 

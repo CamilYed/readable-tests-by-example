@@ -1,6 +1,6 @@
 # About
 This is a project that was used to demonstrate how to write tests that can serve as living code documentation.
-More information you can find on [Allegro Tech Blog](https://blog.allegro.tech/)
+More information you can find on [Allegro Tech Blog](https://blog.allegro.tech/2022/02/readable-tests-by-example.html).
 
 ## Domain description
 
@@ -16,7 +16,7 @@ we can assume that the cost of delivery is always a fixed amount of `EUR 20`.
 
 We distinguish between two types of clients: `STANDARD` and `VIP`. 
 
-If the order is processed for a customer with a `VIP` status or the value of the order exceeds a certain amount.
+If the order is processed for a customer with a `VIP` status or the value of the order exceeds a certain amount
 
 according to the running promotional campaign (current price list configuration), the order will be delivered free of charge.
 

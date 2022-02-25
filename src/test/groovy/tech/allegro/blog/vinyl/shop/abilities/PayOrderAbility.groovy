@@ -59,7 +59,7 @@ trait PayOrderAbility implements
     assert paymentResult.error().cause() instanceof IncorrectAmount
   }
 
-  void assertThatClientDitNotPaidForDelivery() {
+  void assertThatClientDitNotPayForDelivery() {
     assertThatOrderWasPaid(anOrderPaidEventWithFreeDelivery())
   }
 

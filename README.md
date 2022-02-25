@@ -38,7 +38,7 @@ def "shouldn't charge for delivery when the client has a VIP status"() {
 
     then: "Payment succeeded"
 
-    and: "The client did not paid for delivery"
+    and: "The client did not pay for delivery"
 
     and: "Free music track was sent to the client"
 }
@@ -54,7 +54,7 @@ def "shouldn't charge for delivery when order value is above fixed amount based 
 
     then: "Payment succeeded"
 
-    and: "The client did not paid for delivery"
+    and: "The client did not pay for delivery"
 
     and: "Free music track was not sent to the client"
 }

@@ -40,7 +40,7 @@ class OrderPaymentAcceptanceSpec extends BaseIntegrationTest implements
         assertThat(payment).succeeded()
 
     and:
-        assertThatClientDidNotPaidForDelivery()
+        assertThatClientDidNotPayForDelivery()
 
     and:
         assertThatFreeMusicTrackWasSentToTheClient()
@@ -60,7 +60,7 @@ class OrderPaymentAcceptanceSpec extends BaseIntegrationTest implements
         assertThat(payment).succeeded()
 
     and:
-        assertThatClientDidNotPaidForDelivery()
+        assertThatClientDidNotPayForDelivery()
 
     and:
         assertThatFreeMusicTrackWasNotSentToTheClient()

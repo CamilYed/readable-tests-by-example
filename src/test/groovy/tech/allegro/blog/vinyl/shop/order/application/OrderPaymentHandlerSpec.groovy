@@ -21,7 +21,7 @@ class OrderPaymentHandlerSpec extends Specification implements PayOrderAbility {
         clientMakesThe(aPayment())
 
     then:
-        assertThatClientDitNotPaidForDelivery()
+        assertThatClientDitNotPayForDelivery()
   }
 
   def "shouldn't charge for delivery when order value is above fixed amount based on promotion price list"() {
@@ -38,7 +38,7 @@ class OrderPaymentHandlerSpec extends Specification implements PayOrderAbility {
         clientMakesThe(aPayment().withAmount(euro(40.00)))
 
     then:
-        assertThatClientDitNotPaidForDelivery()
+        assertThatClientDitNotPayForDelivery()
   }
 
   def "should charge for delivery based on price provided by courier system"() {

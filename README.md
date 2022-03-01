@@ -111,7 +111,7 @@ def "shouldn't modify paid order"() {
 ```
 
 ### Example
-If you want to know how to bring your tests to the following state, be sure to read my artiche on[Allegro Tech Blog](https://blog.allegro.tech/2022/02/readable-tests-by-example.html).
+If you want to know how to bring your tests to the following state, see my artiche on[Allegro Tech Blog](https://blog.allegro.tech/2022/02/readable-tests-by-example.html).
 
 ```groovy
 

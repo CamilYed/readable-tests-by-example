@@ -49,12 +49,14 @@ public class Order {
 
   public OrderDomainEvent changeItemQuantity(VinylId product, QuantityChange change) {
     if (unpaid) {
-      final var orderLine = orderLines.changeQuantity(product, change);
-      return orderLine.map(it -> {
-        orderLines.removeLineOf(product);
-        orderLines.add(it);
-        return itemQuantityChanged(product, it.quantity());
-      }).orElse(itemDoesNotExists(product));
+      final var orderLine = orderLines.findLineToUpdate(product);
+      if (orderLine.isPresent()) {
+        final var lineToUpdate = orderLine.get();
+        final var updatedLine = lineToUpdate.changeQuantity(change);
+        orderLines.add(updatedLine);
+        return itemQuantityChanged(product, updatedLine.quantity());
+      }
+      return itemDoesNotExists(product);
     }
     return itemQuantityChangeFailedBecauseAlreadyPaid(product);
   }

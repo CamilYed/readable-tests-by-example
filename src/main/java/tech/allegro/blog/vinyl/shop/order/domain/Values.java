@@ -33,12 +33,8 @@ public class Values {
       this.lines = Objects.requireNonNullElseGet(lines, ArrayList::new);
     }
 
-    Optional<OrderLine> changeQuantity(VinylId vinylId, QuantityChange change) {
-      final var orderLine = findLineToUpdate(vinylId);
-      return orderLine.map(line -> line.changeQuantity(change));
-    }
-
     void add(OrderLine orderLine) {
+      removeLineOf(orderLine.vinyl().vinylId());
       lines.add(orderLine);
     }
 
@@ -53,7 +49,7 @@ public class Values {
         .reduce(Money.ZERO, Money::add);
     }
 
-    private Optional<OrderLine> findLineToUpdate(VinylId vinylId) {
+    Optional<OrderLine> findLineToUpdate(VinylId vinylId) {
       return lines.stream()
         .filter(it -> it.vinyl.vinylId().equals(vinylId))
         .findFirst();

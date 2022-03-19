@@ -110,6 +110,32 @@ def "shouldn't modify paid order"() {
 }
 ```
 
+### Example
+If you want to know how to bring your tests to the following state, please see my article on [Allegro Tech Blog](https://blog.allegro.tech/2022/02/readable-tests-by-example.html).
+
+```groovy
+
+def "shouldn’t charge for delivery when the client has a VIP status"() {
+     given:
+       thereIs(anUnpaidOrder())
+
+     and:
+       clientIsVip()
+
+     when:
+       def payment = clientMakesThe(aPayment())
+
+     then:
+       assertThat(payment).succeeded()
+
+     and:
+       assertThatClientDidNotPayForDelivery()
+
+     and:
+       assertThatFreeMusicTrackWasSentToTheClient()
+}
+```
+
 ### Architecture
 The structure of the code reflects the architecture that was adopted during the implementation works. The application is
 a modular monolith written based on the architectural style
